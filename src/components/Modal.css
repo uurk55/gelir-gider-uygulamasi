@@ -1,0 +1,71 @@
+/* src/components/Modal.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 25px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.modal-content h2 {
+  margin-top: 0;
+  border: none;
+}
+
+.modal-body {
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.modal-footer .sil-btn {
+  background-color: #c0392b;
+}
+
+.modal-footer .sil-btn:hover {
+  background-color: #e74c3c;
+}
+/* App.css dosyasının en altına ekle */
+
+.islem-karti {
+  border-left: 5px solid;
+  margin-bottom: 12px !important;
+}
+
+.gelir-karti {
+  border-left-color: #27ae60; /* Yeşil */
+  background-color: #e8f8f5 !important;
+}
+
+.gider-karti {
+  border-left-color: #c0392b; /* Kırmızı */
+  background-color: #fdedec !important;
+}
+
+.tutar-yazisi {
+  font-weight: bold;
+  font-size: 1.1em;
+  min-width: 120px; /* Tutar alanının hizalı durmasını sağlar */
+  text-align: right;
+}

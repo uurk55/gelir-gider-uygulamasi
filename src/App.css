@@ -1,0 +1,590 @@
+/* App.css */
+
+/* Genel Sayfa Ayarları */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Uygulamanın Ana Konteyneri */
+.app-container {
+  width: 100%;
+  max-width: 600px;
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Başlıklar */
+h1, h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 10px;
+}
+
+/* Form Elemanları */
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="text"],
+input[type="number"] {
+  width: 95%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+/* Butonlar */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: white;
+}
+
+button[type="submit"] {
+  background-color: #27ae60; /* Yeşil */
+}
+
+button[type="submit"]:hover {
+  background-color: #2ecc71;
+}
+
+/* Gider Listesi */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  background-color: #ecf0f1;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+li span:first-child {
+  font-weight: 500;
+}
+
+/* Sil Butonu */
+li button {
+  background-color: #c0392b; /* Kırmızı */
+}
+
+li button:hover {
+  background-color: #e74c3c;
+}
+/* App.css dosyasının en altına eklenecekler */
+
+.rapor-bolumu {
+  display: flex;
+  justify-content: space-around;
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+.rapor-bolumu h2 {
+  border: none;
+  margin: 0;
+}
+
+.icerik-bolumu {
+  display: flex;
+  gap: 30px; /* Sütunlar arası boşluk */
+}
+
+.bolum {
+  flex: 1; /* Her iki sütunun da eşit genişlikte olmasını sağlar */
+}
+/* App.css dosyasının en altına eklenecekler */
+
+.buton-grubu {
+  display: flex;
+  gap: 5px; /* Butonlar arası boşluk */
+}
+
+.duzenle-btn {
+  background-color: #f39c12; /* Turuncu */
+}
+
+.duzenle-btn:hover {
+  background-color: #f1c40f;
+}
+/* App.css dosyasının en altına eklenecekler */
+
+/* App.css içindeki mevcut select stilini bununla değiştir */
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  background-color: #f8f9fa; /* Açık gri bir arka plan */
+  color: #333; /* Koyu bir yazı rengi */
+  -webkit-appearance: none; /* Tarayıcının varsayılan okunu kaldırma (bazıları için) */
+  -moz-appearance: none;
+  appearance: none;
+  /* Kendi okumuzu eklemek için (opsiyonel ama şık) */
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 12px auto;
+}
+
+.aciklama-kategori {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.kategori-etiketi {
+  background-color: #3498db;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+.gelir-etiketi {
+  background-color: #27ae60; /* Yeşil */
+}
+/* App.css dosyasının en altına eklenecekler */
+
+.filtre-siralama-kutusu {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.kontrol-grubu {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.kontrol-grubu label {
+  font-size: 14px;
+  font-weight: normal;
+  margin-bottom: 8px;
+}
+/* App.css dosyasının en altına ekle */
+
+.gelir-renk {
+  color: #27ae60; /* Yeşil */
+  font-weight: bold;
+}
+
+.gider-renk {
+  color: #c0392b; /* Kırmızı */
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+
+.form-buton-grubu {
+  display: flex;
+  gap: 10px;
+}
+
+.form-buton-grubu button {
+  flex: 1; /* Butonların eşit genişlikte olmasını sağlar */
+}
+
+.vazgec-btn {
+  background-color: #7f8c8d; /* Gri */
+}
+
+.vazgec-btn:hover {
+  background-color: #95a5a6;
+}
+/* App.css dosyasının en altına ekle */
+
+.tarih-etiketi {
+  font-size: 12px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+/* App.css dosyasının en altına ekle */
+
+.zaman-filtresi-kutusu {
+  display: flex;
+  gap: 20px;
+  background-color: #2c3e50; /* Koyu renk */
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.zaman-filtresi-kutusu .kontrol-grubu label {
+  color: white; /* Label rengini beyaz yap */
+}
+/* App.css dosyasının en altına ekle */
+
+.analiz-bolumu {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.analiz-bolumu h2 {
+  margin-top: 0;
+}
+
+.analiz-icerik {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.ozet-tablosu {
+  flex: 1;
+}
+
+.ozet-tablosu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ozet-tablosu li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+}
+
+.ozet-tablosu li span:last-child {
+  font-weight: bold;
+}
+
+.grafik-konteyner {
+  flex: 1;
+  max-width: 300px; /* Grafiğin çok büyümesini engelle */
+}
+/* App.css dosyasının en altına ekle */
+
+.nav-menu {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: #ecf0f1;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.nav-menu a {
+  flex: 1;
+  text-decoration: none;
+  color: #2c3e50;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Aktif olan sekmeyi vurgulamak için */
+.nav-menu a.active {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.nav-menu a:not(.active):hover {
+  background-color: #bdc3c7;
+}
+
+main {
+  margin-top: 20px;
+}
+/* App.css dosyasının en altına ekle */
+
+.sabit-odemeler-sayfasi {
+  display: flex;
+  gap: 30px;
+}
+/* App.css dosyasının en altına ekle */
+
+.otomatik-ikon {
+  font-size: 14px;
+  cursor: help; /* Üzerine gelince soru işareti çıkmasını sağlar */
+}
+/* App.css dosyasının en altına ekle */
+
+.bildirim-kutusu {
+  background-color: #fffbe6; /* Açık sarı */
+  border: 1px solid #f9ca24; /* Sarı */
+  color: #8a6d3b;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.bildirim-kutusu h3 {
+  margin-top: 0;
+  border: none;
+  color: #8a6d3b;
+}
+
+.bildirim-kutusu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bildirim-kutusu li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #fdecb7;
+}
+
+.bildirim-kutusu li:last-child {
+  border-bottom: none;
+}
+
+.bildirim-sol {
+  display: flex;
+  flex-direction: column;
+}
+
+.bildirim-aciklama {
+  font-weight: bold;
+}
+
+.bildirim-tutar {
+  font-size: 14px;
+}
+
+.onayla-btn {
+  background-color: #f39c12; /* Turuncu */
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.onayla-btn:hover {
+  background-color: #f1c40f;
+}
+/* App.css dosyasını güncelle */
+
+/* .icerik-bolumu stilini bul ve .tek-sutun-layout ile değiştir veya yanına ekle */
+.tek-sutun-layout {
+  display: flex;
+  flex-direction: column; /* Artık tek sütun */
+  gap: 30px;
+}
+
+/* Dosyanın en altına yeni stilleri ekle */
+.islem-tipi-secici {
+  display: flex;
+  margin-bottom: 20px;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.islem-tipi-secici button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.islem-tipi-secici button.aktif {
+  background-color: white;
+  color: #2c3e50;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+/* App.css dosyasının en altına ekle */
+
+.sayfa-ici-ozet {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.ozet-kalem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.ozet-kalem span:first-child {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.ozet-kalem span:last-child {
+  font-size: 18px;
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+
+.yillik-rapor-tablosu {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.yillik-rapor-tablosu th,
+.yillik-rapor-tablosu td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.yillik-rapor-tablosu th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.yillik-rapor-tablosu tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.yillik-rapor-tablosu tfoot {
+  background-color: #e9ecef;
+  font-size: 1.1em;
+}
+
+.yillik-rapor-tablosu td:not(:first-child),
+.yillik-rapor-tablosu th:not(:first-child) {
+  text-align: right;
+}
+/* App.css dosyasının en altına ekle */
+.kategori-listesi {
+  list-style: none;
+  padding: 0;
+}
+.kategori-listesi li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  margin-bottom: 8px;
+}
+.kategori-ekle-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.kategori-ekle-form input {
+  flex: 1;
+}
+/* App.css dosyasının en altına ekle */
+
+.rapor-araclari {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  border: 1px solid #e9ecef;
+}
+
+.rapor-araclari h2 {
+  margin-top: 0;
+  border: none;
+}
+
+.disa-aktar-btn {
+  background-color: #3498db; /* Mavi */
+  font-weight: bold;
+}
+
+.disa-aktar-btn:hover {
+  background-color: #5dade2;
+}
+/* App.css dosyasının en altına ekle */
+
+.butce-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.butce-kalemi {
+  display: flex;
+  flex-direction: column;
+}
+
+.butce-bilgi {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.butce-kategori {
+  font-weight: bold;
+}
+
+.butce-rakamlar {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.progress-bar-konteyner {
+  width: 100%;
+  height: 10px;
+  background-color: #e9ecef;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-dolgu {
+  height: 100%;
+  background-color: #0d6efd; /* Mavi */
+  border-radius: 5px;
+  transition: width 0.5s ease-in-out;
+}
+
+.butce-durum {
+  text-align: right;
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 5px;
+  color: #6c757d;
+}
