@@ -4,25 +4,33 @@
   box-sizing: border-box;
 }
 
-/* Genel Sayfa Ayarları */
+/* Evrensel Kutu Modeli (Bu kalmalı, çünkü bu her zaman iyidir) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Sayfanın Temelini Hazırlama (Orijinal Ortalanmış Hali) */
 body {
+  margin: 0;
+  padding: 20px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   background-color: #f4f7f6;
   color: #333;
-  margin: 0;
-  padding: 20px;
-  display: flex;
-  justify-content: center;
+  display: flex; /* İçeriği ortalamak için */
+  justify-content: center; /* İçeriği ortalamak için */
+  min-height: 100vh;
 }
 
-/* Uygulamanın Ana Konteyneri */
+/* Ana Uygulama Konteyneri (Orijinal Dar Hali) */
 .app-container {
   width: 100%;
-  max-width: 600px;
+  max-width: 900px; /* 600px biraz dardı, 900px daha iyi bir denge olabilir */
   background-color: white;
   padding: 30px;
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Başlıklar */
@@ -848,4 +856,68 @@ input:focus, select:focus {
   font-style: italic;
   margin-top: 5px;
   color: #6c757d;
+}
+/* App.css'teki mevcut .rapor-bolumu'nu bununla değiştir */
+
+.rapor-bolumu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Dikeyde ortala */
+  gap: 20px;
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.rapor-kalemleri {
+  display: flex;
+  gap: 30px;
+}
+
+.rapor-kalem h2 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: #7f8c8d;
+  border: none;
+  padding: 0;
+}
+
+.rapor-kalem span {
+  font-size: 24px;
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+
+.hizli-eylem-butonu-kucuk {
+  background-color: #34495e; /* Daha koyu bir renk */
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hizli-eylem-butonu-kucuk:hover {
+  background-color: #2c3e50;
+  transform: scale(1.05); /* Hover'da hafifçe büyüsün */
+}
+.rapor-bolumu, .rapor-kalemleri {
+  flex-direction: column;
+  align-items: stretch; /* Elemanların tam genişliği kaplamasını sağla */
+}
+
+.rapor-kalem {
+  text-align: center;
+}
+
+.rapor-eylem {
+  width: 100%;
+}
+
+.hizli-eylem-butonu-kucuk {
+  width: 100%;
 }

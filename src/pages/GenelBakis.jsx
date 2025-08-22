@@ -1,4 +1,4 @@
-// GÜNCELLENMİŞ VE KESİNLİKLE ÇALIŞAN - src/pages/GenelBakis.jsx
+// GÜNCELLENMİŞ VE NİHAİ - src/pages/GenelBakis.jsx
 
 import { useNavigate } from 'react-router-dom';
 import { Pie, Bar } from 'react-chartjs-2';
@@ -14,7 +14,6 @@ function GenelBakis(props) {
     gelirGrafikVerisi
   } = props;
   
-  // DÜZELTME: ayAdi, onu kullanan her şeyden ÖNCE tanımlanmalı.
   const ayAdi = new Date(seciliYil, seciliAy - 1, 1).toLocaleString('tr-TR', { month: 'long' });
 
   const handleGrafikTiklama = (event, elements) => {
@@ -33,7 +32,7 @@ function GenelBakis(props) {
       legend: { display: false },
       title: { 
         display: true, 
-        text: `${ayAdi} Ayı Gelir Kaynakları` // Artık ayAdi burada kullanılabilir.
+        text: `${ayAdi} Ayı Gelir Kaynakları`
       },
     },
     scales: {
@@ -43,6 +42,7 @@ function GenelBakis(props) {
 
   return (
     <>
+      {/* 1. BİLDİRİM BÖLÜMÜ */}
       {onayBekleyenAbonelikler.length > 0 && (
         <div className="bildirim-kutusu">
           <h3>Bu Ay Onay Bekleyen Abonelikler</h3>
@@ -57,32 +57,30 @@ function GenelBakis(props) {
         </div>
       )}
 
-      <div className="zaman-filtresi-kutusu">
-        <div className="kontrol-grubu"><label>Yıl Seç:</label><select value={seciliYil} onChange={(e) => setSeciliYil(parseInt(e.target.value))}>{mevcutYillar.length > 0 ? (mevcutYillar.map(yil => <option key={yil} value={yil}>{yil}</option>)) : (<option value={new Date().getFullYear()}>{new Date().getFullYear()}</option>)}</select></div>
-        <div className="kontrol-grubu"><label>Ay Seç:</label><select value={seciliAy} onChange={(e) => setSeciliAy(parseInt(e.target.value))}>{['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'].map((ay, index) => (<option key={index + 1} value={index + 1}>{ay}</option>))}</select></div>
-      </div>
-
+      {/* 2. ZAMAN FİLTRESİ VE RAPOR BÖLÜMÜ */}
       <div className="rapor-bolumu">
-        <h2>Toplam Gelir: <span className="gelir-renk">{toplamGelir.toFixed(2)} ₺</span></h2>
-        <h2>Toplam Gider: <span className="gider-renk">{toplamGider.toFixed(2)} ₺</span></h2>
-        <h2>Bakiye: <span className={bakiye >= 0 ? 'gelir-renk' : 'gider-renk'}>{bakiye.toFixed(2)} ₺</span></h2>
-      </div>
+  <div className="rapor-kalemleri">
+    <div className="rapor-kalem">
+      <h2>Toplam Gelir:</h2>
+      <span className="gelir-renk">{toplamGelir.toFixed(2)} ₺</span>
+    </div>
+    <div className="rapor-kalem">
+      <h2>Toplam Gider:</h2>
+      <span className="gider-renk">{toplamGider.toFixed(2)} ₺</span>
+    </div>
+    <div className="rapor-kalem">
+      <h2>Bakiye:</h2>
+      <span className={bakiye >= 0 ? 'gelir-renk' : 'gider-renk'}>{bakiye.toFixed(2)} ₺</span>
+    </div>
+  </div>
+  <div className="rapor-eylem">
+    <button onClick={() => navigate('/islemler')} className="hizli-eylem-butonu-kucuk">
+      + Yeni İşlem
+    </button>
+  </div>
+</div>
 
-      {butceDurumlari.length > 0 && (
-        <div className="analiz-karti">
-          <h2>Aylık Kategori Limitleri</h2>
-          <div className="butce-listesi">
-            {butceDurumlari.map(butce => (
-              <div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}>
-                <div className="butce-bilgi"><span className="butce-kategori">{butce.kategori}</span><span className="butce-rakamlar"> {butce.harcanan.toFixed(2)} / {butce.limit.toFixed(2)} ₺<strong> (%{butce.yuzde.toFixed(0)})</strong></span></div>
-                <div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div>
-                {butce.kalan < 0 ? (<span className="butce-durum gider-renk">{-butce.kalan.toFixed(2)} ₺ aşıldı!</span>) : (<span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kullanılabilir</span>)}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
+      {/* 3. GELİR VE GİDER ANALİZ IZGARASI (ARTIK EN ÜSTTE) */}
       <div className="analiz-bolumu-grid">
         {filtrelenmisGiderler.length > 0 && (
           <div className="analiz-karti">
@@ -108,6 +106,22 @@ function GenelBakis(props) {
           </div>
         )}
       </div>
+
+      {/* 4. BÜTÇE TAKİP BÖLÜMÜ (ARTIK EN ALTTA) */}
+      {butceDurumlari.length > 0 && (
+        <div className="analiz-karti" style={{ marginTop: '30px' }}>
+          <h2>Aylık Kategori Limitleri</h2>
+          <div className="butce-listesi">
+            {butceDurumlari.map(butce => (
+              <div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}>
+                <div className="butce-bilgi"><span className="butce-kategori">{butce.kategori}</span><span className="butce-rakamlar"> {butce.harcanan.toFixed(2)} / {butce.limit.toFixed(2)} ₺<strong> (%{butce.yuzde.toFixed(0)})</strong></span></div>
+                <div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div>
+                {butce.kalan < 0 ? (<span className="butce-durum gider-renk">{-butce.kalan.toFixed(2)} ₺ aşıldı!</span>) : (<span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kullanılabilir</span>)}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }
