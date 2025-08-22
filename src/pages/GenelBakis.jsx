@@ -62,13 +62,32 @@ function GenelBakis(props) {
 
       {butceDurumlari.length > 0 && (
         <div className="analiz-karti">
-          <h2>Aylık Bütçe Takibi</h2>
+          <h2>Aylık Kategori Limitleri</h2>
           <div className="butce-listesi">
             {butceDurumlari.map(butce => (
-              <div key={butce.kategori} className="butce-kalemi">
-                <div className="butce-bilgi"><span className="butce-kategori">{butce.kategori}</span><span className="butce-rakamlar">{butce.harcanan.toFixed(2)} / {butce.limit.toFixed(2)} ₺</span></div>
-                <div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div>
-                {butce.kalan < 0 ? (<span className="butce-durum gider-renk">{-butce.kalan.toFixed(2)} ₺ aşıldı!</span>) : (<span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kaldı</span>)}
+              <div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}>
+                <div className="butce-bilgi">
+                  <span className="butce-kategori">{butce.kategori}</span>
+                  <span className="butce-rakamlar">
+                    {butce.harcanan.toFixed(2)} / {butce.limit.toFixed(2)} ₺
+                    <strong> (%{butce.yuzde.toFixed(0)})</strong>
+                  </span>
+                </div>
+                <div className="progress-bar-konteyner">
+                  <div 
+                    className="progress-bar-dolgu" 
+                    style={{ width: `${butce.yuzde}%` }}
+                  ></div>
+                </div>
+                {butce.kalan < 0 ? (
+                  <span className="butce-durum gider-renk">
+                    {-butce.kalan.toFixed(2)} ₺ aşıldı!
+                  </span>
+                ) : (
+                  <span className="butce-durum">
+                    {butce.kalan.toFixed(2)} ₺ kullanılabilir
+                  </span>
+                )}
               </div>
             ))}
           </div>
