@@ -52,7 +52,7 @@ function Raporlar(props) {
         Seçili Ayın Raporunu İndir (CSV)
       </button>
     </div>
-
+ <div className="raporlar-sayfasi"></div>
     <div className="analiz-bolumu">
       <Bar options={trendGrafikOptions} data={trendGrafikVerisi} />
     </div>

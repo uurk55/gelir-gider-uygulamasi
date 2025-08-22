@@ -1,5 +1,9 @@
 /* App.css */
 
+* {
+  box-sizing: border-box;
+}
+
 /* Genel Sayfa Ayarları */
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -587,4 +591,193 @@ main {
   font-style: italic;
   margin-top: 5px;
   color: #6c757d;
+}
+/* =============================================== */
+/*              MOBİL UYUMLULUK (RESPONSIVE)         */
+/* =============================================== */
+
+/* Geniş Tabletler ve Altı (992px ve daha dar ekranlar) */
+@media (max-width: 992px) {
+  .icerik-bolumu,
+  .analiz-icerik,
+  .sabit-odemeler-sayfasi,
+  .tek-sutun-layout {
+    flex-direction: column !important; /* !important ile kuralı ezmeye zorla */
+    gap: 40px; /* Alt alta gelince aradaki boşluğu artır */
+  }
+
+   .raporlar-sayfasi {
+    display: flex;
+    flex-direction: column; /* Raporlar sayfasındaki bölümleri alt alta getir */
+    gap: 30px;
+  }
+
+  .grafik-konteyner {
+    max-width: 100%;
+    margin-top: 30px;
+  }
+
+  .analiz-icerik .ozet-tablosu,
+  .analiz-icerik .grafik-konteyner {
+    flex-basis: 100%; /* Her birinin tam genişliği kaplamasını sağla */
+  }
+}
+
+/* Telefonlar (768px ve daha dar ekranlar) */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  .app-container {
+    padding: 20px;
+  }
+
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; }
+
+  .nav-menu {
+    gap: 5px;
+  }
+
+  .nav-menu a {
+    padding: 8px 5px;
+    font-size: 14px;
+  }
+
+  .rapor-bolumu,
+  .zaman-filtresi-kutusu,
+  .filtre-siralama-kutusu {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .islem-karti {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .islem-karti .aciklama-kategori {
+    width: 100%;
+  }
+
+  .islem-karti .tutar-yazisi {
+    width: auto; /* Otomatik genişlik */
+    text-align: left;
+    font-size: 22px;
+    padding: 5px 0;
+  }
+
+  .islem-karti .buton-grubu {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .bildirim-kutusu li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .bildirim-kutusu .onayla-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+/* =============================================== */
+/*              MİKRO-ETKİLEŞİMLER VE İKONLAR        */
+/* =============================================== */
+
+/* İkonlu Butonlar için Genel Stil */
+.icon-btn {
+  background: none; /* Arka planı kaldır */
+  color: #6c757d;  /* Gri bir renk ver */
+  border: none;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
+  border-radius: 50%; /* Tamamen yuvarlak yap */
+  width: 36px;
+  height: 36px;
+}
+
+/* Üzerine gelince (hover) efekti */
+.icon-btn:hover {
+  transform: scale(1.2); /* Hafifçe büyüt */
+  background-color: #f1f1f1; /* Çok hafif bir arka plan rengi ver */
+}
+
+/* Sil ikonuna özel renk */
+.icon-btn:hover {
+  color: #c0392b; /* Kırmızı */
+}
+
+/* Düzenle ikonuna özel renk */
+.duzenle-btn:hover {
+  color: #f39c12; /* Turuncu */
+}
+
+/* Ana Ekle/Güncelle Butonları için hover efekti */
+button[type="submit"]:hover, .onayla-btn:hover, .disa-aktar-btn:hover {
+  transform: translateY(-2px); /* Butonu hafifçe yukarı kaydır */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Gölgeyi belirginleştir */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Form inputlarına odaklanıldığında (focus) efekti */
+input:focus, select:focus {
+  outline: none;
+  border-color: #3498db; /* Mavi */
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+}
+/* App.css'e Ekle (eskileri silerek) */
+
+.analiz-bolumu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.analiz-karti {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.analiz-karti h2 {
+  margin-top: 0;
+  font-size: 18px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.analiz-icerik {
+  display: flex;
+  gap: 20px;
+  flex-grow: 1; /* Kartın içini doldurmasını sağlar */
+}
+
+.analiz-icerik .ozet-tablosu {
+  flex: 1;
+}
+
+.analiz-icerik .grafik-konteyner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gelir-analiz-karti {
+  min-height: 350px; /* Diğer kartla yüksekliğini eşitlemek için */
 }

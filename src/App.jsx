@@ -1,3 +1,5 @@
+// GÜNCEL VE TAM - App.jsx
+
 import toast, { Toaster } from 'react-hot-toast';
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
@@ -6,6 +8,7 @@ import { Pie, Bar } from 'react-chartjs-2';
 import './App.css';
 import Modal from './components/Modal';
 import './components/Modal.css';
+
 import GenelBakis from './pages/GenelBakis';
 import Islemler from './pages/Islemler';
 import SabitOdemeler from './pages/SabitOdemeler';
@@ -50,7 +53,7 @@ function App() {
   const [itemToDelete, setItemToDelete] = useState(null);
   const [onayBekleyenAbonelikler, setOnayBekleyenAbonelikler] = useState([]);
   const [aktifIslemTipi, setAktifIslemTipi] = useState('gider');
-  
+
   // --- LOCALSTORAGE & OTOMASYON ---
   useEffect(() => { localStorage.setItem('giderler', JSON.stringify(giderler)); }, [giderler]);
   useEffect(() => { localStorage.setItem('gelirler', JSON.stringify(gelirler)); }, [gelirler]);
@@ -73,14 +76,13 @@ function App() {
     setOnayBekleyenAbonelikler(yaklasanAbonelikler);
   }, [seciliAy, seciliYil, sabitOdemeler, giderler]);
 
+  // --- CRUD FONKSİYONLARI ---
   const handleSubmit = (e) => {
     e.preventDefault();
     if (aktifIslemTipi === 'gider') {
       if (!aciklama || !tutar || !kategori) return;
-      if (giderDuzenlemeModu) {
-        setGiderler(giderler.map(g => g.id === duzenlenecekGiderId ? { ...g, aciklama, tutar: parseFloat(tutar), kategori, tarih } : g));
-        toast.success('Gider başarıyla güncellendi!');
-      } else {
+      if (giderDuzenlemeModu) { setGiderler(giderler.map(g => g.id === duzenlenecekGiderId ? { ...g, aciklama, tutar: parseFloat(tutar), kategori, tarih } : g)); toast.success('Gider başarıyla güncellendi!'); } 
+      else {
         const yeniGider = { id: Date.now(), aciklama, tutar: parseFloat(tutar), kategori, tarih };
         setGiderler(prevGiderler => [...prevGiderler, yeniGider]);
         toast.success('Gider başarıyla eklendi!');
@@ -94,19 +96,13 @@ function App() {
         }
       }
       handleGiderVazgec();
-    } else { // aktifIslemTipi === 'gelir'
+    } else {
       if (!gelirAciklama || !gelirTutar || !gelirKategori) return;
-      if (gelirDuzenlemeModu) {
-        setGelirler(gelirler.map(g => g.id === duzenlenecekGelirId ? { ...g, aciklama: gelirAciklama, tutar: parseFloat(gelirTutar), kategori: gelirKategori, tarih: gelirTarih } : g));
-        toast.success('Gelir başarıyla güncellendi!');
-      } else {
-        setGelirler([...gelirler, { id: Date.now(), aciklama: gelirAciklama, tutar: parseFloat(gelirTutar), kategori: gelirKategori, tarih: gelirTarih }]);
-        toast.success('Gelir başarıyla eklendi!');
-      }
+      if (gelirDuzenlemeModu) { setGelirler(gelirler.map(g => g.id === duzenlenecekGelirId ? { ...g, aciklama: gelirAciklama, tutar: parseFloat(gelirTutar), kategori: gelirKategori, tarih: gelirTarih } : g)); toast.success('Gelir başarıyla güncellendi!'); }
+      else { setGelirler([...gelirler, { id: Date.now(), aciklama: gelirAciklama, tutar: parseFloat(gelirTutar), kategori: gelirKategori, tarih: gelirTarih }]); toast.success('Gelir başarıyla eklendi!'); }
       handleGelirVazgec();
     }
   };
-
   const handleGiderDuzenleBaslat = (gider) => { setAktifIslemTipi('gider'); setGiderDuzenlemeModu(true); setDuzenlenecekGiderId(gider.id); setAciklama(gider.aciklama); setTutar(gider.tutar); setKategori(gider.kategori); setTarih(gider.tarih); };
   const handleGiderSil = (id) => { setItemToDelete({ id: id, type: 'gider' }); setIsModalOpen(true); };
   const handleGiderVazgec = () => { setGiderDuzenlemeModu(false); setDuzenlenecekGiderId(null); setAciklama(''); setTutar(''); setKategori(giderKategorileri[0]); setTarih(getBugununTarihi()); };
@@ -123,12 +119,10 @@ function App() {
   const handleButceEkle = (yeniButce) => { const mevcutButce = butceler.find(b => b.kategori === yeniButce.kategori); if (mevcutButce) { setButceler(butceler.map(b => b.kategori === yeniButce.kategori ? yeniButce : b)); toast.success(`'${yeniButce.kategori}' bütçesi güncellendi!`); } else { setButceler(prev => [...prev, yeniButce]); toast.success(`'${yeniButce.kategori}' için yeni bütçe oluşturuldu!`); } };
   const handleButceSil = (kategori) => { setButceler(butceler.filter(b => b.kategori !== kategori)); toast.error(`'${kategori}' bütçesi silindi.`); };
   const handleVeriIndir = () => { const indirilecekVeri = [...filtrelenmisGelirler.map(gelir => ({ ...gelir, tip: 'Gelir' })), ...filtrelenmisGiderler.map(gider => ({ ...gider, tip: 'Gider' }))].sort((a, b) => new Date(a.tarih) - new Date(b.tarih)); if (indirilecekVeri.length === 0) { toast.error('İndirilecek veri bulunmuyor.'); return; } const basliklar = ['Tarih', 'Tip', 'Kategori', 'Açıklama', 'Tutar']; const csvRows = [basliklar.join(';')]; indirilecekVeri.forEach(islem => { const row = [new Date(islem.tarih).toLocaleDateString('tr-TR'), islem.tip, islem.kategori, `"${islem.aciklama.replace(/"/g, '""')}"`, islem.tutar.toFixed(2).replace('.', ',')]; csvRows.push(row.join(';')); }); const csvString = csvRows.join('\r\n'); const blob = new Blob([`\uFEFF${csvString}`], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement('a'); const url = URL.createObjectURL(blob); link.setAttribute('href', url); link.setAttribute('download', `bütçe_raporu_${seciliAy}_${seciliYil}.csv`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); toast.success('Rapor başarıyla indirildi!'); };
-  
 
   // --- VERİ İŞLEME VE HESAPLAMALAR ---
   const filtrelenmisGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy);
   const filtrelenmisGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy);
-  // DÜZELTME: butceDurumlari hesaplaması, filtrelenmisGiderler'e bağlı olduğu için onun altına taşındı
   const butceDurumlari = butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori === butce.kategori).reduce((toplam, gider) => toplam + gider.tutar, 0); const kalan = butce.limit - harcanan; const yuzde = Math.min((harcanan / butce.limit) * 100, 100); return { ...butce, harcanan, kalan, yuzde }; }).sort((a,b) => b.yuzde - a.yuzde);
   const tumIslemler = [...gelirler, ...giderler];
   const mevcutYillar = [...new Set(tumIslemler.map(islem => new Date(islem.tarih).getFullYear()))].sort((a,b) => b-a);
@@ -141,16 +135,18 @@ function App() {
   const birlesikIslemler = [...filtrelenmisGelirler.map(gelir => ({ ...gelir, tip: 'gelir' })),...filtrelenmisGiderler.map(gider => ({ ...gider, tip: 'gider' }))].sort((a, b) => new Date(b.tarih) - new Date(a.tarih));
   const kategoriOzeti = filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) { acc[kategori] = 0; } acc[kategori] += tutar; return acc; }, {});
   const grafikVerisi = { labels: Object.keys(kategoriOzeti), datasets: [{ label: 'Harcama Miktarı', data: Object.values(kategoriOzeti), backgroundColor: ['rgba(255, 99, 132, 0.7)','rgba(54, 162, 235, 0.7)','rgba(255, 206, 86, 0.7)','rgba(75, 192, 192, 0.7)','rgba(153, 102, 255, 0.7)','rgba(255, 159, 64, 0.7)', '#8e44ad', '#34495e'], borderColor: ['#fff'], borderWidth: 1,},],};
+  const gelirKategoriOzeti = filtrelenmisGelirler.reduce((acc, gelir) => { const { kategori, tutar } = gelir; if (!acc[kategori]) { acc[kategori] = 0; } acc[kategori] += tutar; return acc; }, {});
+  const gelirGrafikVerisi = { labels: Object.keys(gelirKategoriOzeti), datasets: [{ label: 'Gelir Miktarı', data: Object.values(gelirKategoriOzeti), backgroundColor: ['rgba(75, 192, 192, 0.7)', 'rgba(110, 214, 123, 0.7)', 'rgba(46, 204, 113, 0.7)', 'rgba(39, 174, 96, 0.7)'], borderColor: ['rgba(75, 192, 192, 1)', 'rgba(110, 214, 123, 1)', 'rgba(46, 204, 113, 1)', 'rgba(39, 174, 96, 1)'], borderWidth: 1, },], };
   const trendVerisi = { labels: [], gelirler: [], giderler: [], };
   const yillikRaporVerisi = { aylar: [], toplamGelir: 0, toplamGider: 0, toplamBakiye: 0 };
   for (let i = 1; i <= 12; i++) { const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i).reduce((toplam, g) => toplam + g.tutar, 0); const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i).reduce((toplam, g) => toplam + g.tutar, 0); if (aylikGelir > 0 || aylikGider > 0) { yillikRaporVerisi.aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: aylikGelir, gider: aylikGider, bakiye: aylikGelir - aylikGider }); } yillikRaporVerisi.toplamGelir += aylikGelir; yillikRaporVerisi.toplamGider += aylikGider; }
   yillikRaporVerisi.toplamBakiye = yillikRaporVerisi.toplamGelir - yillikRaporVerisi.toplamGider;
   for (let i = 5; i >= 0; i--) { const tarih = new Date(seciliYil, seciliAy - 1, 1); tarih.setMonth(tarih.getMonth() - i); const ay = tarih.getMonth() + 1; const yil = tarih.getFullYear(); const oAykiGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((toplam, g) => toplam + g.tutar, 0); const oAykiGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((toplam, g) => toplam + g.tutar, 0); trendVerisi.labels.push(`${tarih.toLocaleString('tr-TR', { month: 'long' })}`); trendVerisi.gelirler.push(oAykiGelir); trendVerisi.giderler.push(oAykiGider); }
-  
+
   return (
     <Router>
       <div className="app-container">
-        <Toaster position="bottom-center" reverseOrder={false} toastOptions={{ style: { background: '#363636', color: '#fff', borderRadius: '8px', boxShadow: '0 3px 6px rgba(0,0,0,0.16)', }, success: { iconTheme: { primary: '#4ade80', secondary: '#fff', }, }, error: { iconTheme: { primary: '#f87171', secondary: '#fff', }, },}} />
+        <Toaster position="bottom-center" reverseOrder={false} toastOptions={{ /*...*/ }} />
         <h1>Gelir - Gider Takip</h1>
         <nav className="nav-menu">
             <NavLink to="/">Genel Bakış</NavLink>
@@ -162,8 +158,8 @@ function App() {
         </nav>
         <main>
           <Routes>
-            <Route path="/" element={<GenelBakis seciliYil={seciliYil} setSeciliYil={setSeciliYil} seciliAy={seciliAy} setSeciliAy={setSeciliAy} mevcutYillar={mevcutYillar} toplamGelir={toplamGelir} toplamGider={toplamGider} bakiye={bakiye} filtrelenmisGiderler={filtrelenmisGiderler} kategoriOzeti={kategoriOzeti} grafikVerisi={grafikVerisi} setGiderFiltreKategori={setGiderFiltreKategori} trendVerisi={trendVerisi} onayBekleyenAbonelikler={onayBekleyenAbonelikler} handleAbonelikOnayla={handleAbonelikOnayla} butceDurumlari={butceDurumlari} />} />
-            <Route path="/islemler" element={<Islemler aktifIslemTipi={aktifIslemTipi} setAktifIslemTipi={setAktifIslemTipi} handleSubmit={handleSubmit} gelirDuzenlemeModu={gelirDuzenlemeModu} gelirKategori={gelirKategori} setGelirKategori={setGelirKategori} gelirKategorileri={gelirKategorileri} gelirAciklama={gelirAciklama} setGelirAciklama={setGelirAciklama} gelirTarih={gelirTarih} setGelirTarih={setGelirTarih} gelirTutar={gelirTutar} setGelirTutar={setGelirTutar} handleGelirVazgec={handleGelirVazgec} birlesikIslemler={birlesikIslemler} handleGelirDuzenleBaslat={handleGelirDuzenleBaslat} handleGelirSil={handleGelirSil} giderDuzenlemeModu={giderDuzenlemeModu} kategori={kategori} setKategori={setKategori} giderKategorileri={giderKategorileri} aciklama={aciklama} setAciklama={setAciklama} tarih={tarih} setTarih={setTarih} tutar={tutar} setTutar={setTutar} handleGiderVazgec={handleGiderVazgec} handleGiderDuzenleBaslat={handleGiderDuzenleBaslat} handleGiderSil={handleGiderSil} />} />
+            <Route path="/" element={<GenelBakis seciliYil={seciliYil} setSeciliYil={setSeciliYil} seciliAy={seciliAy} setSeciliAy={setSeciliAy} mevcutYillar={mevcutYillar} toplamGelir={toplamGelir} toplamGider={toplamGider} bakiye={bakiye} filtrelenmisGiderler={filtrelenmisGiderler} filtrelenmisGelirler={filtrelenmisGelirler} kategoriOzeti={kategoriOzeti} grafikVerisi={grafikVerisi} setGiderFiltreKategori={setGiderFiltreKategori} trendVerisi={trendVerisi} onayBekleyenAbonelikler={onayBekleyenAbonelikler} handleAbonelikOnayla={handleAbonelikOnayla} butceDurumlari={butceDurumlari} gelirGrafikVerisi={gelirGrafikVerisi} />} />
+            <Route path="/islemler" element={<Islemler aktifIslemTipi={aktifIslemTipi} setAktifIslemTipi={setAktifIslemTipi} handleSubmit={handleSubmit} gelirDuzenlemeModu={gelirDuzenlemeModu} gelirKategori={gelirKategori} setGelirKategori={setGelirKategori} gelirKategorileri={gelirKategorileri} gelirAciklama={gelirAciklama} setGelirAciklama={setGelirAciklama} gelirTarih={gelirTarih} setGelirTarih={setGelirTarih} gelirTutar={gelirTutar} setGelirTutar={setGelirTutar} handleGelirVazgec={handleGelirVazgec} handleGelirDuzenleBaslat={handleGelirDuzenleBaslat} handleGelirSil={handleGelirSil} giderDuzenlemeModu={giderDuzenlemeModu} kategori={kategori} setKategori={setKategori} giderKategorileri={giderKategorileri} aciklama={aciklama} setAciklama={setAciklama} tarih={tarih} setTarih={setTarih} tutar={tutar} setTutar={setTutar} handleGiderVazgec={handleGiderVazgec} handleGiderDuzenleBaslat={handleGiderDuzenleBaslat} handleGiderSil={handleGiderSil} birlesikIslemler={birlesikIslemler} />} />
             <Route path="/raporlar" element={<Raporlar trendVerisi={trendVerisi} yillikRaporVerisi={yillikRaporVerisi} seciliYil={seciliYil} handleVeriIndir={handleVeriIndir} />} />
             <Route path="/sabit-odemeler" element={<SabitOdemeler sabitOdemeler={sabitOdemeler} handleSabitOdemeEkle={handleSabitOdemeEkle} handleSabitOdemeSil={handleSabitOdemeSil} giderKategorileri={giderKategorileri} />} />
             <Route path="/butceler" element={<Butceler giderKategorileri={giderKategorileri} butceler={butceler} handleButceEkle={handleButceEkle} handleButceSil={handleButceSil} />} />

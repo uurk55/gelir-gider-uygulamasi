@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FaTrash } from 'react-icons/fa'; // YENİ
 
 function SabitOdemeler(props) {
   // DÜZELTME: Prop'un adı "giderKategorileri" olarak değiştirildi
@@ -90,8 +91,14 @@ function SabitOdemeler(props) {
                 </div>
                 <span>{odeme.tutar.toFixed(2)} ₺</span>
                 <div className="buton-grubu">
-                  <button onClick={() => handleSabitOdemeSil(odeme.id)}>Sil</button>
-                </div>
+  <button 
+    onClick={() => handleSabitOdemeSil(odeme.id)}
+    className="icon-btn" // "icon-btn" sınıfı eklendi
+    aria-label="Sil"
+  >
+    <FaTrash /> {/* Sil ikonu */}
+  </button>
+</div>
               </li>
             ))}
           </ul>

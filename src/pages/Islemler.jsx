@@ -1,3 +1,4 @@
+import { FaPen, FaTrash } from 'react-icons/fa'; // Düzenle ve Sil ikonları
 import { motion, AnimatePresence } from 'framer-motion';
 
 function Islemler(props) {
@@ -85,16 +86,18 @@ function Islemler(props) {
                   <div className="buton-grubu">
                     <button 
                       onClick={() => islem.tip === 'gelir' ? handleGelirDuzenleBaslat(islem) : handleGiderDuzenleBaslat(islem)} 
-                      className="duzenle-btn"
+                      className="duzenle-btn icon-btn" // "icon-btn" sınıfı eklendi
+                      aria-label="Düzenle" // Ekran okuyucular için
                     >
-                      Düzenle
+                      <FaPen />
                     </button>
                     <button 
-                      onClick={() => islem.tip === 'gelir' ? handleGelirSil(islem.id) : handleGiderSil(islem.id)}
-                    >
-                      Sil
-                    </button>
-                  </div>
+                      className="icon-btn" // "icon-btn" sınıfı eklendi
+    aria-label="Sil"
+  >
+    <FaTrash /> {/* Sil ikonu */}
+  </button>
+</div>
                 </motion.li>
               ))}
             </AnimatePresence>
