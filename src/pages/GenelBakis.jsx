@@ -1,3 +1,5 @@
+// GÜNCELLENMİŞ VE KESİNLİKLE ÇALIŞAN - src/pages/GenelBakis.jsx
+
 import { useNavigate } from 'react-router-dom';
 import { Pie, Bar } from 'react-chartjs-2';
 
@@ -12,6 +14,9 @@ function GenelBakis(props) {
     gelirGrafikVerisi
   } = props;
   
+  // DÜZELTME: ayAdi, onu kullanan her şeyden ÖNCE tanımlanmalı.
+  const ayAdi = new Date(seciliYil, seciliAy - 1, 1).toLocaleString('tr-TR', { month: 'long' });
+
   const handleGrafikTiklama = (event, elements) => {
     if (!elements || elements.length === 0) return;
     const tiklananIndex = elements[0].index;
@@ -26,7 +31,10 @@ function GenelBakis(props) {
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false },
-      title: { display: true, text: 'Gelir Kaynakları' },
+      title: { 
+        display: true, 
+        text: `${ayAdi} Ayı Gelir Kaynakları` // Artık ayAdi burada kullanılabilir.
+      },
     },
     scales: {
         x: { beginAtZero: true }
@@ -66,28 +74,9 @@ function GenelBakis(props) {
           <div className="butce-listesi">
             {butceDurumlari.map(butce => (
               <div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}>
-                <div className="butce-bilgi">
-                  <span className="butce-kategori">{butce.kategori}</span>
-                  <span className="butce-rakamlar">
-                    {butce.harcanan.toFixed(2)} / {butce.limit.toFixed(2)} ₺
-                    <strong> (%{butce.yuzde.toFixed(0)})</strong>
-                  </span>
-                </div>
-                <div className="progress-bar-konteyner">
-                  <div 
-                    className="progress-bar-dolgu" 
-                    style={{ width: `${butce.yuzde}%` }}
-                  ></div>
-                </div>
-                {butce.kalan < 0 ? (
-                  <span className="butce-durum gider-renk">
-                    {-butce.kalan.toFixed(2)} ₺ aşıldı!
-                  </span>
-                ) : (
-                  <span className="butce-durum">
-                    {butce.kalan.toFixed(2)} ₺ kullanılabilir
-                  </span>
-                )}
+                <div className="butce-bilgi"><span className="butce-kategori">{butce.kategori}</span><span className="butce-rakamlar"> {butce.harcanan.toFixed(2)} / {butce.limit.toFixed(2)} ₺<strong> (%{butce.yuzde.toFixed(0)})</strong></span></div>
+                <div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div>
+                {butce.kalan < 0 ? (<span className="butce-durum gider-renk">{-butce.kalan.toFixed(2)} ₺ aşıldı!</span>) : (<span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kullanılabilir</span>)}
               </div>
             ))}
           </div>
@@ -97,7 +86,7 @@ function GenelBakis(props) {
       <div className="analiz-bolumu-grid">
         {filtrelenmisGiderler.length > 0 && (
           <div className="analiz-karti">
-            <h2>Kategori Harcama Dağılımı</h2>
+            <h2>{ayAdi} Ayı Harcama Dağılımı</h2>
             <div className="analiz-icerik">
               <div className="ozet-tablosu">
                 <ul>

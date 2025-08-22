@@ -31,7 +31,7 @@ function Raporlar(props) {
       legend: { position: 'top' },
       title: {
         display: true,
-        text: 'Son 6 Aylık Gelir-Gider Trendi',
+        text: `Son 6 Aylık Trend (${trendVerisi.labels[5]} ${seciliYil})`,
         font: { size: 18 }
       },
     },
