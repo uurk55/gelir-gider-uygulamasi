@@ -1,26 +1,28 @@
-// src/components/Modal.jsx
+import { useFinans } from '../context/FinansContext'; // YENİ: Context Hook'u içe aktar
 
-import React from 'react';
+function Modal({ title, children }) {
+  // YENİ: Prop'lar yerine, ihtiyacımız olan state ve fonksiyonları Context'ten alıyoruz.
+  const { isModalOpen, handleCloseModal, handleConfirmDelete } = useFinans();
 
-function Modal({ isOpen, onClose, onConfirm, title, children }) {
-  if (!isOpen) {
-    return null; // Eğer modal açık değilse, hiçbir şey gösterme
-  }
+  if (!isModalOpen) return null;
 
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h2>{title}</h2>
-        <div className="modal-body">
-          {children}
-        </div>
-        <div className="modal-footer">
-          <button onClick={onClose} className="vazgec-btn">Vazgeç</button>
-          <button onClick={onConfirm} className="sil-btn">Onayla ve Sil</button>
-        </div>
-      </div>
-    </div>
-  );
+  return (
+    <div className="modal-backdrop">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <button onClick={handleCloseModal} className="modal-close-btn">&times;</button>
+        </div>
+        <div className="modal-body">
+          {children}
+        </div>
+        <div className="modal-footer">
+          <button onClick={handleCloseModal} className="modal-cancel-btn">Vazgeç</button>
+          <button onClick={handleConfirmDelete} className="modal-confirm-btn">Onayla ve Sil</button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default Modal;

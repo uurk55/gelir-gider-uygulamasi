@@ -1,9 +1,10 @@
-// GÜNCELLENMİŞ ve DÜZELTİLMİŞ - src/pages/Raporlar.jsx
-
 import { Bar } from 'react-chartjs-2';
+import { useFinans } from '../context/FinansContext';
+import TarihSecici from '../components/TarihSecici'; // YENİ: TarihSecici bileşenini içe aktar
 
-function Raporlar(props) {
-  const { trendVerisi, yillikRaporVerisi, seciliYil, handleVeriIndir } = props;
+function Raporlar() {
+  // YENİ: Prop'lar yerine, ihtiyacımız olan tüm state ve fonksiyonları Context'ten alıyoruz.
+  const { trendVerisi, yillikRaporVerisi, seciliYil, handleVeriIndir } = useFinans();
 
   const trendGrafikVerisi = {
     labels: trendVerisi.labels,
@@ -36,31 +37,29 @@ function Raporlar(props) {
       },
     },
     scales: {
-        y: { 
-            beginAtZero: true 
-        }
+      y: {
+        beginAtZero: true
+      }
     }
   };
 
-  // return bloğu artık tek bir ana <div> ile başlıyor ve bitiyor
   return (
-    <div> 
-         {/* YENİ RAPOR ARAÇLARI BÖLÜMÜ */}
-    <div className="rapor-araclari">
-      <h2>Rapor Araçları</h2>
-      <button onClick={handleVeriIndir} className="disa-aktar-btn">
-        Seçili Ayın Raporunu İndir (CSV)
-      </button>
-    </div>
- <div className="raporlar-sayfasi"></div>
-    <div className="analiz-bolumu">
-      <Bar options={trendGrafikOptions} data={trendGrafikVerisi} />
-    </div>
+    <div>
+      <TarihSecici /> {/* YENİ: Tarih seçme bileşenini buraya ekle */}
+      
+      {/* YENİ RAPOR ARAÇLARI BÖLÜMÜ */}
+      <div className="rapor-araclari">
+        <h2>Rapor Araçları</h2>
+        <button onClick={handleVeriIndir} className="disa-aktar-btn">
+          Seçili Ayın Raporunu İndir (CSV)
+        </button>
+      </div>
+      <div className="raporlar-sayfasi"></div>
       <div className="analiz-bolumu">
         <Bar options={trendGrafikOptions} data={trendGrafikVerisi} />
       </div>
 
-      <div className="analiz-bolumu" style={{marginTop: '30px'}}>
+      <div className="analiz-bolumu" style={{ marginTop: '30px' }}>
         <h2>{seciliYil} Yılı Özeti</h2>
         {yillikRaporVerisi.aylar.length > 0 ? (
           <table className="yillik-rapor-tablosu">

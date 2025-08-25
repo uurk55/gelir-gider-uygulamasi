@@ -187,14 +187,25 @@ select {
 }
 /* App.css dosyasının en altına eklenecekler */
 
+/* App.css'teki mevcut .filtre-siralama-kutusu'nu bununla değiştir */
+
 .filtre-siralama-kutusu {
   display: flex;
-  justify-content: space-between;
   gap: 20px;
   background-color: #f8f9fa;
-  padding: 15px;
+  padding: 20px;
   border-radius: 5px;
   margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+  overflow: hidden; /* Animasyonun düzgün çalışması için önemli */
+}
+
+/* Mobil için de güncelleyelim */
+@media (max-width: 768px) {
+  .filtre-siralama-kutusu {
+    flex-direction: column;
+    gap: 20px;
+  }
 }
 
 .kontrol-grubu {
@@ -207,6 +218,7 @@ select {
   font-size: 14px;
   font-weight: normal;
   margin-bottom: 8px;
+  color: #6c757d;
 }
 /* App.css dosyasının en altına ekle */
 
@@ -920,4 +932,31 @@ input:focus, select:focus {
 
 .hizli-eylem-butonu-kucuk {
   width: 100%;
+}
+/* App.css dosyasının en altına ekle */
+
+.liste-baslik {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.liste-baslik h2 {
+  margin: 0;
+}
+
+.filtre-buton {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border: 1px solid #bdc3c7;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filtre-buton:hover {
+  background-color: #bdc3c7;
 }
