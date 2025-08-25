@@ -3,126 +3,130 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { FaPen, FaTrash } from 'react-icons/fa';
 import { useFinans } from '../context/FinansContext';
 import TarihSecici from '../components/TarihSecici';
+import { getCategoryIcon } from '../utils/iconMap';
 
 function Islemler() {
-  const {
-    aktifIslemTipi, setAktifIslemTipi, handleSubmit,
-    hesaplar, seciliHesapId, setSeciliHesapId,
-    gelirDuzenlemeModu, gelirKategori, setGelirKategori, gelirKategorileri, gelirAciklama, setGelirAciklama, gelirTarih, setGelirTarih, gelirTutar, setGelirTutar, handleGelirVazgec,
-    giderDuzenlemeModu, kategori, setKategori, giderKategorileri, aciklama, setAciklama, tarih, setTarih, tutar, setTutar, handleGiderVazgec,
-    birlesikIslemler, handleGelirDuzenleBaslat, handleGelirSil, handleGiderDuzenleBaslat, handleGiderSil,
-    toplamGelir, toplamGider,
-    birlesikFiltreTip, setBirlesikFiltreTip, birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri,
-  } = useFinans();
+    const {
+        aktifIslemTipi, setAktifIslemTipi, handleSubmit,
+        hesaplar, seciliHesapId, setSeciliHesapId,
+        gelirDuzenlemeModu, gelirKategori, setGelirKategori, gelirKategorileri, gelirAciklama, setGelirAciklama, gelirTarih, setGelirTarih, gelirTutar, setGelirTutar, handleGelirVazgec,
+        giderDuzenlemeModu, kategori, setKategori, giderKategorileri, aciklama, setAciklama, tarih, setTarih, tutar, setTutar, handleGiderVazgec,
+        birlesikIslemler, handleGelirDuzenleBaslat, handleGelirSil, handleGiderDuzenleBaslat, handleGiderSil,
+        toplamGelir, toplamGider,
+        birlesikFiltreTip, setBirlesikFiltreTip, giderFiltreKategori, setGiderFiltreKategori, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri
+    } = useFinans();
 
-  const [filtrePaneliAcik, setFiltrePaneliAcik] = useState(false);
-  
-  if (!hesaplar || !birlesikIslemler) {
-      return <div>Yükleniyor...</div>;
-  }
+    const [filtrePaneliAcik, setFiltrePaneliAcik] = useState(false);
 
-  const listItemVariants = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, x: -100 },
-  };
+    if (!hesaplar || !birlesikIslemler) {
+        return <div>Yükleniyor...</div>;
+    }
 
-  const tumKategoriler = [...new Set([...giderKategorileri, ...gelirKategorileri])];
+    const listItemVariants = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, x: -100, transition: { duration: 0.2 } },
+    };
 
-  return (
-    <div className="tek-sutun-layout">
-      <TarihSecici />
-      
-      <div className="bolum">
-        <div className="islem-tipi-secici">
-          <button onClick={() => setAktifIslemTipi('gelir')} className={aktifIslemTipi === 'gelir' ? 'aktif' : ''}>Gelir</button>
-          <button onClick={() => setAktifIslemTipi('gider')} className={aktifIslemTipi === 'gider' ? 'aktif' : ''}>Gider</button>
-        </div>
-        {aktifIslemTipi === 'gelir' ? (
-          <form onSubmit={handleSubmit}>
-            <h2>{gelirDuzenlemeModu ? 'Geliri Güncelle' : 'Yeni Gelir Ekle'}</h2>
-            <div><label>Kategori:</label><select value={gelirKategori} onChange={(e) => setGelirKategori(e.target.value)}>{gelirKategorileri.map(k => (<option key={k} value={k}>{k}</option>))}</select></div>
-            <div>
+    const FormContent = ({ isGelir }) => (
+        <form onSubmit={handleSubmit} className="form-grid">
+            <div className="form-item-full">
+                <label>Açıklama:</label>
+                <input type="text" placeholder={isGelir ? "Örn: Maaş" : "Örn: Akşam yemeği"} value={isGelir ? gelirAciklama : aciklama} onChange={(e) => isGelir ? setGelirAciklama(e.target.value) : setAciklama(e.target.value)} />
+            </div>
+            <div className="form-item-half">
+                <label>Kategori:</label>
+                <select value={isGelir ? gelirKategori : kategori} onChange={(e) => isGelir ? setGelirKategori(e.target.value) : setKategori(e.target.value)}>
+                    {(isGelir ? gelirKategorileri : giderKategorileri).map(k => (<option key={k} value={k}>{k}</option>))}
+                </select>
+            </div>
+            <div className="form-item-half">
                 <label>Hesap:</label>
                 <select value={seciliHesapId} onChange={(e) => setSeciliHesapId(parseInt(e.target.value))}>
                     {hesaplar.map(hesap => (<option key={hesap.id} value={hesap.id}>{hesap.ad}</option>))}
                 </select>
             </div>
-            <div><label>Açıklama:</label><input type="text" placeholder="Örn: Maaş" value={gelirAciklama} onChange={(e) => setGelirAciklama(e.target.value)} /></div>
-            <div><label>Tarih:</label><input type="date" value={gelirTarih} onChange={(e) => setGelirTarih(e.target.value)} /></div>
-            <div><label>Tutar (₺):</label><input type="number" placeholder="Örn: 20000" value={gelirTutar} onChange={(e) => setGelirTutar(e.target.value)} /></div>
-            <div className="form-buton-grubu">
-              <button type="submit">{gelirDuzenlemeModu ? 'Güncelle' : 'Ekle'}</button>
-              {gelirDuzenlemeModu && (<button type="button" onClick={handleGelirVazgec} className="vazgec-btn">Vazgeç</button>)}
-            </div>
-          </form>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <h2>{giderDuzenlemeModu ? 'Gideri Güncelle' : 'Yeni Gider Ekle'}</h2>
-            <div><label>Kategori:</label><select value={kategori} onChange={(e) => setKategori(e.target.value)}>{giderKategorileri.map(k => (<option key={k} value={k}>{k}</option>))}</select></div>
-            <div>
-                <label>Hesap:</label>
-                <select value={seciliHesapId} onChange={(e) => setSeciliHesapId(parseInt(e.target.value))}>
-                    {hesaplar.map(hesap => (<option key={hesap.id} value={hesap.id}>{hesap.ad}</option>))}
-                </select>
+            <div className="form-item-half">
+                <label>Tutar (₺):</label>
+                <input type="number" placeholder="0.00" value={isGelir ? gelirTutar : tutar} onChange={(e) => isGelir ? setGelirTutar(e.target.value) : setTutar(e.target.value)} />
             </div>
-            <div><label>Açıklama:</label><input type="text" placeholder="Örn: Kahve" value={aciklama} onChange={(e) => setAciklama(e.target.value)} /></div>
-            <div><label>Tarih:</label><input type="date" value={tarih} onChange={(e) => setTarih(e.target.value)} /></div>
-            <div><label>Tutar (₺):</label><input type="number" placeholder="Örn: 50" value={tutar} onChange={(e) => setTutar(e.target.value)} /></div>
-            <div className="form-buton-grubu">
-              <button type="submit">{giderDuzenlemeModu ? 'Güncelle' : 'Ekle'}</button>
-              {giderDuzenlemeModu && (<button type="button" onClick={handleGiderVazgec} className="vazgec-btn">Vazgeç</button>)}
-            </div>
-          </form>
-        )}
-      </div>
+            <div className="form-item-half">
+                <label>Tarih:</label>
+                <input type="date" value={isGelir ? gelirTarih : tarih} onChange={(e) => isGelir ? setGelirTarih(e.target.value) : setTarih(e.target.value)} />
+            </div>
+            <div className="form-item-full form-buton-grubu">
+                <button type="submit">{(isGelir ? gelirDuzenlemeModu : giderDuzenlemeModu) ? 'Güncelle' : 'Ekle'}</button>
+                {(isGelir ? gelirDuzenlemeModu : giderDuzenlemeModu) && (<button type="button" onClick={isGelir ? handleGelirVazgec : handleGiderVazgec} className="vazgec-btn">Vazgeç</button>)}
+            </div>
+        </form>
+    );
 
-      <div className="bolum">
-        <hr />
-        <div className="liste-baslik">
-          <h2>İşlem Listesi</h2>
-          <button onClick={() => setFiltrePaneliAcik(!filtrePaneliAcik)} className="filtre-buton">Filtrele & Sırala</button>
-        </div>
-        <AnimatePresence>
-          {filtrePaneliAcik && (
-            <motion.div className="filtre-siralama-kutusu" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.3 }}>
-              {/* Filtreleme içeriği burada */}
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div className="sayfa-ici-ozet">
-          <div className="ozet-kalem"><span>Toplam Gelir:</span><span className="gelir-renk">{toplamGelir.toFixed(2)} ₺</span></div>
-          <div className="ozet-kalem"><span>Toplam Gider:</span><span className="gider-renk">{toplamGider.toFixed(2)} ₺</span></div>
-        </div>
-        {birlesikIslemler.length === 0 ? (
-          <p style={{textAlign: "center", fontStyle: "italic", color: "#7f8c8d"}}>Seçili ayda gösterilecek işlem bulunmuyor.</p> 
-        ) : (
-          <ul>
-            <AnimatePresence>
-              {birlesikIslemler.map(islem => {
-                const hesap = hesaplar.find(h => h.id === islem.hesapId);
-                return (
-                <motion.li key={islem.id} layout variants={listItemVariants} initial="initial" animate="animate" exit="exit" transition={{ type: "spring", stiffness: 300, damping: 30 }} className={`islem-karti ${islem.tip === 'gelir' ? 'gelir-karti' : 'gider-karti'}`}>
-                  <div className="aciklama-kategori">
-                    <span>{islem.aciklama}</span>
-                    <span className={`kategori-etiketi ${islem.tip === 'gelir' ? 'gelir-etiketi' : ''}`}>{islem.kategori}</span>
-                    {hesap && <span className="hesap-etiketi">{hesap.ad}</span>}
-                    <span className="tarih-etiketi">{new Date(islem.tarih).toLocaleDateString('tr-TR')}</span>
-                  </div>
-                  <span className={`tutar-yazisi ${islem.tip === 'gelir' ? 'gelir-renk' : 'gider-renk'}`}>{islem.tip === 'gelir' ? '+' : '-'} {islem.tutar.toFixed(2)} ₺</span>
-                  <div className="buton-grubu">
-                    <button onClick={() => islem.tip === 'gelir' ? handleGelirDuzenleBaslat(islem) : handleGiderDuzenleBaslat(islem)} className="duzenle-btn icon-btn" aria-label="Düzenle"><FaPen /></button>
-                    <button onClick={() => islem.tip === 'gelir' ? handleGelirSil(islem.id) : handleGiderSil(islem.id)} className="icon-btn" aria-label="Sil"><FaTrash /></button>
-                  </div>
-                </motion.li>
-                )
-              })}
-            </AnimatePresence>
-          </ul>
-        )}
-      </div>
-    </div>
-  );
+    return (
+        <>
+            <TarihSecici />
+            <div className="card">
+                <div className="islem-tipi-secici">
+                    <button onClick={() => setAktifIslemTipi('gider')} className={aktifIslemTipi === 'gider' ? 'aktif' : ''}>Gider Ekle</button>
+                    <button onClick={() => setAktifIslemTipi('gelir')} className={aktifIslemTipi === 'gelir' ? 'aktif' : ''}>Gelir Ekle</button>
+                </div>
+                {aktifIslemTipi === 'gider' ? <FormContent isGelir={false} /> : <FormContent isGelir={true} />}
+            </div>
+
+            <div className="card">
+                <div className="liste-baslik">
+                    <h2>İşlem Listesi</h2>
+                    <button onClick={() => setFiltrePaneliAcik(!filtrePaneliAcik)} className="filtre-buton">
+                        Filtrele & Sırala
+                    </button>
+                </div>
+                
+                <AnimatePresence>
+                    {filtrePaneliAcik && (
+                        <motion.div className="filtre-siralama-kutusu" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
+                            {/* Orijinal filtreleme içeriğiniz buraya gelecek */}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+
+                <div className="sayfa-ici-ozet">
+                    <div className="ozet-kalem"><span>Aylık Toplam Gelir:</span><span className="gelir-renk">{toplamGelir.toFixed(2)} ₺</span></div>
+                    <div className="ozet-kalem"><span>Aylık Toplam Gider:</span><span className="gider-renk">{toplamGider.toFixed(2)} ₺</span></div>
+                </div>
+                
+                <ul className="islem-listesi-yeni">
+                    <AnimatePresence>
+                        {birlesikIslemler.map(islem => {
+                            const hesap = hesaplar.find(h => h.id === islem.hesapId);
+                            const isGelir = islem.tip === 'gelir';
+                            return (
+                                <motion.li key={islem.id} layout variants={listItemVariants} initial="initial" animate="animate" exit="exit" className={isGelir ? 'islem-karti-gelir' : 'islem-karti-gider'}>
+                                    <div className="islem-ikon">{getCategoryIcon(islem.kategori)}</div>
+                                    <div className="islem-orta">
+                                        <span className="islem-aciklama">{islem.aciklama}</span>
+                                        <div className="islem-etiketler">
+                                            <span className="islem-etiket">{islem.kategori}</span>
+                                            {hesap && <span className="islem-etiket">{hesap.ad}</span>}
+                                            <span className="islem-etiket tarih-etiketi">{new Date(islem.tarih).toLocaleDateString('tr-TR')}</span>
+                                        </div>
+                                    </div>
+                                    <div className="islem-sag">
+                                        <span className={`islem-tutar ${isGelir ? 'gelir-renk' : 'gider-renk'}`}>{isGelir ? '+' : '-'} {islem.tutar.toFixed(2)} ₺</span>
+                                        <div className="buton-grubu">
+                                            <button onClick={() => isGelir ? handleGelirDuzenleBaslat(islem) : handleGiderDuzenleBaslat(islem)} className="icon-btn duzenle-btn"><FaPen /></button>
+                                            <button onClick={() => isGelir ? handleGelirSil(islem.id) : handleGiderSil(islem.id)} className="icon-btn sil-btn"><FaTrash /></button>
+                                        </div>
+                                    </div>
+                                </motion.li>
+                            );
+                        })}
+                    </AnimatePresence>
+                </ul>
+                {birlesikIslemler.length === 0 && (
+                    <p style={{textAlign: "center", padding: "2rem", color: "var(--secondary-text)"}}>Bu ay için gösterilecek işlem bulunmuyor.</p> 
+                )}
+            </div>
+        </>
+    );
 }
 
 export default Islemler;

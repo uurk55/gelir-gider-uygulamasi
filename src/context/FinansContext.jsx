@@ -153,7 +153,25 @@ export const FinansProvider = ({ children }) => {
         });
     }, [hesaplar, gelirler, giderler]);
     const toplamBakiye = hesapDurumlari.reduce((toplam, hesap) => toplam + hesap.bakiye, 0);
-    const butceDurumlari = butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori === butce.kategori).reduce((toplam, gider) => toplam + gider.tutar, 0); const kalan = butce.limit - harcanan; const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; const yuzde = Math.min(yuzdeRaw, 100); let durum = 'normal'; if (yuzdeRaw > 100) { durum = 'asildi'; } else if (yuzdeRaw >= 90) { durum = 'uyari'; } return { ...butce, harcanan, kalan, yuzde, durum }; }).sort((a,b) => b.yuzde - a.yuzde);
+    const butceDurumlari = butceler.map(butce => { 
+      // DİKKAT: Burada 'filtrelenmisGiderler' kullanıldığından emin oluyoruz.
+      const harcanan = filtrelenmisGiderler
+        .filter(gider => gider.kategori.trim() === butce.kategori.trim())
+        .reduce((toplam, gider) => toplam + gider.tutar, 0); 
+      
+      const kalan = butce.limit - harcanan; 
+      const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; 
+      const yuzde = Math.min(yuzdeRaw, 100); 
+      let durum = 'normal'; 
+      
+      if (yuzdeRaw > 100) { 
+        durum = 'asildi'; 
+      } else if (yuzdeRaw >= 90) { 
+        durum = 'uyari'; 
+      } 
+      
+      return { ...butce, harcanan, kalan, yuzde, yuzdeRaw, durum }; 
+    }).sort((a,b) => b.yuzde - a.yuzde);
     const tumIslemler = [...gelirler, ...giderler];
     const mevcutYillar = [...new Set(tumIslemler.map(islem => new Date(islem.tarih).getFullYear()))].sort((a,b) => b-a);
     const birlesikIslemler = [...filtrelenmisGelirler.map(g => ({ ...g, tip: 'gelir' })), ...filtrelenmisGiderler.map(g => ({ ...g, tip: 'gider' }))]

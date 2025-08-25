@@ -562,56 +562,7 @@ main {
 .disa-aktar-btn:hover {
   background-color: #5dade2;
 }
-/* App.css dosyasının en altına ekle */
 
-.butce-listesi {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.butce-kalemi {
-  display: flex;
-  flex-direction: column;
-}
-
-.butce-bilgi {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 5px;
-}
-
-.butce-kategori {
-  font-weight: bold;
-}
-
-.butce-rakamlar {
-  font-size: 14px;
-  color: #6c757d;
-}
-
-.progress-bar-konteyner {
-  width: 100%;
-  height: 10px;
-  background-color: #e9ecef;
-  border-radius: 5px;
-  overflow: hidden;
-}
-
-.progress-bar-dolgu {
-  height: 100%;
-  background-color: #0d6efd; /* Mavi */
-  border-radius: 5px;
-  transition: width 0.5s ease-in-out;
-}
-
-.butce-durum {
-  text-align: right;
-  font-size: 12px;
-  font-style: italic;
-  margin-top: 5px;
-  color: #6c757d;
-}
 /* =============================================== */
 /*              MOBİL UYUMLULUK (RESPONSIVE)         */
 /* =============================================== */
@@ -959,4 +910,407 @@ input:focus, select:focus {
 
 .filtre-buton:hover {
   background-color: #bdc3c7;
+}
+/* === MODERN TASARIM TEMEL STILLERİ === */
+
+/* 1. Genel Sayfa Yapısı ve Renk Paleti */
+:root {
+  --background-page: #f4f7fa; /* Sayfanın ana arka plan rengi (çok açık gri) */
+  --background-card: #ffffff; /* Kartların arka plan rengi (beyaz) */
+  --primary-text: #2f3542;    /* Ana metin rengi */
+  --secondary-text: #576574;  /* İkincil metin rengi (daha soluk) */
+  --primary-brand: #4a69bd;   /* Ana marka rengi (linkler, butonlar için) */
+  --border-color: #dfe4ea;   /* Çerçeve rengi */
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Kart gölgesi */
+  --border-radius: 12px;     /* Kenar yuvarlaklığı */
+}
+
+body {
+  background-color: var(--background-page);
+  color: var(--primary-text);
+}
+
+/* 2. Header (Üst Menü) Stilleri */
+.app-header {
+  background-color: var(--background-card);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 64px;
+}
+
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-brand);
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: var(--secondary-text);
+  padding: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border-bottom: 2px solid transparent; /* Aktif link için zemin */
+}
+
+.header-nav a:hover {
+  color: var(--primary-brand);
+}
+
+.header-nav a.active {
+  color: var(--primary-brand);
+  border-bottom: 2px solid var(--primary-brand);
+}
+
+/* 3. Ana İçerik ve Kart Stili */
+.main-content {
+  padding: 2rem;
+}
+
+.card {
+  background-color: var(--background-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+/* App.css dosyasının altına ekleyelim */
+
+.analiz-bolumu-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Sadece 1 sütun olsun diyoruz */
+  gap: 2rem;
+}
+/* App.css altına eklenecekler */
+
+.aylik-ozet-kutusu {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.ozet-kalem {
+  display: flex;
+  flex-direction: column;
+}
+
+.ozet-baslik {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem;
+}
+
+.ozet-tutar {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.kart-ici-ayirici {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 1rem 0;
+}
+
+.hesap-durumlari-listesi h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+}
+
+.hesap-satiri {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hesap-durumlari-listesi .hesap-satiri:last-child {
+  border-bottom: none;
+}
+
+.hesap-satiri .hesap-adi {
+  font-weight: 500;
+}
+
+.hesap-satiri .hesap-bakiye {
+  font-weight: 700;
+}
+/* Harcama Dağılımı Kartı İçin Yeni Stiller */
+
+.analiz-icerik {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.ozet-tablosu {
+  flex: 1; /* Listenin mevcut alanı doldurmasını sağlar */
+}
+
+.grafik-konteyner {
+  flex: 1;
+  min-width: 150px; /* Grafiğin çok küçülmesini engeller */
+}
+
+.harcama-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.harcama-listesi li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.harcama-listesi li:last-child {
+    border-bottom: none;
+}
+
+.kategori-sol-taraf {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 0; /* Flexbox'ın küçülmesine izin verir */
+}
+
+.renk-noktasi {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
+  flex-shrink: 0; /* Noktanın küçülmesini engeller */
+}
+
+.kategori-adi {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Uzun kategori adları için ... ekler */
+}
+
+/* Noktalı kılavuz çizgisi için */
+.kategori-adi::after {
+  content: '';
+  flex-grow: 1;
+  border-bottom: 2px dotted #ccc;
+  margin: 0 8px;
+  position: relative;
+  top: -4px;
+}
+
+.kategori-tutari {
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--primary-text);
+  margin-left: 8px; /* Çizgi ile arasında boşluk */
+}
+/* === DÜZELTİLMİŞ BÜTÇE KARTI STİLLERİ === */
+
+.butce-listesi {
+    margin-top: 1rem;
+}
+
+.butce-kalemi {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.butce-kalemi:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Üst Satır: Kategori Adı ve Yüzde */
+.butce-bilgi {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.butce-kategori {
+    font-weight: bold; /* Orijinal stilini koruyoruz */
+}
+
+.butce-yuzde {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+}
+
+/* Orta Satır: Progress Bar */
+.progress-bar-konteyner {
+    margin: 0.5rem 0;
+}
+
+.progress-bar-dolgu {
+    height: 8px;
+    border-radius: 4px;
+    background-color: var(--primary-brand);
+    transition: width 0.4s ease-in-out;
+}
+
+.butce-kalemi.uyari .progress-bar-dolgu {
+    background-color: var(--warning-color);
+}
+
+.butce-kalemi.asildi .progress-bar-dolgu {
+    background-color: var(--danger-color);
+}
+
+/* Alt Satır: Rakamlar ve Kalan Durumu */
+.butce-detay-yeni {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.butce-rakamlar {
+    font-size: 14px;
+    color: var(--secondary-text);
+}
+
+.butce-durum {
+    text-align: right;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--secondary-text);
+}
+
+.butce-kalemi.asildi .butce-durum {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+/* === YENİ GRID FORM TASARIMI === */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 sütunlu yapı */
+    gap: 1rem; /* Elemanlar arası boşluk */
+}
+.form-item-full {
+    grid-column: 1 / -1; /* Tam genişlik kaplar */
+}
+/* Form butonlarını sağa yaslamak için */
+.form-buton-grubu {
+    justify-content: flex-end;
+}
+
+/* === YENİ İŞLEM KARTI TASARIMI === */
+.islem-listesi-yeni {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+.islem-listesi-yeni li {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.islem-listesi-yeni li:last-child {
+    border-bottom: none;
+}
+
+.islem-ikon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color: var(--secondary-text);
+    width: 40px;
+    text-align: center;
+}
+
+.islem-orta {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.islem-aciklama {
+    font-weight: 500;
+    color: var(--primary-text);
+}
+
+.islem-etiketler {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.islem-etiket {
+    font-size: 0.75rem;
+    background-color: #e9ecef;
+    color: var(--secondary-text);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.islem-sag {
+    text-align: right;
+    margin-left: 1rem;
+}
+
+.islem-tutar {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+/* Buton gruplarını daha kompakt yapalım */
+.islem-sag .buton-grubu {
+    display: flex;
+    justify-content: flex-end;
+}
+.islem-sag .icon-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+}
+.sil-btn:hover { /* Sil butonuna özel hover rengi */
+    color: var(--danger-color);
+}
+/* === İŞLEM KARTI RENKLENDİRME VE STİLİ === */
+
+/* Liste elemanlarına genel bir stil verelim */
+.islem-listesi-yeni li {
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 0.75rem; /* Kartlar arasına boşluk */
+    transition: background-color 0.2s ease-in-out;
+    border: 1px solid transparent; /* Geçişlerin pürüzsüz olması için */
+}
+
+/* Gelir kartının stili */
+.islem-karti-gelir {
+    background-color: rgba(39, 174, 96, 0.08); /* Çok açık, şeffaf yeşil */
+    border-left: 4px solid var(--success-color); /* Soluna belirgin yeşil bir çizgi */
+}
+.islem-karti-gelir:hover {
+    background-color: rgba(39, 174, 96, 0.12); /* Üzerine gelince biraz daha belirgin */
+}
+
+
+/* Gider kartının stili */
+.islem-karti-gider {
+    background-color: rgba(192, 57, 43, 0.07); /* Çok açık, şeffaf kırmızı */
+    border-left: 4px solid var(--danger-color); /* Soluna belirgin kırmızı bir çizgi */
+}
+.islem-karti-gider:hover {
+    background-color: rgba(192, 57, 43, 0.11); /* Üzerine gelince biraz daha belirgin */
+}
+/* Tarih etiketini diğer etiketlerden ayırmak için */
+.islem-etiket.tarih-etiketi {
+    background-color: transparent;
+    color: var(--secondary-text);
+    font-style: italic;
+    padding-left: 0;
+    padding-right: 0;
 }
