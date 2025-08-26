@@ -206,7 +206,7 @@ export const FinansProvider = ({ children }) => {
         let durum = 'normal';
         if (yuzdeRaw > 100) { durum = 'asildi'; } else if (yuzdeRaw >= 90) { durum = 'uyari'; }
         return { ...butce, harcanan, kalan, yuzde, yuzdeRaw, durum };
-    }).sort((a, b) => b.yuzde - a.yuzde), [butceler, filtrelenmisGiderler]);
+   }).sort((a, b) => b.yuzdeRaw - a.yuzdeRaw), [butceler, filtrelenmisGiderler]);
 
     const birlesikIslemler = useMemo(() => {
         const temelListe = [...filtrelenmisGelirler.map(g => ({ ...g, tip: 'gelir' })), ...filtrelenmisGiderler.map(g => ({ ...g, tip: 'gider' }))];

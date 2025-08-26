@@ -971,6 +971,7 @@ body {
   justify-content: space-around;
   text-align: center;
   margin: 1.5rem 0;
+  font-weight: 500;
 }
 
 .ozet-kalem {
@@ -982,6 +983,7 @@ body {
   font-size: 0.9rem;
   color: var(--secondary-text);
   margin-bottom: 0.5rem;
+  font-weight: 500;
 }
 
 .ozet-tutar {
@@ -1737,4 +1739,170 @@ body {
   margin-top: 0.75rem;
   padding-top: 0.85rem;
   font-size: 1.1rem;
+}
+/* ==========================================================================
+   BEYİN FIRTINASI SONRASI EKLENEN YENİ STİLLER
+   ========================================================================== */
+
+/* 1. Tarih Seçici Kutusunu Oval Yapma */
+.zaman-filtresi-kutusu {
+  border-radius: var(--border-radius);
+  /* Mevcut stilinizde koyu renk vardı, tasarıma uyması için değiştirelim */
+  background-color: #34495e; /* Koyu Mavi/Gri */
+  padding: 1rem 1.5rem;
+}
+
+/* 2. Aylık Özet Kartı Metinlerini Kalınlaştırma */
+.ozet-tutar {
+  font-weight: 700; /* Zaten kalındı, teyit edelim */
+}
+.ozet-baslik {
+  font-weight: 500; /* Başlıkları biraz daha belirgin yapalım */
+  color: var(--secondary-text);
+}
+
+/* 3. Hesap Durumları Başlığını Belirginleştirme */
+.hesap-durumlari-listesi h3 {
+  font-size: 1.1rem; /* Biraz büyütelim */
+  font-weight: 600;  /* Kalınlaştıralım */
+  color: var(--primary-text); /* Rengini ana metin rengi yapalım */
+}
+
+/* 4. Toplam Varlık Rakamını Kalınlaştırma */
+.hesap-satiri.toplam-bakiye .hesap-bakiye strong {
+  font-weight: 700; /* Zaten kalındı, ama bu kural ile garantileyelim */
+}
+
+/* 5. Genel Kart Başlıklarını Tasarıma Uydurma */
+.card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+  /* Eski border ve padding kurallarını ezelim */
+  border: none;
+  padding: 0;
+}
+/* ==========================================================================
+   AKILLI BÜTÇE KARTI STİLLERİ
+   ========================================================================== */
+
+.butce-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Bütçe kalemleri arasına daha fazla boşluk */
+}
+
+.butce-kalemi {
+  /* Bu ana konteyner için özel bir stil gerekmiyor */
+}
+
+/* Üst Satır: Kategori Adı ve Yüzde */
+.butce-bilgi {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.butce-kategori {
+  font-weight: 600; /* Kategoriyi daha belirgin yapalım */
+  font-size: 1.05rem;
+}
+
+.butce-yuzde {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
+/* Orta Satır: Progress Bar */
+.progress-bar-konteyner {
+  width: 100%;
+  height: 10px; /* Biraz daha kalın yapalım */
+  background-color: #e9ecef;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-dolgu {
+  height: 100%;
+  border-radius: 5px;
+  background-color: var(--primary-brand); /* Varsayılan renk marka rengi */
+  transition: width 0.5s ease-in-out;
+}
+
+/* Duruma göre renkleri ayarlama */
+.butce-kalemi.uyari .progress-bar-dolgu {
+  background-color: var(--warning-color);
+}
+.butce-kalemi.asildi .progress-bar-dolgu {
+  background-color: var(--danger-color);
+}
+.butce-kalemi.uyari .butce-yuzde {
+  color: var(--warning-color);
+}
+.butce-kalemi.asildi .butce-yuzde {
+  color: var(--danger-color);
+}
+
+/* Alt Satır: Rakamlar ve Kalan Durumu */
+.butce-detay-yeni {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+}
+
+.butce-rakamlar {
+  /* Özel bir stil gerekmiyor */
+}
+
+.butce-durum {
+  font-style: italic;
+}
+
+/* Bütçe aşıldığında durumu daha belirgin hale getir */
+.butce-kalemi.asildi .butce-durum {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+/* ==========================================================================
+   KART BAŞLIKLARINI ORTALAMA
+   ========================================================================== */
+
+.card-header {
+  /* Zaten display: flex; kuralı vardı, bunu kullanarak ortalayalım */
+  justify-content: center; /* Yatayda ortalar */
+  position: relative; /* Butonun konumlanması için gerekli */
+  text-align: center; /* h2'yi de ortalar */
+}
+
+/* 
+  Eğer başlığın yanında bir buton varsa (Örn: "Yeni İşlem"), 
+  bu butonun başlığı ortalamasını engellememesi için 
+  onu mutlak konumlandırma ile sağ köşeye alıyoruz.
+*/
+.card-header .card-header-action {
+  position: absolute;
+  right: 0; 
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Mobil cihazlarda başlık ve butonun alt alta gelmesi daha iyi olabilir */
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+  }
+  .card-header .card-header-action {
+    position: static; /* Mutlak konumlandırmayı iptal et */
+    transform: none;
+    width: 100%; /* Mobil'de tam genişlik kaplasın */
+    text-align: center;
+    justify-content: center; /* Buton içindeki ikonu ve yazıyı ortala */
+  }
 }

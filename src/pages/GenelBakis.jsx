@@ -15,7 +15,6 @@ function GenelBakis() {
         grafikVerisi, gelirGrafikVerisi, kategoriOzeti, setGiderFiltreKategori,
         filtrelenmisGiderler, filtrelenmisGelirler,
         kategoriRenkleri,
-        isHizliEkleModalOpen, openHizliEkleModal, closeHizliEkleModal,
         aktifIslemTipi, setAktifIslemTipi, handleSubmit, hesaplar, seciliHesapId, setSeciliHesapId,
         gelirDuzenlemeModu, gelirKategori, setGelirKategori, gelirKategorileri, gelirAciklama, setGelirAciklama, gelirTarih, setGelirTarih, gelirTutar, setGelirTutar, handleGelirVazgec,
         giderDuzenlemeModu, kategori, setKategori, giderKategorileri, aciklama, setAciklama, tarih, setTarih, tutar, setTutar, handleGiderVazgec
@@ -27,22 +26,90 @@ function GenelBakis() {
 
     const ayAdi = new Date(seciliYil, seciliAy - 1, 1).toLocaleString('tr-TR', { month: 'long' });
 
-    const handleGrafikTiklama = (event, elements) => {
-        if (!elements || elements.length === 0) return;
-        const tiklananIndex = elements[0].index;
-        const tiklananKategori = grafikVerisi.labels[tiklananIndex];
-        setGiderFiltreKategori(tiklananKategori);
-        navigate('/islemler');
-    };
+    const { setBirlesikFiltreKategori, setBirlesikFiltreTip } = useFinans(); // Bu iki fonksiyonu context'ten al
 
-    const gelirGrafikOptions = {
-        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
-        plugins: {
-            legend: { display: false },
-            title: { display: true, text: `${ayAdi} Ayı Gelir Kaynakları`, font: { size: 18 }, padding: { bottom: 20 } },
+    const handleGrafikTiklama = (event, elements) => {
+    if (!elements || elements.length === 0) return;
+    const tiklananIndex = elements[0].index;
+    const tiklananKategori = grafikVerisi.labels[tiklananIndex];
+
+    setBirlesikFiltreKategori(tiklananKategori); // İşlemler sayfasının filtresini ayarla
+    setBirlesikFiltreTip('gider'); // Sadece giderleri göstermesi için tipi de ayarla
+    navigate('/islemler'); // İşlemler sayfasına git
+};
+
+    // YENİ VE GELİŞMİŞ HALİ
+const gelirGrafikOptions = {
+    indexAxis: 'y', // Barların yatay olmasını sağlar
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+        legend: {
+            display: false // Grafik üzerindeki renk etiketini gizler
         },
-        scales: { x: { beginAtZero: true } }
-    };
+        title: {
+        display: true, // Başlığı tekrar görünür yap
+        text: `${ayAdi} Ayı Gelir Kaynakları`, // Başlık metni (zaten dinamik)
+        padding: {
+            bottom: 25 // Başlık ile grafik arasına boşluk bırak
+        },
+        font: {
+            family: "'Roboto', sans-serif",
+            size: 18,
+            weight: '600', // Başlığı kalın yap
+        },
+        color: '#2f3542' // Başlık rengini ana metin rengiyle aynı yap
+    },
+        tooltip: {
+            // Üzerine gelince çıkan kutucuğun stilleri
+            backgroundColor: '#2f3542',
+            titleColor: '#ffffff',
+            bodyColor: '#ffffff',
+            borderRadius: 8,
+            padding: 10,
+            callbacks: {
+                // Tutarı daha güzel formatlamak için
+                label: function(context) {
+                    let label = context.dataset.label || '';
+                    if (label) {
+                        label += ': ';
+                    }
+                    if (context.parsed.x !== null) {
+                        label += new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' }).format(context.parsed.x);
+                    }
+                    return label;
+                }
+            }
+        }
+    },
+    scales: {
+        x: { // Yatay Eksen (Tutar çizgileri)
+            beginAtZero: true,
+            grid: {
+                color: '#dfe4ea', // Kılavuz çizgilerinin rengini daha soluk yap
+                borderDash: [5, 5], // Çizgileri kesikli yap
+            },
+            ticks: {
+                color: '#576574', // Rakamların rengi
+                font: {
+                    family: "'Roboto', sans-serif",
+                }
+            }
+        },
+        y: { // Dikey Eksen (Kategori isimleri)
+            grid: {
+                display: false, // Dikey kılavuz çizgilerini kaldır
+            },
+            ticks: {
+                color: '#2f3542', // Kategori isimlerinin rengi
+                font: {
+                    family: "'Roboto', sans-serif",
+                    size: 13, // Yazı boyutunu biraz büyüt
+                }
+            }
+        }
+    }
+};
 
     const pieChartOptions = {
         responsive: true, maintainAspectRatio: false, onClick: handleGrafikTiklama,
@@ -148,30 +215,15 @@ function GenelBakis() {
             </div>
 
             {butceDurumlari.length > 0 && (
-                <div className="card">
-                    <h2>Aylık Kategori Limitleri</h2>
-                    <div className="butce-listesi">{butceDurumlari.map(butce => (<div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}><div className="butce-bilgi"><span className="butce-kategori">{butce.kategori}</span><span className="butce-yuzde">(%{butce.yuzdeRaw ? butce.yuzdeRaw.toFixed(0) : butce.yuzde.toFixed(0)})</span></div><div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div><div className="butce-detay-yeni"><span className="butce-rakamlar">{butce.harcanan.toFixed(2)} ₺ / {butce.limit.toFixed(2)} ₺</span>{butce.kalan < 0 ? (<span className="butce-durum gider-renk">{(-butce.kalan).toFixed(2)} ₺ aşıldı!</span>) : (<span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kaldı</span>)}</div></div>))}</div>
-                </div>
-            )}
-            
-            <button onClick={() => navigate('/islemler')} className="fab" aria-label="Yeni İşlem Ekle">
-                <FaPlus />
-            </button>
-
-            {isHizliEkleModalOpen && (
-                <div className="modal-backdrop" onClick={closeHizliEkleModal}>
-                    <div className="modal-content hizli-ekle-modal" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header"><h2>Hızlı İşlem Ekle</h2><button onClick={closeHizliEkleModal} className="modal-close-btn">&times;</button></div>
-                        <div className="modal-body">
-                            <div className="islem-tipi-secici">
-                                <button onClick={() => setAktifIslemTipi('gider')} className={aktifIslemTipi === 'gider' ? 'aktif' : ''}>Gider</button>
-                                <button onClick={() => setAktifIslemTipi('gelir')} className={aktifIslemTipi === 'gelir' ? 'aktif' : ''}>Gelir</button>
-                            </div>
-                            {aktifIslemTipi === 'gider' ? <FormContent isGelir={false} /> : <FormContent isGelir={true} />}
-                        </div>
-                    </div>
-                </div>
-            )}
+    <div className="card">
+        {/* YENİ EKLENEN SATIRLAR */}
+        <div className="card-header">
+            <h2>Aylık Kategori Limitleri</h2>
+        </div>
+        {/* --- */}
+        <div className="butce-listesi">{butceDurumlari.map(butce => (<div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}><div className="butce-bilgi"><span className="butce-kategori">{butce.kategori}</span><span className="butce-yuzde">(%{butce.yuzdeRaw ? butce.yuzdeRaw.toFixed(0) : butce.yuzde.toFixed(0)})</span></div><div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div><div className="butce-detay-yeni"><span className="butce-rakamlar">{butce.harcanan.toFixed(2)} ₺ / {butce.limit.toFixed(2)} ₺</span>{butce.kalan < 0 ? (<span className="butce-durum gider-renk">{(-butce.kalan).toFixed(2)} ₺ aşıldı!</span>) : (<span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kaldı</span>)}</div></div>))}</div>
+    </div>
+)}
         </>
     );
 }
