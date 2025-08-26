@@ -13,10 +13,8 @@ function Islemler() {
         giderDuzenlemeModu, kategori, setKategori, giderKategorileri, aciklama, setAciklama, tarih, setTarih, tutar, setTutar, handleGiderVazgec,
         birlesikIslemler, handleGelirDuzenleBaslat, handleGelirSil, handleGiderDuzenleBaslat, handleGiderSil,
         toplamGelir, toplamGider,
-        birlesikFiltreTip, setBirlesikFiltreTip, giderFiltreKategori, setGiderFiltreKategori, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri
+        birlesikFiltreTip, setBirlesikFiltreTip, birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri
     } = useFinans();
-
-    const [filtrePaneliAcik, setFiltrePaneliAcik] = useState(false);
 
     if (!hesaplar || !birlesikIslemler) {
         return <div>Yükleniyor...</div>;
@@ -27,6 +25,8 @@ function Islemler() {
         animate: { opacity: 1, y: 0 },
         exit: { opacity: 0, x: -100, transition: { duration: 0.2 } },
     };
+
+    const tumKategoriler = [...new Set([...giderKategorileri, ...gelirKategorileri])];
 
     const FormContent = ({ isGelir }) => (
         <form onSubmit={handleSubmit} className="form-grid">
@@ -73,20 +73,38 @@ function Islemler() {
             </div>
 
             <div className="card">
-                <div className="liste-baslik">
+               <div className="liste-baslik">
                     <h2>İşlem Listesi</h2>
-                    <button onClick={() => setFiltrePaneliAcik(!filtrePaneliAcik)} className="filtre-buton">
-                        Filtrele & Sırala
-                    </button>
+                    {/* Butonu buradan kaldırdık */}
                 </div>
                 
-                <AnimatePresence>
-                    {filtrePaneliAcik && (
-                        <motion.div className="filtre-siralama-kutusu" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
-                            {/* Orijinal filtreleme içeriğiniz buraya gelecek */}
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+                {/* Filtreleme paneli artık her zaman görünür */}
+                <div className="filtre-siralama-kutusu">
+                    <div className="kontrol-grubu">
+                        <label>Tipe Göre Filtrele:</label>
+                        <select value={birlesikFiltreTip} onChange={(e) => setBirlesikFiltreTip(e.target.value)}>
+                            <option value="Tümü">Tümü</option>
+                            <option value="gelir">Gelir</option>
+                            <option value="gider">Gider</option>
+                        </select>
+                    </div>
+                    <div className="kontrol-grubu">
+                        <label>Kategoriye Göre Filtrele:</label>
+                        <select value={birlesikFiltreKategori} onChange={(e) => setBirlesikFiltreKategori(e.target.value)}>
+                            <option value="Tümü">Tümü</option>
+                            {tumKategoriler.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
+                        </select>
+                    </div>
+                    <div className="kontrol-grubu">
+                        <label>Sırala:</label>
+                        <select value={birlesikSiralamaKriteri} onChange={(e) => setBirlesikSiralamaKriteri(e.target.value)}>
+                            <option value="tarih-yeni">Tarihe Göre (En Yeni)</option>
+                            <option value="tarih-eski">Tarihe Göre (En Eski)</option>
+                            <option value="tutar-artan">Tutara Göre (Artan)</option>
+                            <option value="tutar-azalan">Tutara Göre (Azalan)</option>
+                        </select>
+                    </div>
+                </div>
 
                 <div className="sayfa-ici-ozet">
                     <div className="ozet-kalem"><span>Aylık Toplam Gelir:</span><span className="gelir-renk">{toplamGelir.toFixed(2)} ₺</span></div>

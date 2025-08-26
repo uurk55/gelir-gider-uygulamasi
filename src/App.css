@@ -1314,3 +1314,185 @@ body {
     padding-left: 0;
     padding-right: 0;
 }
+/* === RAPORLAR SAYFASI STİLLERİ === */
+
+/* Rapor İndirme Butonu */
+.disa-aktar-btn {
+  background-color: var(--primary-brand);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.disa-aktar-btn:hover {
+  opacity: 0.9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Modern Yıllık Rapor Tablosu */
+.yillik-rapor-tablosu {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.yillik-rapor-tablosu th,
+.yillik-rapor-tablosu td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.yillik-rapor-tablosu thead th {
+  background-color: var(--background-page);
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.yillik-rapor-tablosu tbody tr:hover {
+  background-color: rgba(74, 105, 189, 0.05); /* Çok hafif bir hover rengi */
+}
+
+.yillik-rapor-tablosu tfoot tr {
+  border-top: 2px solid var(--primary-text);
+  font-size: 1.1rem;
+}
+
+.yillik-rapor-tablosu tfoot td {
+    border-bottom: none;
+}
+
+/* Sayısal değerleri sağa yaslamak için */
+.yillik-rapor-tablosu td:not(:first-child),
+.yillik-rapor-tablosu th:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums; /* Rakamların daha düzgün hizalanması için */
+}
+/* === YÖNETİM SAYFALARI GENEL STİLLERİ === */
+
+.yonetim-sayfasi-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+  gap: 2.5rem; /* Sütunlar arası boşluk */
+  margin-top: 1.5rem;
+  align-items: flex-start; /* Sütunların üstten hizalanması */
+}
+
+/* Form stillerini genelleyelim */
+.form-modern label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
+.form-modern input,
+.form-modern select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+.form-modern input:focus,
+.form-modern select:focus {
+  outline: none;
+  border-color: var(--primary-brand);
+  box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.2);
+}
+
+.form-modern button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--primary-brand);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
+}
+.form-modern button[type="submit"]:hover {
+  background-color: #3a539b;
+}
+
+/* Liste stillerini genelleyelim */
+.yonetim-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.yonetim-listesi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 500;
+}
+
+.yonetim-listesi-item:first-child {
+    padding-top: 0;
+}
+
+.yonetim-listesi-item .icon-btn {
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.yonetim-listesi-item:hover .icon-btn {
+    opacity: 1;
+}
+
+/* Mobil için iki sütunu alt alta getir */
+@media (max-width: 768px) {
+  .yonetim-sayfasi-layout {
+    grid-template-columns: 1fr;
+  }
+}
+/* === SABİT ÖDEMELER SAYFASI ÖZEL STİLLERİ === */
+
+/* Form grid yapısını bu sayfada da kullanalım */
+.form-grid .form-item-half {
+    grid-column: span 1;
+}
+
+.sabit-odeme-item {
+    align-items: flex-start; /* İçeriğin dikeyde en üste hizalanması */
+}
+
+.sabit-odeme-orta {
+    flex-grow: 1;
+}
+
+.sabit-odeme-aciklama {
+    font-weight: 500;
+    color: var(--primary-text);
+    margin-bottom: 0.35rem;
+    display: block;
+}
+
+.sabit-odeme-sag {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Tutar ve buton arası boşluk */
+    flex-shrink: 0; /* Küçülmesini engelle */
+}
+
+.sabit-odeme-tutar {
+    font-weight: 700;
+    min-width: 80px;
+    color: var(--primary-text);
+}
