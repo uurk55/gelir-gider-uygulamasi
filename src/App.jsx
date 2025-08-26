@@ -15,7 +15,7 @@ import GenelBakis from './pages/GenelBakis';
 import Islemler from './pages/Islemler';
 import SabitOdemeler from './pages/SabitOdemeler';
 import Raporlar from './pages/Raporlar';
-import Ayarlar from './pages/Ayarlar';
+import Kategoriler from './pages/Kategoriler';
 import Butceler from './pages/Butceler';
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
@@ -26,7 +26,7 @@ function AppContent() {
   const { isModalOpen, handleCloseModal, handleConfirmDelete } = useFinans();
 
   return (
-    <div className="app-wrapper">
+    <div className="app-layout">
       <header className="app-header">
         <div className="header-logo">FinansTakip</div>
         <nav className="header-nav">
@@ -36,7 +36,7 @@ function AppContent() {
           <NavLink to="/raporlar">Raporlar</NavLink>
           <NavLink to="/sabit-odemeler">Sabit Ödemeler</NavLink>
           <NavLink to="/butceler">Bütçeler</NavLink>
-          <NavLink to="/ayarlar">Ayarlar</NavLink>
+          <NavLink to="/kategoriler">Kategoriler</NavLink>
         </nav>
       </header>
 
@@ -48,7 +48,7 @@ function AppContent() {
           <Route path="/raporlar" element={<Raporlar />} />
           <Route path="/sabit-odemeler" element={<SabitOdemeler />} />
           <Route path="/butceler" element={<Butceler />} />
-          <Route path="/ayarlar" element={<Ayarlar />} />
+          <Route path="/kategoriler" element={<Kategoriler />} />
         </Routes>
       </main>
 
@@ -61,6 +61,9 @@ function AppContent() {
 
 // Uygulamanın tamamını Context'imiz ile sarmalıyoruz.
 function App() {
+  
+  
+  
   return (
     <Router>
       <FinansProvider>

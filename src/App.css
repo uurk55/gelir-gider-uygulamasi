@@ -1,5 +1,36 @@
 /* App.css */
 
+/* === YENİ TASARIM İÇİN TEMEL AYARLAR === */
+:root {
+  /* Renk Paleti */
+  --primary-brand: #4a69bd;
+  --success-color: #27ae60;
+  --danger-color: #c0392b;
+  --warning-color: #f39c12;
+  
+  /* Arka Plan Renkleri */
+  --background-page: #f4f7fa;
+  --background-card: #ffffff;
+  
+  /* Metin Renkleri */
+  --primary-text: #2f3542;
+  --secondary-text: #576574;
+
+  /* Diğer Stiller */
+  --border-color: #dfe4ea;
+  --border-radius: 12px;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Mevcut body stilini bununla güncelliyoruz */
+body {
+  margin: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background-color: var(--background-page);
+  color: var(--primary-text);
+  /* justify-content ve display flex'i buradan kaldırıyoruz, çünkü artık tam sayfa düzeni istiyoruz */
+}
+
 * {
   box-sizing: border-box;
 }
@@ -51,14 +82,6 @@ label {
   font-weight: bold;
 }
 
-input[type="text"],
-input[type="number"] {
-  width: 95%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
 
 /* Butonlar */
 button {
@@ -82,17 +105,6 @@ button[type="submit"]:hover {
 ul {
   list-style: none;
   padding: 0;
-}
-
-li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px;
-  background-color: #ecf0f1;
-  border-radius: 5px;
-  margin-bottom: 10px;
-  font-size: 18px;
 }
 
 li span:first-child {
@@ -146,25 +158,6 @@ li button:hover {
   background-color: #f1c40f;
 }
 /* App.css dosyasının en altına eklenecekler */
-
-/* App.css içindeki mevcut select stilini bununla değiştir */
-select {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-  background-color: #f8f9fa; /* Açık gri bir arka plan */
-  color: #333; /* Koyu bir yazı rengi */
-  -webkit-appearance: none; /* Tarayıcının varsayılan okunu kaldırma (bazıları için) */
-  -moz-appearance: none;
-  appearance: none;
-  /* Kendi okumuzu eklemek için (opsiyonel ama şık) */
-  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-  background-repeat: no-repeat;
-  background-position: right 10px top 50%;
-  background-size: 12px auto;
-}
 
 .aciklama-kategori {
   display: flex;
@@ -518,19 +511,7 @@ main {
   text-align: right;
 }
 /* App.css dosyasının en altına ekle */
-.kategori-listesi {
-  list-style: none;
-  padding: 0;
-}
-.kategori-listesi li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px;
-  background-color: #f8f9fa;
-  border-radius: 5px;
-  margin-bottom: 8px;
-}
+
 .kategori-ekle-form {
   display: flex;
   gap: 10px;
@@ -660,10 +641,9 @@ main {
 /*              MİKRO-ETKİLEŞİMLER VE İKONLAR        */
 /* =============================================== */
 
-/* İkonlu Butonlar için Genel Stil */
+/* === İKONLU BUTONLARIN NİHAİ STİLİ === */
 .icon-btn {
-  background: none; /* Arka planı kaldır */
-  color: #6c757d;  /* Gri bir renk ver */
+  background: none;
   border: none;
   padding: 8px;
   display: flex;
@@ -671,26 +651,32 @@ main {
   justify-content: center;
   font-size: 16px;
   cursor: pointer;
-  transition: transform 0.2s ease-in-out, color 0.2s ease-in-out;
-  border-radius: 50%; /* Tamamen yuvarlak yap */
+  border-radius: 50%;
   width: 36px;
   height: 36px;
+  color: var(--secondary-text); /* Varsayılan renk soluk gri */
+  transition: all 0.2s ease-in-out;
 }
 
-/* Üzerine gelince (hover) efekti */
 .icon-btn:hover {
-  transform: scale(1.2); /* Hafifçe büyüt */
-  background-color: #f1f1f1; /* Çok hafif bir arka plan rengi ver */
+  transform: scale(1.1);
+  background-color: #f1f1f1;
 }
 
-/* Sil ikonuna özel renk */
-.icon-btn:hover {
-  color: #c0392b; /* Kırmızı */
+/* Silme ikonunu kalıcı kırmızı yapma */
+.sil-btn {
+  color: var(--danger-color);
+  opacity: 0.6;
+}
+.sil-btn:hover {
+  opacity: 1;
+  color: #a11d1d; /* Hover'da daha koyu kırmızı */
+  background-color: rgba(192, 57, 43, 0.1);
 }
 
-/* Düzenle ikonuna özel renk */
+/* Düzenle ikonunun hover rengi */
 .duzenle-btn:hover {
-  color: #f39c12; /* Turuncu */
+  color: #f39c12;
 }
 
 /* Ana Ekle/Güncelle Butonları için hover efekti */
@@ -700,12 +686,6 @@ button[type="submit"]:hover, .onayla-btn:hover, .disa-aktar-btn:hover {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Form inputlarına odaklanıldığında (focus) efekti */
-input:focus, select:focus {
-  outline: none;
-  border-color: #3498db; /* Mavi */
-  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-}
 /* App.css'e Ekle (eskileri silerek) */
 
 .analiz-bolumu-grid {
@@ -1393,15 +1373,6 @@ body {
   color: var(--secondary-text);
 }
 
-.form-modern input,
-.form-modern select {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
 .form-modern input:focus,
 .form-modern select:focus {
   outline: none;
@@ -1436,10 +1407,11 @@ body {
 .yonetim-listesi-item {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 0;
+  align-items: center; /* Bu satır dikey ortalamayı sağlar */
+  padding: 0.8rem 1rem; /* Üst/Alt ve Sağ/Sol boşlukları ayarlar */
   border-bottom: 1px solid var(--border-color);
   font-weight: 500;
+  background-color: transparent; /* Arka planı şeffaf yapar */
 }
 
 .yonetim-listesi-item:first-child {
@@ -1495,4 +1467,274 @@ body {
     font-weight: 700;
     min-width: 80px;
     color: var(--primary-text);
+}
+/* === KATEGORİLER SAYFASI VE GENEL İYİLEŞTİRMELER (NİHAİ) === */
+
+/* 1. Kategori Listesi Stili */
+.yonetim-listesi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem; /* İç boşluklar */
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 500;
+  background-color: transparent; /* Arka planı şeffaf yapar */
+}
+
+/* 2. Silme İkonu Stili */
+.yonetim-listesi-item .sil-btn {
+  color: var(--danger-color); /* Kalıcı kırmızı */
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+.yonetim-listesi-item:hover .sil-btn {
+  opacity: 1;
+  transform: scale(1.1);
+}
+.yonetim-listesi-item .sil-btn:hover {
+  background-color: rgba(192, 57, 43, 0.1);
+  color: #a11d1d; /* Hover'da daha koyu kırmızı */
+}
+
+
+/* === FORM ELEMANLARI NİHAİ STİLİ (GLOBAL) === */
+.form-modern input,
+.form-modern select,
+input[type="text"], 
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: var(--primary-text);
+  border: 1px solid #ced4da;
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-brand);
+  box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.2);
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23576574%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 1rem top 50%;
+  background-size: 12px auto;
+}
+/* === KATEGORİ SIRALAMA STİLLERİ === */
+
+.kategori-sol-taraf-sirala {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* İkon ve yazı arası boşluk */
+}
+
+.drag-handle {
+    cursor: grab; /* Sürükleme imleci */
+    color: #c8d6e5; /* Soluk bir renk */
+    transition: color 0.2s ease;
+}
+
+.drag-handle:hover {
+    color: var(--primary-text);
+}
+/* === GENEL BAKIŞ - HESAP LİSTESİ CİLA DOKUNUŞLARI === */
+
+.hesap-adi-ikon {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* İkon ve yazı arası boşluk */
+}
+
+.hesap-ikon {
+    color: var(--secondary-text);
+    font-size: 1.1rem;
+}
+
+.hesap-satiri.toplam-bakiye {
+    border-top: 2px solid var(--primary-text);
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    font-size: 1.1rem;
+}
+/* Kart Başlığı için Stil */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Başlığın altındaki varsayılan çizgiyi ve boşluğu kaldıralım */
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 1.5rem; /* Başlık ve kart içeriği arasına boşluk koyar */
+}
+
+.card-header h2 {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Kart Başlığındaki Eylem Butonu */
+.card-header-action {
+  background-color: var(--primary-brand);
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.card-header-action:hover {
+  background-color: #3a539b; /* Marka renginin koyu tonu */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+body {
+  background-color: #f0f2f5; /* Tasarımdaki gibi hafif gri/mavi bir ton */
+  font-family: 'Roboto', sans-serif; /* Daha modern bir font */
+}
+.main-content {
+  max-width: 1200px; /* İçeriğin çok genişlemesini önler */
+  margin: 0 auto;
+  padding: 24px;
+}
+/* === YENİ TASARIM İÇİN YERLEŞİM (LAYOUT) === */
+
+/* Header (Üst Menü) */
+.app-header {
+  background-color: var(--background-card);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 64px;
+  margin-bottom: 2rem; /* Header ile içerik arasına boşluk */
+}
+
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-brand);
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: var(--secondary-text);
+  padding: 1.25rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border-bottom: 3px solid transparent;
+}
+.header-nav a:hover { color: var(--primary-brand); }
+.header-nav a.active {
+  color: var(--primary-brand);
+  border-bottom-color: var(--primary-brand);
+}
+
+/* Ana İçerik Alanı */
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem; /* Üstten ve alttan boşluk header'dan geldi, sağ/sol boşluk buradan */
+}
+
+/* Mevcut .card stilini bununla güncelliyoruz */
+.card {
+  background-color: var(--background-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: none; /* Eski border'ı kaldırıyoruz */
+}
+/* ==========================================================================
+   Genel Bakış Sayfası - Özet Kartı Stilleri (KULLANICI TERCİHİNE GÖRE)
+   ========================================================================== */
+
+/* Aylık Özet Kutusu (Başlık Üstte, Rakam Altta) */
+.aylik-ozet-kutusu {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.ozet-kalem {
+  /* Bu sınıf zaten mevcut yapınla uyumlu, özel bir stile ihtiyacı yok. */
+}
+
+.ozet-baslik {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem; /* Başlık ve rakam arasına boşluk */
+  display: block; /* Span'ın tam genişlik kaplaması için */
+}
+
+.ozet-tutar {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+
+/* Hesap Durumları Listesi (Bu kısım öncekiyle aynı, çünkü yapısı güzel) */
+.hesap-durumlari-listesi h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+}
+
+.hesap-satiri {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.hesap-durumlari-listesi .hesap-satiri:last-of-type {
+  border-bottom: none;
+}
+
+.hesap-adi-ikon {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hesap-ikon {
+  color: var(--secondary-text);
+  font-size: 1.2rem;
+}
+
+.hesap-adi {
+  font-weight: 500;
+}
+
+.hesap-bakiye {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.hesap-satiri.toplam-bakiye {
+  border-top: 2px solid var(--primary-text);
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  font-size: 1.1rem;
 }
