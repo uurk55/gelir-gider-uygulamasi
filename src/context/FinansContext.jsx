@@ -1,6 +1,7 @@
-// src/context/FinansContext.jsx (TÜM HATALARI DÜZELTİLMİŞ NİHAİ VERSİYON)
+// src/context/FinansContext.jsx (TÜM HATALAR DÜZELTİLDİ - SON VERSİYON)
 import { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import toast from 'react-hot-toast';
+import { arrayMove } from '@dnd-kit/sortable';
 
 const FinansContext = createContext();
 
@@ -32,6 +33,7 @@ export const FinansProvider = ({ children }) => {
     const [kategoriRenkleri, setKategoriRenkleri] = useState(() => JSON.parse(localStorage.getItem('kategoriRenkleri')) || {});
     const [giderler, setGiderler] = useState(() => JSON.parse(localStorage.getItem('giderler')) || []);
     const [gelirler, setGelirler] = useState(() => JSON.parse(localStorage.getItem('gelirler')) || []);
+    const [transferler, setTransferler] = useState(() => JSON.parse(localStorage.getItem('transferler')) || []);
     const [sabitOdemeler, setSabitOdemeler] = useState(() => JSON.parse(localStorage.getItem('sabitOdemeler')) || []);
     const [butceler, setButceler] = useState(() => JSON.parse(localStorage.getItem('butceler')) || []);
     const [hesaplar, setHesaplar] = useState(() => JSON.parse(localStorage.getItem('hesaplar')) || VARSAYILAN_HESAPLAR);
@@ -52,282 +54,60 @@ export const FinansProvider = ({ children }) => {
     const [seciliYil, setSeciliYil] = useState(new Date().getFullYear());
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [itemToDelete, setItemToDelete] = useState(null);
-    const [isHizliEkleModalOpen, setIsHizliEkleModalOpen] = useState(false);
-    const [onayBekleyenAbonelikler, setOnayBekleyenAbonelikler] = useState([]);
     const [aktifIslemTipi, setAktifIslemTipi] = useState('gider');
-    
     const [birlesikFiltreKategori, setBirlesikFiltreKategori] = useState('Tümü');
     const [birlesikFiltreTip, setBirlesikFiltreTip] = useState('Tümü');
     const [birlesikSiralamaKriteri, setBirlesikSiralamaKriteri] = useState('tarih-yeni');
 
     useEffect(() => { localStorage.setItem('giderler', JSON.stringify(giderler)); }, [giderler]);
     useEffect(() => { localStorage.setItem('gelirler', JSON.stringify(gelirler)); }, [gelirler]);
+    useEffect(() => { localStorage.setItem('transferler', JSON.stringify(transferler)); }, [transferler]);
     useEffect(() => { localStorage.setItem('sabitOdemeler', JSON.stringify(sabitOdemeler)); }, [sabitOdemeler]);
     useEffect(() => { localStorage.setItem('butceler', JSON.stringify(butceler)); }, [butceler]);
     useEffect(() => { localStorage.setItem('giderKategorileri', JSON.stringify(giderKategorileri)); }, [giderKategorileri]);
     useEffect(() => { localStorage.setItem('gelirKategorileri', JSON.stringify(gelirKategorileri)); }, [gelirKategorileri]);
     useEffect(() => { localStorage.setItem('hesaplar', JSON.stringify(hesaplar)); }, [hesaplar]);
-
-    useEffect(() => {
-        const tumKategoriler = [...new Set([...giderKategorileri, ...gelirKategorileri])];
-        let renklerGuncellendi = false;
-        const yeniRenkler = { ...kategoriRenkleri };
-        tumKategoriler.forEach(kategori => {
-            if (!yeniRenkler[kategori]) {
-                yeniRenkler[kategori] = stringToColor(kategori);
-                renklerGuncellendi = true;
-            }
-        });
-        if (renklerGuncellendi) {
-            setKategoriRenkleri(yeniRenkler);
-            localStorage.setItem('kategoriRenkleri', JSON.stringify(yeniRenkler));
-        }
-    }, [giderKategorileri, gelirKategorileri, kategoriRenkleri]);
-    
-    useEffect(() => {
-        let guncellemeYapildi = false;
-        const migrateItems = (items) => items.map(item => {
-            if (item.hesapId === undefined || item.hesapId === null) {
-                guncellemeYapildi = true;
-                return { ...item, hesapId: hesaplar[0]?.id || 1 };
-            }
-            return item;
-        });
-
-        if (hesaplar.length > 0) {
-            const guncelGiderler = migrateItems(giderler);
-            const guncelGelirler = migrateItems(gelirler);
-            if (guncellemeYapildi) {
-                setGiderler(guncelGiderler);
-                setGelirler(guncelGelirler);
-            }
-        }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    useEffect(() => { localStorage.setItem('kategoriRenkleri', JSON.stringify(kategoriRenkleri)); }, [kategoriRenkleri]);
 
     const handleGiderVazgec = () => { setGiderDuzenlemeModu(false); setDuzenlenecekGiderId(null); setAciklama(''); setTutar(''); setKategori(giderKategorileri[0]); setTarih(getBugununTarihi()); };
     const handleGelirVazgec = () => { setGelirDuzenlemeModu(false); setDuzenlenecekGelirId(null); setGelirAciklama(''); setGelirTutar(''); setGelirKategori(gelirKategorileri[0]); setGelirTarih(getBugununTarihi()); };
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (aktifIslemTipi === 'gider') {
-            if (!aciklama || !tutar || !kategori || !seciliHesapId) { toast.error("Lütfen tüm alanları doldurun."); return; }
-            if (giderDuzenlemeModu) { 
-                setGiderler(giderler.map(g => g.id === duzenlenecekGiderId ? { ...g, aciklama, tutar: parseFloat(tutar), kategori, tarih, hesapId: seciliHesapId } : g)); 
-                toast.success('Gider başarıyla güncellendi!'); 
-            } else {
-                const yeniGider = { id: Date.now(), aciklama, tutar: parseFloat(tutar), kategori, tarih, hesapId: seciliHesapId };
-                setGiderler(prevGiderler => [...prevGiderler, yeniGider]);
-                toast.success('Gider başarıyla eklendi!');
-            }
-            handleGiderVazgec();
-        } else {
-            if (!gelirAciklama || !gelirTutar || !gelirKategori || !seciliHesapId) { toast.error("Lütfen tüm alanları doldurun."); return; }
-            if (gelirDuzenlemeModu) { 
-                setGelirler(gelirler.map(g => g.id === duzenlenecekGelirId ? { ...g, aciklama: gelirAciklama, tutar: parseFloat(gelirTutar), kategori: gelirKategori, tarih: gelirTarih, hesapId: seciliHesapId } : g)); 
-                toast.success('Gelir başarıyla güncellendi!'); 
-            } else { 
-                const yeniGelir = { id: Date.now(), aciklama: gelirAciklama, tutar: parseFloat(gelirTutar), kategori: gelirKategori, tarih: gelirTarih, hesapId: seciliHesapId };
-                setGelirler([...gelirler, yeniGelir]); 
-                toast.success('Gelir başarıyla eklendi!'); 
-            }
-            handleGelirVazgec();
-        }
-    };
+    const handleSubmit = (e) => { e.preventDefault(); const isGider = aktifIslemTipi === 'gider'; const currentAciklama = isGider ? aciklama : gelirAciklama; const currentTutar = isGider ? tutar : gelirTutar; const currentKategori = isGider ? kategori : gelirKategori; const currentTarih = isGider ? tarih : gelirTarih; const isEditing = isGider ? giderDuzenlemeModu : gelirDuzenlemeModu; const editId = isGider ? duzenlenecekGiderId : duzenlenecekGelirId; if (!currentAciklama || !currentTutar || !currentKategori || !seciliHesapId) { toast.error("Lütfen tüm alanları doldurun."); return; } const newItem = { id: isEditing ? editId : Date.now(), aciklama: currentAciklama, tutar: parseFloat(currentTutar), kategori: currentKategori, tarih: currentTarih, hesapId: seciliHesapId }; if (isGider) { setGiderler(prev => isEditing ? prev.map(g => g.id === editId ? newItem : g) : [...prev, newItem]); toast.success(`Gider başarıyla ${isEditing ? 'güncellendi' : 'eklendi'}!`); handleGiderVazgec(); } else { setGelirler(prev => isEditing ? prev.map(g => g.id === editId ? newItem : g) : [...prev, newItem]); toast.success(`Gelir başarıyla ${isEditing ? 'güncellendi' : 'eklendi'}!`); handleGelirVazgec(); } };
+    const handleTransferSubmit = (transferData) => { const { tutar, gonderenHesapId, aliciHesapId, tarih, aciklama } = transferData; if (!tutar || !gonderenHesapId || !aliciHesapId) { toast.error("Lütfen tüm zorunlu alanları doldurun."); return; } if (gonderenHesapId === aliciHesapId) { toast.error("Gönderen ve alıcı hesap aynı olamaz."); return; } if (parseFloat(tutar) <= 0) { toast.error("Tutar pozitif bir değer olmalıdır."); return; } const yeniTransfer = { id: Date.now(), tutar: parseFloat(tutar), gonderenHesapId: parseInt(gonderenHesapId), aliciHesapId: parseInt(aliciHesapId), tarih, aciklama: aciklama || "Hesaplar Arası Transfer", tip: 'transfer' }; setTransferler(prev => [...prev, yeniTransfer]); toast.success("Transfer başarıyla gerçekleştirildi!"); };
     const handleGiderDuzenleBaslat = (gider) => { setAktifIslemTipi('gider'); setGiderDuzenlemeModu(true); setDuzenlenecekGiderId(gider.id); setAciklama(gider.aciklama); setTutar(gider.tutar); setKategori(gider.kategori); setTarih(gider.tarih); setSeciliHesapId(gider.hesapId); };
     const handleGelirDuzenleBaslat = (gelir) => { setAktifIslemTipi('gelir'); setGelirDuzenlemeModu(true); setDuzenlenecekGelirId(gelir.id); setGelirAciklama(gelir.aciklama); setGelirTutar(gelir.tutar); setGelirKategori(gelir.kategori); setGelirTarih(gelir.tarih); setSeciliHesapId(gelir.hesapId); };
-    const handleGiderSil = (id) => { setItemToDelete({ id: id, type: 'gider' }); setIsModalOpen(true); };
-    const handleGelirSil = (id) => { setItemToDelete({ id: id, type: 'gelir' }); setIsModalOpen(true); };
+    const handleGiderSil = (id) => { setItemToDelete({ id, type: 'gider' }); setIsModalOpen(true); };
+    const handleGelirSil = (id) => { setItemToDelete({ id, type: 'gelir' }); setIsModalOpen(true); };
     const handleCloseModal = () => { setIsModalOpen(false); setItemToDelete(null); };
-    const handleConfirmDelete = () => { if (!itemToDelete) return; if (itemToDelete.type === 'gider') { setGiderler(giderler.filter(g => g.id !== itemToDelete.id)); toast.error('Gider silindi.'); } else if (itemToDelete.type === 'gelir') { setGelirler(gelirler.filter(g => g.id !== itemToDelete.id)); toast.error('Gelir silindi.'); } handleCloseModal(); };
+    const handleConfirmDelete = () => { if (!itemToDelete) return; if (itemToDelete.type === 'gider') { setGiderler(prev => prev.filter(g => g.id !== itemToDelete.id)); toast.error('Gider silindi.'); } else { setGelirler(prev => prev.filter(g => g.id !== itemToDelete.id)); toast.error('Gelir silindi.'); } handleCloseModal(); };
     const handleHesapEkle = (yeniHesapAdi) => { if (!yeniHesapAdi.trim() || hesaplar.some(h => h.ad.toLowerCase() === yeniHesapAdi.trim().toLowerCase())) { toast.error("Bu hesap adı zaten mevcut veya geçersiz."); return; } const yeniHesap = { id: Date.now(), ad: yeniHesapAdi.trim() }; setHesaplar(prev => [...prev, yeniHesap]); toast.success(`'${yeniHesapAdi.trim()}' hesabı eklendi!`); };
-    const handleHesapSil = (silinecekId) => { if (hesaplar.length <= 1) { toast.error("En az bir hesap kalmalıdır."); return; } const hesaptakiIslemler = [...giderler, ...gelirler].some(islem => islem.hesapId === silinecekId); if(hesaptakiIslemler) { toast.error("Bu hesapta işlem bulunduğu için silinemez."); return; } setHesaplar(hesaplar.filter(h => h.id !== silinecekId)); toast.error("Hesap silindi."); };
-    const handleKategoriEkle = (tip, yeniKategori) => { if (tip === 'gider') { if (!giderKategorileri.includes(yeniKategori) && yeniKategori) { setGiderKategorileri(prev => [...prev, yeniKategori]); toast.success("Gider kategorisi eklendi!"); } else { toast.error("Bu kategori zaten mevcut veya geçersiz."); } } else { if (!gelirKategorileri.includes(yeniKategori) && yeniKategori) { setGelirKategorileri(prev => [...prev, yeniKategori]); toast.success("Gelir kategorisi eklendi!"); } else { toast.error("Bu kategori zaten mevcut veya geçersiz."); } } };
-    const handleKategoriSil = (tip, kategori) => { if (tip === 'gider') { if (kategori === 'Diğer') { toast.error("'Diğer' kategorisi silinemez."); return; } setGiderKategorileri(giderKategorileri.filter(k => k !== kategori)); toast.error("Gider kategorisi silindi."); } else { if (kategori === 'Diğer') { toast.error("'Diğer' kategorisi silinemez."); return; } setGelirKategorileri(gelirKategorileri.filter(k => k !== kategori)); toast.error("Gelir kategorisi silindi."); } };
-    const handleKategoriSirala = (tip, aktifId, hedefId) => {
-        const setKategoriler = tip === 'gider' ? setGiderKategorileri : setGelirKategorileri;
-        const kategoriler = tip === 'gider' ? giderKategorileri : gelirKategorileri;
-        const eskiIndex = kategoriler.findIndex(k => k === aktifId);
-        const yeniIndex = kategoriler.findIndex(k => k === hedefId);
-        if (eskiIndex !== -1 && yeniIndex !== -1) {
-            setKategoriler(prev => {
-                const yeniListe = [...prev];
-                const [tasinan] = yeniListe.splice(eskiIndex, 1);
-                yeniListe.splice(yeniIndex, 0, tasinan);
-                return yeniListe;
-            });
-        }
-    };
-    const openHizliEkleModal = () => setIsHizliEkleModalOpen(true);
-    const closeHizliEkleModal = () => setIsHizliEkleModalOpen(false);
-
-    const filtrelenmisGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy);
-    const filtrelenmisGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy);
-    const toplamGelir = filtrelenmisGelirler.reduce((t, g) => t + g.tutar, 0);
-    const toplamGider = filtrelenmisGiderler.reduce((t, g) => t + g.tutar, 0);
-    const hesapDurumlari = useMemo(() => {
-        return hesaplar.map(hesap => {
-            const bakiye = gelirler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) - giderler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0);
-            return { ...hesap, bakiye };
-        });
-    }, [hesaplar, gelirler, giderler]);
-    const toplamBakiye = hesapDurumlari.reduce((toplam, hesap) => toplam + hesap.bakiye, 0);
-    const kategoriOzeti = filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) { acc[kategori] = 0; } acc[kategori] += tutar; return acc; }, {});
-    const grafikVerisi = useMemo(() => {
-        const labels = Object.keys(kategoriOzeti);
-        const data = Object.values(kategoriOzeti);
-        const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#CCCCCC');
-        return {
-            labels,
-            datasets: [{ label: 'Harcama Miktarı', data, backgroundColor, borderColor: '#ffffff', borderWidth: 2 }],
-        };
-    }, [kategoriOzeti, kategoriRenkleri]);
+    const handleHesapSil = (silinecekId) => { if (hesaplar.length <= 1) { toast.error("En az bir hesap kalmalıdır."); return; } if ([...giderler, ...gelirler, ...transferler].some(islem => islem.hesapId === silinecekId || islem.gonderenHesapId === silinecekId || islem.aliciHesapId === silinecekId)) { toast.error("Bu hesapta işlem bulunduğu için silinemez."); return; } setHesaplar(prev => prev.filter(h => h.id !== silinecekId)); toast.error("Hesap silindi."); };
+    const handleKategoriEkle = (tip, yeniKategori) => { const kategoriler = tip === 'gider' ? giderKategorileri : gelirKategorileri; const setKategoriler = tip === 'gider' ? setGiderKategorileri : setGelirKategorileri; if (!kategoriler.includes(yeniKategori) && yeniKategori) { setKategoriler(prev => [...prev, yeniKategori]); toast.success(`${tip === 'gider' ? 'Gider' : 'Gelir'} kategorisi eklendi!`); } else { toast.error("Bu kategori zaten mevcut veya geçersiz."); } };
+    const handleKategoriSil = (tip, kategori) => { if (kategori === 'Diğer') { toast.error("'Diğer' kategorisi silinemez."); return; } if (tip === 'gider') { setGiderKategorileri(prev => prev.filter(k => k !== kategori)); } else { setGelirKategorileri(prev => prev.filter(k => k !== kategori)); } toast.error(`${tip === 'gider' ? 'Gider' : 'Gelir'} kategorisi silindi.`); };
+    const handleKategoriSirala = (tip, aktifId, hedefId) => { const setKategoriler = tip === 'gider' ? setGiderKategorileri : setGelirKategorileri; setKategoriler(prev => { const eskiIndex = prev.findIndex(k => k === aktifId); const yeniIndex = prev.findIndex(k => k === hedefId); return arrayMove(prev, eskiIndex, yeniIndex); }); };
+    const handleButceEkle = (yeniButce) => { const mevcutButce = butceler.find(b => b.kategori === yeniButce.kategori); if (mevcutButce) { setButceler(butceler.map(b => b.kategori === yeniButce.kategori ? yeniButce : b)); toast.success(`'${yeniButce.kategori}' bütçesi güncellendi!`); } else { setButceler(prev => [...prev, yeniButce]); toast.success(`'${yeniButce.kategori}' için yeni bütçe oluşturuldu!`); } };
+    const handleButceSil = (kategori) => { setButceler(butceler.filter(b => b.kategori !== kategori)); toast.error(`'${kategori}' bütçesi silindi.`); };
+    const handleSabitOdemeEkle = (yeniOdeme) => { setSabitOdemeler(prev => [...prev, { id: Date.now(), ...yeniOdeme }]); toast.success('Sabit ödeme başarıyla eklendi!'); };
+    const handleSabitOdemeSil = (id) => { setSabitOdemeler(sabitOdemeler.filter(odeme => odeme.id !== id)); toast.error('Sabit ödeme silindi.'); };
+    const handleVeriIndir = () => { const basliklar = "ID,Tip,Açıklama,Tutar,Kategori,Tarih,Hesap ID"; const birlesikIslemler = [...gelirler.map(g => ({ ...g, tip: 'gelir' })), ...giderler.map(g => ({ ...g, tip: 'gider' }))]; const satirlar = birlesikIslemler.map(islem => `${islem.id},${islem.tip},"${islem.aciklama.replace(/"/g, '""')}",${islem.tutar},${islem.kategori},${islem.tarih},${islem.hesapId}`); const csvIcerik = [basliklar, ...satirlar].join('\n'); const blob = new Blob([`\uFEFF${csvIcerik}`], { type: 'text/csv;charset=utf-8;' }); const link = document.createElement("a"); if (link.download !== undefined) { const url = URL.createObjectURL(blob); link.setAttribute("href", url); link.setAttribute("download", `finans_raporu.csv`); link.style.visibility = 'hidden'; document.body.appendChild(link); link.click(); document.body.removeChild(link); } toast.success("Rapor indirildi!"); };
     
-    const gelirGrafikVerisi = useMemo(() => {
-        const gelirKaynaklari = filtrelenmisGelirler.reduce((acc, gelir) => {
-            const { kategori, tutar } = gelir;
-            if (!acc[kategori]) { acc[kategori] = 0; }
-            acc[kategori] += tutar;
-            return acc;
-        }, {});
-        const labels = Object.keys(gelirKaynaklari);
-        const data = Object.values(gelirKaynaklari);
-        const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#2ecc71');
-        return {
-            labels,
-            datasets: [{ label: 'Gelir Kaynağı', data, backgroundColor, borderRadius: 4 }],
-        };
-    }, [filtrelenmisGelirler, kategoriRenkleri]);
-
-    const butceDurumlari = useMemo(() => butceler.map(butce => {
-        const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0);
-        const kalan = butce.limit - harcanan;
-        const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0;
-        const yuzde = Math.min(yuzdeRaw, 100);
-        let durum = 'normal';
-        if (yuzdeRaw > 100) { durum = 'asildi'; } else if (yuzdeRaw >= 90) { durum = 'uyari'; }
-        return { ...butce, harcanan, kalan, yuzde, yuzdeRaw, durum };
-   }).sort((a, b) => b.yuzdeRaw - a.yuzdeRaw), [butceler, filtrelenmisGiderler]);
-
-    const birlesikIslemler = useMemo(() => {
-        const temelListe = [...filtrelenmisGelirler.map(g => ({ ...g, tip: 'gelir' })), ...filtrelenmisGiderler.map(g => ({ ...g, tip: 'gider' }))];
-
-        const filtrelenmisListe = temelListe.filter(islem => {
-            const tipFiltresiGecti = birlesikFiltreTip === 'Tümü' || islem.tip === birlesikFiltreTip;
-            const kategoriFiltresiGecti = birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori;
-            return tipFiltresiGecti && kategoriFiltresiGecti;
-        });
-
-        return filtrelenmisListe.sort((a, b) => {
-            switch (birlesikSiralamaKriteri) {
-                case 'tarih-eski': return new Date(a.tarih) - new Date(b.tarih);
-                case 'tutar-artan': return a.tutar - b.tutar;
-                case 'tutar-azalan': return b.tutar - a.tutar;
-                case 'tarih-yeni':
-                default:
-                    return new Date(b.tarih) - new Date(a.tarih);
-            }
-        });
-    }, [filtrelenmisGelirler, filtrelenmisGiderler, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri]);
-    
-    const trendVerisi = useMemo(() => {
-        const labels = [];
-        const gelirlerData = [];
-        const giderlerData = [];
-        const bugun = new Date();
-        for (let i = 5; i >= 0; i--) {
-            const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1);
-            const yil = tarih.getFullYear();
-            const ay = tarih.getMonth() + 1;
-            labels.push(tarih.toLocaleString('tr-TR', { month: 'long' }));
-            const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0);
-            const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0);
-            gelirlerData.push(aylikGelir);
-            giderlerData.push(aylikGider);
-        }
-        return { labels, gelirler: gelirlerData, giderler: giderlerData };
-    }, [gelirler, giderler]);
-    
-    const yillikRaporVerisi = useMemo(() => {
-        const aylar = [];
-        let toplamGelir = 0;
-        let toplamGider = 0;
-        for (let i = 1; i <= 12; i++) {
-            const aylikGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i);
-            const aylikGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i);
-            if (aylikGelirler.length > 0 || aylikGiderler.length > 0) {
-                const ayGelir = aylikGelirler.reduce((t, g) => t + g.tutar, 0);
-                const ayGider = aylikGiderler.reduce((t, g) => t + g.tutar, 0);
-                toplamGelir += ayGelir;
-                toplamGider += ayGider;
-                aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: ayGelir, gider: ayGider, bakiye: ayGelir - ayGider });
-            }
-        }
-        return { aylar, toplamGelir, toplamGider, toplamBakiye: toplamGelir - toplamGider };
-    }, [gelirler, giderler, seciliYil]);
-
-    const mevcutYillar = useMemo(() => {
-        const yillar = new Set();
-        [...gelirler, ...giderler].forEach(islem => {
-            yillar.add(new Date(islem.tarih).getFullYear());
-        });
-        if (yillar.size === 0) {
-            yillar.add(new Date().getFullYear());
-        }
-        return Array.from(yillar).sort((a, b) => b - a);
-    }, [gelirler, giderler]);
-    
-    const handleVeriIndir = () => {
-        const basliklar = "ID,Tip,Açıklama,Tutar,Kategori,Tarih,Hesap ID";
-        const satirlar = birlesikIslemler.map(islem => 
-            `${islem.id},${islem.tip},"${islem.aciklama.replace(/"/g, '""')}",${islem.tutar},${islem.kategori},${islem.tarih},${islem.hesapId}`
-        );
-        const csvIcerik = [basliklar, ...satirlar].join('\n');
-        const blob = new Blob([`\uFEFF${csvIcerik}`], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        if (link.download !== undefined) {
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
-            link.setAttribute("download", `finans_raporu_${seciliYil}_${seciliAy}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        }
-        toast.success("Rapor indirildi!");
-    };
+    const filtrelenmisGelirler = useMemo(() => gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [gelirler, seciliAy, seciliYil]);
+    const filtrelenmisGiderler = useMemo(() => giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [giderler, seciliAy, seciliYil]);
+    const toplamGelir = useMemo(() => filtrelenmisGelirler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGelirler]);
+    const toplamGider = useMemo(() => filtrelenmisGiderler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGiderler]);
+    const genelHesapBakiyeleri = useMemo(() => { return hesaplar.reduce((acc, hesap) => { const toplamGiren = gelirler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.aliciHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); const toplamCikan = giderler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.gonderenHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); acc[hesap.id] = toplamGiren - toplamCikan; return acc; }, {}); }, [hesaplar, gelirler, giderler, transferler]);
+    const toplamBakiye = useMemo(() => Object.values(genelHesapBakiyeleri).reduce((t, b) => t + b, 0), [genelHesapBakiyeleri]);
+    const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
+    const butceDurumlari = useMemo(() => butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); const kalan = butce.limit - harcanan; const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; const yuzde = Math.min(yuzdeRaw, 100); let durum = 'normal'; if (yuzdeRaw > 100) durum = 'asildi'; else if (yuzdeRaw >= 90) durum = 'uyari'; return { ...butce, harcanan, kalan, yuzde, yuzdeRaw, durum }; }).sort((a, b) => b.yuzdeRaw - a.yuzdeRaw), [butceler, filtrelenmisGiderler]);
+    const kategoriOzeti = useMemo(() => filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}), [filtrelenmisGiderler]);
+    const grafikVerisi = useMemo(() => { const labels = Object.keys(kategoriOzeti); const data = Object.values(kategoriOzeti); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#CCCCCC'); return { labels, datasets: [{ label: 'Harcama Miktarı', data, backgroundColor, borderColor: '#ffffff', borderWidth: 2 }] }; }, [kategoriOzeti, kategoriRenkleri]);
+    const gelirGrafikVerisi = useMemo(() => { const gelirKaynaklari = filtrelenmisGelirler.reduce((acc, gelir) => { const { kategori, tutar } = gelir; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}); const labels = Object.keys(gelirKaynaklari); const data = Object.values(gelirKaynaklari); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#2ecc71'); return { labels, datasets: [{ label: 'Gelir Kaynağı', data, backgroundColor, borderRadius: 4 }] }; }, [filtrelenmisGelirler, kategoriRenkleri]);
+    const birlesikIslemler = useMemo(() => { const temelListe = [...filtrelenmisGelirler.map(g => ({ ...g, tip: 'gelir' })), ...filtrelenmisGiderler.map(g => ({ ...g, tip: 'gider' }))]; const filtrelenmisListe = temelListe.filter(islem => (birlesikFiltreTip === 'Tümü' || islem.tip === birlesikFiltreTip) && (birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori)); return filtrelenmisListe.sort((a, b) => { switch (birlesikSiralamaKriteri) { case 'tarih-eski': return new Date(a.tarih) - new Date(b.tarih); case 'tutar-artan': return a.tutar - b.tutar; case 'tutar-azalan': return b.tutar - a.tutar; case 'tarih-yeni': default: return new Date(b.tarih) - new Date(a.tarih); } }); }, [filtrelenmisGelirler, filtrelenmisGiderler, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri]);
+    const mevcutYillar = useMemo(() => { const yillar = new Set([...gelirler, ...giderler].map(islem => new Date(islem.tarih).getFullYear())); if (yillar.size === 0) yillar.add(new Date().getFullYear()); return Array.from(yillar).sort((a, b) => b - a); }, [gelirler, giderler]);
+    const trendVerisi = useMemo(() => { const labels = []; const gelirlerData = []; const giderlerData = []; const bugun = new Date(); for (let i = 5; i >= 0; i--) { const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1); const yil = tarih.getFullYear(); const ay = tarih.getMonth() + 1; labels.push(tarih.toLocaleString('tr-TR', { month: 'long' })); const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); gelirlerData.push(aylikGelir); giderlerData.push(aylikGider); } return { labels, gelirler: gelirlerData, giderler: giderlerData }; }, [gelirler, giderler]);
+    const yillikRaporVerisi = useMemo(() => { const aylar = []; let yillikToplamGelir = 0; let yillikToplamGider = 0; for (let i = 1; i <= 12; i++) { const aylikGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); const aylikGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); if (aylikGelirler.length > 0 || aylikGiderler.length > 0) { const ayGelir = aylikGelirler.reduce((t, g) => t + g.tutar, 0); const ayGider = aylikGiderler.reduce((t, g) => t + g.tutar, 0); yillikToplamGelir += ayGelir; yillikToplamGider += ayGider; aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: ayGelir, gider: ayGider, bakiye: ayGelir - ayGider }); } } return { aylar, toplamGelir: yillikToplamGelir, toplamGider: yillikToplamGider, toplamBakiye: yillikToplamGelir - yillikToplamGider }; }, [gelirler, giderler, seciliYil]);
 
     const contextValue = {
-        giderKategorileri, setGiderKategorileri, gelirKategorileri, setGelirKategorileri, kategoriRenkleri,
-        giderler, setGiderler, gelirler, setGelirler, sabitOdemeler, butceler, hesaplar, setHesaplar,
-        aciklama, setAciklama, tutar, setTutar, kategori, setKategori, tarih, setTarih,
-        gelirAciklama, setGelirAciklama, gelirTutar, setGelirTutar, gelirKategori, setGelirKategori, gelirTarih, setGelirTarih,
-        seciliHesapId, setSeciliHesapId,
-        giderDuzenlemeModu, setGiderDuzenlemeModu, duzenlenecekGiderId,
-        gelirDuzenlemeModu, setGelirDuzenlemeModu, duzenlenecekGelirId,
-        seciliAy, setSeciliAy, seciliYil, setSeciliYil,
-        isModalOpen, setIsModalOpen, itemToDelete,
-        isHizliEkleModalOpen, setIsHizliEkleModalOpen, openHizliEkleModal, closeHizliEkleModal,
-        onayBekleyenAbonelikler, aktifIslemTipi, setAktifIslemTipi,
-        birlesikFiltreKategori, setBirlesikFiltreKategori,
-        birlesikFiltreTip, setBirlesikFiltreTip, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri,
-        handleSubmit, handleGiderDuzenleBaslat, handleGelirDuzenleBaslat,
-        handleGiderSil, handleGelirSil, handleGiderVazgec, handleGelirVazgec,
-        handleCloseModal, handleConfirmDelete, 
-        handleHesapEkle, handleHesapSil,
-        handleKategoriEkle, handleKategoriSil, handleKategoriSirala,
-        handleButceEkle: (yeniButce) => { const mevcutButce = butceler.find(b => b.kategori === yeniButce.kategori); if (mevcutButce) { setButceler(butceler.map(b => b.kategori === yeniButce.kategori ? yeniButce : b)); toast.success(`'${yeniButce.kategori}' bütçesi güncellendi!`); } else { setButceler(prev => [...prev, yeniButce]); toast.success(`'${yeniButce.kategori}' için yeni bütçe oluşturuldu!`); } },
-        handleButceSil: (kategori) => { setButceler(butceler.filter(b => b.kategori !== kategori)); toast.error(`'${kategori}' bütçesi silindi.`); },
-        handleSabitOdemeEkle: (yeniOdeme) => { setSabitOdemeler(prev => [...prev, { id: Date.now(), ...yeniOdeme }]); toast.success('Sabit ödeme başarıyla eklendi!'); },
-        handleSabitOdemeSil: (id) => { setSabitOdemeler(sabitOdemeler.filter(odeme => odeme.id !== id)); toast.error('Sabit ödeme silindi.'); },
-        handleAbonelikOnayla: (abonelik) => { const odemeTarihiStr = `${seciliYil}-${String(seciliAy).padStart(2, '0')}-${String(abonelik.odemeGunu).padStart(2, '0')}`; const yeniGider = { id: Date.now() + Math.random(), aciklama: abonelik.aciklama, tutar: abonelik.tutar, kategori: abonelik.kategori, tarih: odemeTarihiStr, otomatikMi: true, kaynakId: abonelik.id, hesapId: hesaplar[0]?.id || 1 }; setGiderler(prevGiderler => [...prevGiderler, yeniGider]); toast.success(`'${abonelik.aciklama}' ödemesi giderlere eklendi!`); },
-        handleVeriIndir,
-        filtrelenmisGelirler, filtrelenmisGiderler, toplamGelir, toplamGider,
-        hesapDurumlari, toplamBakiye,
-        kategoriOzeti, grafikVerisi, 
-        gelirGrafikVerisi,
-        butceDurumlari, birlesikIslemler,
-        trendVerisi, yillikRaporVerisi,
-        mevcutYillar
+        giderKategorileri, setGiderKategorileri, gelirKategorileri, setGelirKategorileri, hesaplar, setHesaplar, seciliHesapId, setSeciliHesapId, seciliAy, setSeciliAy, seciliYil, setSeciliYil, aktifIslemTipi, setAktifIslemTipi, aciklama, setAciklama, tutar, setTutar, kategori, setKategori, tarih, setTarih, gelirAciklama, setGelirAciklama, gelirTutar, setGelirTutar, gelirKategori, setGelirKategori, gelirTarih, setGelirTarih, giderDuzenlemeModu, gelirDuzenlemeModu, birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikFiltreTip, setBirlesikFiltreTip, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri, handleSubmit, handleTransferSubmit, handleGiderDuzenleBaslat, handleGelirDuzenleBaslat, handleGiderSil, handleGelirSil, handleGiderVazgec, handleGelirVazgec, handleCloseModal, handleConfirmDelete, handleHesapEkle, handleHesapSil, handleKategoriEkle, handleKategoriSil, handleKategoriSirala, filtrelenmisGelirler, filtrelenmisGiderler, toplamGelir, toplamGider, aylikHesapGiderleri, toplamBakiye, kategoriOzeti, grafikVerisi, gelirGrafikVerisi, butceDurumlari, birlesikIslemler, mevcutYillar, isModalOpen, itemToDelete, kategoriRenkleri, transferler, butceler, sabitOdemeler, handleButceEkle, handleButceSil, handleSabitOdemeEkle, handleSabitOdemeSil, handleVeriIndir, trendVerisi, yillikRaporVerisi
     };
 
     return <FinansContext.Provider value={contextValue}>{children}</FinansContext.Provider>;

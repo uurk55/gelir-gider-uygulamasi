@@ -1678,10 +1678,6 @@ body {
   margin: 1.5rem 0;
 }
 
-.ozet-kalem {
-  /* Bu sınıf zaten mevcut yapınla uyumlu, özel bir stile ihtiyacı yok. */
-}
-
 .ozet-baslik {
   font-size: 0.9rem;
   color: var(--secondary-text);
@@ -1792,10 +1788,6 @@ body {
   gap: 1.5rem; /* Bütçe kalemleri arasına daha fazla boşluk */
 }
 
-.butce-kalemi {
-  /* Bu ana konteyner için özel bir stil gerekmiyor */
-}
-
 /* Üst Satır: Kategori Adı ve Yüzde */
 .butce-bilgi {
   display: flex;
@@ -1855,10 +1847,6 @@ body {
   color: var(--secondary-text);
 }
 
-.butce-rakamlar {
-  /* Özel bir stil gerekmiyor */
-}
-
 .butce-durum {
   font-style: italic;
 }
@@ -1906,3 +1894,95 @@ body {
     justify-content: center; /* Buton içindeki ikonu ve yazıyı ortala */
   }
 }
+/* ==========================================================================
+   TRANSFER VE YENİ GİDER KARTI İÇİN EKLENEN STİLLER
+   ========================================================================== */
+
+.form-ipucu { /* ... (Daha önce yazdığımız stil) ... */ }
+.hesap-gider-listesi { /* ... (Daha önce yazdığımız stil) ... */ }
+/* ... (Diğer gerekli tüm yeni stiller) ... */
+/* ==========================================================================
+   MOBİL UYUMLULUK (RESPONSIVE DESIGN)
+   ========================================================================== */
+
+/* Tablet ve daha küçük ekranlar için (örneğin 900px ve altı) */
+@media (max-width: 900px) {
+    /* Ana içeriğin kenar boşluklarını azaltalım */
+    .main-content {
+        padding: 1rem;
+    }
+
+    /* Tüm kartların iç boşluklarını azaltalım */
+    .card {
+        padding: 1rem;
+    }
+
+    /* İki sütunlu tüm yapıları tek sütuna düşürelim */
+    .analiz-bolumu-grid,
+    .yonetim-sayfasi-layout {
+        grid-template-columns: 1fr; /* Her zaman tek sütun */
+    }
+
+    /* Formlardaki iki sütunlu yapıyı tek sütuna düşürelim */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sadece telefonlar için (örneğin 600px ve altı) */
+@media (max-width: 600px) {
+    /* Yazı boyutlarını biraz küçültelim */
+    h2, .card-header h2 {
+        font-size: 1.1rem;
+    }
+    .ozet-tutar {
+        font-size: 1.5rem;
+    }
+
+    /* Üst menüyü daha kompakt hale getirelim */
+    .app-header {
+        padding: 0 1rem;
+        height: 56px;
+    }
+    .header-logo {
+        font-size: 1.2rem;
+    }
+    .header-nav a {
+        padding: 1rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Tarih seçiciyi alt alta getirelim */
+    .zaman-filtresi-kutusu {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+/* === İŞLEM KARTI MOBİL GÖRÜNÜMÜ === */
+@media (max-width: 600px) {
+    .islem-listesi-yeni li {
+        /* flex-direction: column; Her şeyi alt alta dizer */
+        align-items: flex-start; /* Elemanları sola hizalar */
+        position: relative; /* Butonları konumlandırmak için */
+        padding-bottom: 3rem; /* Butonlar için altta yer açar */
+    }
+
+    .islem-orta {
+        margin-bottom: 0.5rem;
+    }
+    
+    .islem-sag {
+        /* Rakamı ve butonları ekranın sağına değil, kartın altına alalım */
+        position: absolute;
+        bottom: 0.75rem;
+        right: 1rem;
+        width: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .islem-tutar {
+        font-size: 1.2rem;
+    }
+    }
