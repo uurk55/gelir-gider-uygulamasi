@@ -1396,8 +1396,11 @@ body {
 /* Liste stillerini genelleyelim */
 .yonetim-listesi {
   list-style: none;
-  padding: 0;
+  padding: 0.5rem; /* İçerik ve kenarlar arasına boşluk */
   margin: 0;
+  background-color: #f8f9fa; /* Hafif gri arka plan */
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
 }
 
 .yonetim-listesi-item {
@@ -2307,133 +2310,44 @@ body {
     text-align: center;
 }
 /* ==========================================================================
-   ÖZELLEŞTİR SAYFASI STİLLERİ
+   ÖZELLEŞTİR SAYFASI - BASİT VE ZARİF STİLLER (İLK HALİNE DÖNÜŞ)
    ========================================================================== */
 
-.yonetim-sayfasi-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-.yonetim-sayfasi-header h2 {
-    margin: 0;
-    border: none;
-    padding: 0;
-}
-
-/* İşlemler sayfasındaki .islem-tipi-secici stilini burada da kullanıyoruz */
-/* Eğer zaten varsa, bu bloğu tekrar eklemene gerek yok. */
-.islem-tipi-secici {
-  display: flex;
-  background-color: #f1f2f6;
-  border-radius: 8px;
-  padding: 5px;
-}
-.islem-tipi-secici button {
-  flex: 1;
-  background: none;
-  border: none;
-  color: var(--secondary-text);
-  font-weight: 500;
-  padding: 0.5rem 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.2s, color 0.2s;
-}
-.islem-tipi-secici button.aktif {
-  background-color: var(--background-card);
-  color: var(--primary-text);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.yonetim-sayfasi-icerik {
-    margin-top: 1.5rem;
-}
-/* ==========================================================================
-   ÖZELLEŞTİR SAYFASI - NİHAİ TASARIM STİLLERİ
-   ========================================================================== */
-
-/* --- 1. Ana Başlık ve Sekme Konteyneri --- */
 .yonetim-sayfasi-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
   padding-bottom: 1rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
 }
 .yonetim-sayfasi-header h2 {
-  font-size: 1.5rem; /* "Özelleştir" başlığını ayarlıyoruz */
-  font-weight: 600;
-  margin: 0;
-  border: none;
-  padding: 0;
+  font-size: 1.5rem;
+  margin: 0; border: none; padding: 0;
 }
-/* Sekmeler için İşlemler sayfasındaki .islem-tipi-secici stilini kullanıyoruz */
-.yonetim-sayfasi-header .islem-tipi-secici {
-    margin: 0; /* Ekstra boşluğu kaldır */
-}
+.yonetim-sayfasi-header .islem-tipi-secici { margin: 0; }
 
-/* --- 2. İçerik Alanı ve Sütunlar --- */
-.yonetim-sayfasi-icerik {
-  margin-top: 1.5rem;
-}
-.yonetim-sayfasi-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: start;
-}
+.yonetim-sayfasi-icerik { margin-top: 1.5rem; }
+.yonetim-sayfasi-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
 .bolum h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-top: 0;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-/* --- 3. Modern Form Stilleri --- */
 .form-modern label {
+  display: block;
   font-size: 0.9rem;
   font-weight: 500;
   color: var(--secondary-text);
-  margin-bottom: 0.7rem;
+  margin-bottom: 0.5rem;
 }
-.form-modern input {
-  width: 100%;
-  padding: 0.8rem 1rem;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  font-size: 1rem;
-  transition: all 0.2s ease;
-}
-.form-modern input:focus {
-  outline: none;
-  border-color: var(--primary-brand);
-  box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.2);
-}
-.form-modern button {
-  width: 100%;
-  background-color: var(--primary-brand);
-  color: white;
-  font-weight: 500;
-  font-size: 1rem;
-  padding: 0.9rem;
-  border-radius: 8px;
-  margin-top: 1rem;
-  border: none;
-}
-.form-modern button:hover {
-  background-color: var(--primary-brand-hover);
-}
+.form-modern input { margin-bottom: 0.75rem; }
+.form-modern button { font-size: 0.9rem; }
 
-
-/* --- 4. Yönetim Listeleri (Hesaplar & Kategoriler) --- */
 .yonetim-listesi {
   list-style: none;
   padding: 0;
@@ -2443,20 +2357,13 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 0.5rem;
+  padding: 1.1rem 0.5rem;
   border-bottom: 1px solid var(--border-color);
   font-weight: 500;
-  transition: background-color 0.2s;
-}
-.yonetim-listesi-item:hover {
-    background-color: #f8f9fa;
-    border-radius: 8px;
 }
 .yonetim-listesi-item:last-child {
   border-bottom: none;
 }
-
-/* Kategori sürükleme stili */
 .kategori-sol-taraf-sirala {
     display: flex;
     align-items: center;
@@ -2465,7 +2372,4 @@ body {
 .drag-handle {
     cursor: grab;
     color: #c8d6e5;
-}
-.yonetim-listesi-item:hover .drag-handle {
-    color: var(--primary-text);
 }

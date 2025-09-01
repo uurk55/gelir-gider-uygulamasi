@@ -83,9 +83,39 @@ export const FinansProvider = ({ children }) => {
     const handleCloseModal = () => { setIsModalOpen(false); setItemToDelete(null); };
     const handleConfirmDelete = () => { if (!itemToDelete) return; if (itemToDelete.type === 'gider') { setGiderler(prev => prev.filter(g => g.id !== itemToDelete.id)); } else if (itemToDelete.type === 'gelir') { setGelirler(prev => prev.filter(g => g.id !== itemToDelete.id)); } else if (itemToDelete.type === 'transfer') { setTransferler(prev => prev.filter(t => t.id !== itemToDelete.id)); } toast.error('İşlem silindi.'); handleCloseModal(); };
     const handleHesapEkle = (yeniHesapAdi) => { if (!yeniHesapAdi.trim() || hesaplar.some(h => h.ad.toLowerCase() === yeniHesapAdi.trim().toLowerCase())) { toast.error("Bu hesap adı zaten mevcut veya geçersiz."); return; } const yeniHesap = { id: Date.now(), ad: yeniHesapAdi.trim() }; setHesaplar(prev => [...prev, yeniHesap]); toast.success(`'${yeniHesapAdi.trim()}' hesabı eklendi!`); };
-    const handleHesapSil = (silinecekId) => { if (hesaplar.length <= 1) { toast.error("En az bir hesap kalmalıdır."); return; } if ([...giderler, ...gelirler, ...transferler].some(islem => islem.hesapId === silinecekId || islem.gonderenHesapId === silinecekId || islem.aliciHesapId === silinecekId)) { toast.error("Bu hesapta işlem bulunduğu için silinemez."); return; } setHesaplar(prev => prev.filter(h => h.id !== silinecekId)); toast.error("Hesap silindi."); };
+    const handleHesapSil = (silinecekId) => {
+    if (hesaplar.length <= 1) { toast.error("En az bir hesap kalmalıdır."); return; }
+    
+    // YENİ KONTROL: Bu hesap herhangi bir işlemde (gelir, gider, transfer) kullanılmış mı?
+    const isUsedInGelirGider = [...gelirler, ...giderler].some(islem => islem.hesapId === silinecekId);
+    const isUsedInTransfer = transferler.some(t => t.gonderenHesapId === silinecekId || t.aliciHesapId === silinecekId);
+
+    if (isUsedInGelirGider || isUsedInTransfer) {
+        toast.error("Bu hesapta işlem bulunduğu için silinemez.");
+        return;
+    }
+    
+    setHesaplar(prev => prev.filter(h => h.id !== silinecekId));
+    toast.error("Hesap silindi.");
+};
     const handleKategoriEkle = (tip, yeniKategori) => { const kategoriler = tip === 'gider' ? giderKategorileri : gelirKategorileri; const setKategoriler = tip === 'gider' ? setGiderKategorileri : setGelirKategorileri; if (!kategoriler.includes(yeniKategori) && yeniKategori) { setKategoriler(prev => [...prev, yeniKategori]); toast.success(`${tip === 'gider' ? 'Gider' : 'Gelir'} kategorisi eklendi!`); } else { toast.error("Bu kategori zaten mevcut veya geçersiz."); } };
-    const handleKategoriSil = (tip, kategori) => { if (kategori === 'Diğer') { toast.error("'Diğer' kategorisi silinemez."); return; } if (tip === 'gider') { setGiderKategorileri(prev => prev.filter(k => k !== kategori)); } else { setGelirKategorileri(prev => prev.filter(k => k !== kategori)); } toast.error(`${tip === 'gider' ? 'Gider' : 'Gelir'} kategorisi silindi.`); };
+    const handleKategoriSil = (tip, kategori) => {
+    if (kategori === 'Diğer') { toast.error("'Diğer' kategorisi silinemez."); return; }
+    
+    const isUsed = (tip === 'gider' ? giderler : gelirler).some(islem => islem.kategori === kategori);
+
+    if (isUsed) {
+        toast.error("Bu kategori kullanımda olan işlemlere sahip olduğu için silinemez.");
+        return;
+    }
+    
+    if (tip === 'gider') {
+        setGiderKategorileri(prev => prev.filter(k => k !== kategori));
+    } else {
+        setGelirKategorileri(prev => prev.filter(k => k !== kategori));
+    }
+    toast.error(`${tip === 'gider' ? 'Gider' : 'Gelir'} kategorisi silindi.`);
+};
     const handleKategoriSirala = (tip, aktifId, hedefId) => { const setKategoriler = tip === 'gider' ? setGiderKategorileri : setGelirKategorileri; setKategoriler(prev => { const eskiIndex = prev.findIndex(k => k === aktifId); const yeniIndex = prev.findIndex(k => k === hedefId); return arrayMove(prev, eskiIndex, yeniIndex); }); };
     const handleButceEkle = (yeniButce) => { const mevcutButce = butceler.find(b => b.kategori === yeniButce.kategori); if (mevcutButce) { setButceler(butceler.map(b => b.kategori === yeniButce.kategori ? yeniButce : b)); toast.success(`'${yeniButce.kategori}' bütçesi güncellendi!`); } else { setButceler(prev => [...prev, yeniButce]); toast.success(`'${yeniButce.kategori}' için yeni bütçe oluşturuldu!`); } };
     const handleButceSil = (kategori) => { setButceler(butceler.filter(b => b.kategori !== kategori)); toast.error(`'${kategori}' bütçesi silindi.`); };
