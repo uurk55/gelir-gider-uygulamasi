@@ -2111,3 +2111,198 @@ body {
   content: "";
   margin-left: 0;
 }
+/* ==========================================================================
+   İŞLEM KARTI - İKONLU VE ANLAMLI ETİKET TASARIMI
+   ========================================================================== */
+
+.islem-etiketler {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Mobilde etiketler sığmazsa alt satıra geçsin */
+  gap: 0.75rem; /* Etiketler arasına boşluk */
+  margin-top: 0.5rem;
+}
+
+/* Tüm etiketler için temel stil */
+.islem-etiket {
+  display: inline-flex; /* İkon ve metni yan yana getirir */
+  align-items: center;
+  gap: 0.4rem; /* İkon ve metin arasına boşluk */
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: #f1f2f6;
+  color: var(--secondary-text);
+}
+
+/* Kategori, Hesap ve Transfer için hafif farklı arka planlar */
+.islem-etiket.kategori-etiketi {
+  background-color: #eef2f7;
+}
+.islem-etiket.hesap-etiketi {
+  background-color: #f0f4f8;
+}
+.islem-etiket.transfer-etiketi {
+    background-color: #e9ecef;
+    font-weight: 600;
+}
+
+/* Tarih etiketi yine daha sade */
+.islem-etiket.tarih-etiketi {
+  background-color: transparent;
+  color: #a4b0be;
+  padding: 0;
+}
+
+/* Ayırıcı noktaları artık kullanmıyoruz, ikonlar bu işi görüyor */
+.islem-etiket::after {
+  content: "";
+  margin: 0;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - YAN FİLTRE PANELİ STİLLERİ
+   ========================================================================== */
+
+.filtre-kontrol-paneli {
+    display: flex;
+    justify-content: flex-end; /* Butonu sağa yaslar */
+    margin-bottom: 1rem;
+}
+
+.filtre-ac-btn {
+    background-color: var(--background-card);
+    color: var(--primary-text);
+    border: 1px solid var(--border-color);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+.filtre-ac-btn:hover {
+    background-color: #f8f9fa;
+}
+
+/* --- Yan Menü --- */
+.filtre-yan-menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.filtre-yan-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 350px; /* Panelin maksimum genişliği */
+    background-color: var(--background-card);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.filtre-yan-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filtre-yan-menu-header h3 {
+    margin: 0;
+}
+.filtre-yan-menu-header button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--secondary-text);
+}
+
+.filtre-yan-menu-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto; /* Çok fazla filtre olursa kaydırma çubuğu çıkar */
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - AÇILIR FİLTRE KARTI STİLLERİ
+   ========================================================================== */
+
+/* Liste başlığını (İşlem Listesi ve Filtre Butonu) yan yana getirir */
+.liste-baslik {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.liste-baslik h2 {
+  margin: 0;
+}
+
+/* Filtre açma butonu */
+.filtre-ac-btn {
+    background-color: #f1f2f6;
+    color: var(--primary-text);
+    border: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+}
+.filtre-ac-btn:hover {
+    background-color: #dfe4ea;
+}
+
+/* Animasyonla açılan ana filtre kutusu */
+.acilir-filtre-kutusu {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+/* select kutularını grid yapıda dizer */
+.filtre-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Net bir şekilde 2 eşit sütun oluştur */
+    gap: 1.5rem; /* Sütunlar ve satırlar arasına boşluk koy */
+}
+
+/* Filtreleri Temizle butonu */
+.filtre-temizle-btn {
+    background: none;
+    color: var(--primary-brand);
+    font-weight: 500;
+    padding: 0;
+    margin-top: 1.5rem;
+    float: right; /* Butonu sağa yaslar */
+}
+.filtre-temizle-btn:hover {
+    text-decoration: underline;
+}
+
+/* Aylık özet kutusunun stilini güncelleyelim */
+.sayfa-ici-ozet {
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+}
+.ozet-kalem {
+    text-align: center;
+}
