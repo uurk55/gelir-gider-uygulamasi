@@ -105,7 +105,45 @@ export const FinansProvider = ({ children }) => {
     const kategoriOzeti = useMemo(() => filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}), [filtrelenmisGiderler]);
     const grafikVerisi = useMemo(() => { const labels = Object.keys(kategoriOzeti); const data = Object.values(kategoriOzeti); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#CCCCCC'); return { labels, datasets: [{ label: 'Harcama Miktarı', data, backgroundColor, borderColor: '#ffffff', borderWidth: 2 }] }; }, [kategoriOzeti, kategoriRenkleri]);
     const gelirGrafikVerisi = useMemo(() => { const gelirKaynaklari = filtrelenmisGelirler.reduce((acc, gelir) => { const { kategori, tutar } = gelir; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}); const labels = Object.keys(gelirKaynaklari); const data = Object.values(gelirKaynaklari); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#2ecc71'); return { labels, datasets: [{ label: 'Gelir Kaynağı', data, backgroundColor, borderRadius: 4 }] }; }, [filtrelenmisGelirler, kategoriRenkleri]);
-    const birlesikIslemler = useMemo(() => { const filtrelenmisTransferler = transferler.filter(t => new Date(t.tarih).getFullYear() === seciliYil && new Date(t.tarih).getMonth() + 1 === seciliAy); const temelListe = [...filtrelenmisGelirler.map(g => ({ ...g, tip: 'gelir' })), ...filtrelenmisGiderler.map(g => ({ ...g, tip: 'gider' })), ...filtrelenmisTransferler.map(t => ({ ...t, tip: 'transfer' }))]; const filtrelenmisListe = temelListe.filter(islem => { if (islem.tip === 'transfer') { return birlesikFiltreTip === 'Tümü' || birlesikFiltreTip === 'transfer'; } const tipFiltresiGecti = birlesikFiltreTip === 'Tümü' || islem.tip === birlesikFiltreTip; const kategoriFiltresiGecti = birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori; return tipFiltresiGecti && kategoriFiltresiGecti; }); return filtrelenmisListe.sort((a, b) => { switch (birlesikSiralamaKriteri) { case 'tarih-eski': return new Date(a.tarih) - new Date(b.tarih); case 'tutar-artan': return a.tutar - b.tutar; case 'tutar-azalan': return b.tutar - a.tutar; case 'tarih-yeni': default: return new Date(b.tarih) - new Date(a.tarih); } }); }, [filtrelenmisGelirler, filtrelenmisGiderler, transferler, seciliAy, seciliYil, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri]);
+    // FinansContext.jsx İÇİNDE SADECE BU useMemo BLOĞUNU DEĞİŞTİR
+
+    const birlesikIslemler = useMemo(() => {
+        const filtrelenmisTransferler = transferler.filter(t => 
+            new Date(t.tarih).getFullYear() === seciliYil && 
+            new Date(t.tarih).getMonth() + 1 === seciliAy
+        );
+
+        const temelListe = [
+            ...filtrelenmisGelirler.map(g => ({ ...g, tip: 'gelir' })), 
+            ...filtrelenmisGiderler.map(g => ({ ...g, tip: 'gider' })),
+            ...filtrelenmisTransferler.map(t => ({ ...t, tip: 'transfer' }))
+        ];
+
+        const filtrelenmisListe = temelListe.filter(islem => {
+            const tipFiltresiGecti = birlesikFiltreTip === 'Tümü' || islem.tip === birlesikFiltreTip;
+            
+            // Kategori filtresi sadece gelir ve gider için geçerli olmalı
+            const kategoriFiltresiGecti = islem.tip === 'transfer' || birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori;
+
+            // YENİ FİLTRE KOŞULU (filtreHesapId henüz tanımlanmadığı için şimdilik devre dışı)
+            // const hesapFiltresiGecti = true; 
+
+            return tipFiltresiGecti && kategoriFiltresiGecti;
+        });
+
+        return filtrelenmisListe.sort((a, b) => {
+            switch (birlesikSiralamaKriteri) {
+                case 'tarih-eski': return new Date(a.tarih) - new Date(b.tarih);
+                case 'tutar-artan': return a.tutar - b.tutar;
+                case 'tutar-azalan': return b.tutar - a.tutar;
+                case 'tarih-yeni': default: return new Date(b.tarih) - new Date(a.tarih);
+            }
+        });
+    }, [
+        filtrelenmisGelirler, filtrelenmisGiderler, transferler, 
+        seciliAy, seciliYil, birlesikFiltreTip, 
+        birlesikFiltreKategori, birlesikSiralamaKriteri
+    ]);
     const mevcutYillar = useMemo(() => { const yillar = new Set([...gelirler, ...giderler].map(islem => new Date(islem.tarih).getFullYear())); if (yillar.size === 0) yillar.add(new Date().getFullYear()); return Array.from(yillar).sort((a, b) => b - a); }, [gelirler, giderler]);
     const trendVerisi = useMemo(() => { const labels = []; const gelirlerData = []; const giderlerData = []; const bugun = new Date(); for (let i = 5; i >= 0; i--) { const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1); const yil = tarih.getFullYear(); const ay = tarih.getMonth() + 1; labels.push(tarih.toLocaleString('tr-TR', { month: 'long' })); const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); gelirlerData.push(aylikGelir); giderlerData.push(aylikGider); } return { labels, gelirler: gelirlerData, giderler: giderlerData }; }, [gelirler, giderler]);
     const yillikRaporVerisi = useMemo(() => { const aylar = []; let yillikToplamGelir = 0; let yillikToplamGider = 0; for (let i = 1; i <= 12; i++) { const aylikGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); const aylikGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); if (aylikGelirler.length > 0 || aylikGiderler.length > 0) { const ayGelir = aylikGelirler.reduce((t, g) => t + g.tutar, 0); const ayGider = aylikGiderler.reduce((t, g) => t + g.tutar, 0); yillikToplamGelir += ayGelir; yillikToplamGider += ayGider; aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: ayGelir, gider: ayGider, bakiye: ayGelir - ayGider }); } } return { aylar, toplamGelir: yillikToplamGelir, toplamGider: yillikToplamGider, toplamBakiye: yillikToplamGelir - yillikToplamGider }; }, [gelirler, giderler, seciliYil]);

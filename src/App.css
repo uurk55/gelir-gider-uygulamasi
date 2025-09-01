@@ -2070,3 +2070,44 @@ body {
 .notr-renk {
     color: var(--secondary-text);
 }
+/* ==========================================================================
+   İŞLEM KARTI - ETİKET TASARIMI GÜNCELLEMESİ
+   ========================================================================== */
+
+.islem-etiketler {
+  display: flex;
+  align-items: center; /* Etiketleri dikeyde ortalar */
+  gap: 0.5rem; /* Etiketler arasına boşluk bırakır */
+  margin-top: 0.5rem; /* Açıklama ile arasına boşluk koyar */
+}
+
+/* Kategori ve Hesap Etiketlerinin Genel Stili */
+.islem-etiket {
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px; /* Daha yuvarlak kenarlar */
+  background-color: #f1f2f6; /* Nötr, açık gri bir arka plan */
+  color: var(--secondary-text); /* Soluk metin rengi */
+}
+
+/* Tarih Etiketinin Özel Stili */
+.islem-etiket.tarih-etiketi {
+  background-color: transparent; /* Arka planı olmasın */
+  color: #a4b0be; /* Daha da soluk bir gri */
+  font-style: normal; /* İtalikliği kaldırabiliriz, daha modern durur */
+  padding: 0; /* Ekstra boşlukları kaldır */
+}
+
+/* Etiketler arasına ayırıcı nokta ekleyelim */
+.islem-etiket:not(:last-child)::after {
+  content: "•";
+  margin-left: 0.5rem;
+  color: #dfe4ea; /* Çok soluk bir ayırıcı rengi */
+}
+
+/* Tarih etiketinden sonra ayırıcı olmasın */
+.islem-etiket.tarih-etiketi::after {
+  content: "";
+  margin-left: 0;
+}
