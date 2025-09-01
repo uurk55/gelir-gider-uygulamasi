@@ -2,11 +2,16 @@ import {
     FaShoppingCart, FaFileInvoiceDollar, FaBus, FaGamepad, 
     FaHeartbeat, FaHome, FaCreditCard, FaRedo, FaQuestionCircle,
     FaMoneyBillWave, FaGift, FaBriefcase, 
-    FaWallet, FaLandmark
+    FaWallet, FaLandmark,
+    FaExchangeAlt,
 } from 'react-icons/fa';
 
 // KATEGORİ İKONLARI İÇİN FONKSİYON
 export const getCategoryIcon = (category) => {
+    if (category === 'Transfer') {
+        return <FaExchangeAlt />;
+    }
+
     const iconMap = {
         "Market": <FaShoppingCart />,
         "Fatura": <FaFileInvoiceDollar />,

@@ -12,7 +12,7 @@ import { FinansProvider, useFinans } from './context/FinansContext';
 
 // Eski sayfaları içe aktarıyoruz
 import GenelBakis from './pages/GenelBakis';
-import Islemler from './pages/Islemler';
+import IslemlerPage from './pages/islemler/IslemlerPage';
 import SabitOdemeler from './pages/SabitOdemeler';
 import Raporlar from './pages/Raporlar';
 import Kategoriler from './pages/Kategoriler';
@@ -43,7 +43,7 @@ function AppContent() {
       <main className="main-content">
         <Routes>
           <Route path="/" element={<GenelBakis />} />
-          <Route path="/Islemler" element={<Islemler />} />
+          <Route path="/Islemler" element={<IslemlerPage />} />
           <Route path="/hesaplar" element={<Hesaplar />} />
           <Route path="/raporlar" element={<Raporlar />} />
           <Route path="/sabit-odemeler" element={<SabitOdemeler />} />

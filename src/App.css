@@ -1874,13 +1874,6 @@ body {
   }
 }
 /* ==========================================================================
-   TRANSFER VE YENİ GİDER KARTI İÇİN EKLENEN STİLLER
-   ========================================================================== */
-
-.form-ipucu { /* ... (Daha önce yazdığımız stil) ... */ }
-.hesap-gider-listesi { /* ... (Daha önce yazdığımız stil) ... */ }
-/* ... (Diğer gerekli tüm yeni stiller) ... */
-/* ==========================================================================
    MOBİL UYUMLULUK (RESPONSIVE DESIGN)
    ========================================================================== */
 
@@ -1982,10 +1975,6 @@ body {
   gap: 1.5rem;
 }
 
-.hesap-gider-satiri {
-  /* Bu ana konteyner için ek kural gerekmiyor */
-}
-
 .hesap-gider-ust {
   display: flex;
   justify-content: space-between;
@@ -2065,4 +2054,19 @@ body {
   border-radius: var(--border-radius);
   margin-bottom: 2rem;
   align-items: center; /* <<< BU SATIR HER ŞEYİ DİKEYDE ORTALAYACAK */
+}
+/* App.css'e eklenecekler */
+
+/* Transfer kartının arka plan rengi */
+.islem-karti-transfer {
+    background-color: #e9ecef; /* DAHA BELİRGİN BİR GRİ TONU */
+    border-left: 4px solid var(--secondary-text); 
+}
+.islem-karti-transfer:hover {
+    background-color: #dfe4ea; /* Hover için biraz daha koyu bir ton */
+}
+
+/* Nötr renk (gri) */
+.notr-renk {
+    color: var(--secondary-text);
 }
