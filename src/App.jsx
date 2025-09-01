@@ -5,7 +5,6 @@ import toast, { Toaster } from 'react-hot-toast';
 import './App.css';
 import Modal from './components/Modal';
 import './components/Modal.css';
-import Hesaplar from './pages/Hesaplar';
 
 // Yeni Context'imizi içe aktarıyoruz
 import { FinansProvider, useFinans } from './context/FinansContext';
@@ -15,8 +14,9 @@ import GenelBakis from './pages/GenelBakis';
 import IslemlerPage from './pages/islemler/IslemlerPage';
 import SabitOdemeler from './pages/SabitOdemeler';
 import Raporlar from './pages/Raporlar';
-import Kategoriler from './pages/Kategoriler';
 import Butceler from './pages/Butceler';
+import Ozellestir from './pages/Ozellestir';
+
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title);
 
@@ -32,11 +32,10 @@ function AppContent() {
         <nav className="header-nav">
           <NavLink to="/">Genel Bakış</NavLink>
           <NavLink to="/Islemler">İşlemler</NavLink>
-          <NavLink to="/hesaplar">Hesaplar</NavLink>
+          <NavLink to="/ozellestir">Özelleştir</NavLink>
           <NavLink to="/raporlar">Raporlar</NavLink>
           <NavLink to="/sabit-odemeler">Sabit Ödemeler</NavLink>
           <NavLink to="/butceler">Bütçeler</NavLink>
-          <NavLink to="/kategoriler">Kategoriler</NavLink>
         </nav>
       </header>
 
@@ -44,11 +43,10 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<GenelBakis />} />
           <Route path="/Islemler" element={<IslemlerPage />} />
-          <Route path="/hesaplar" element={<Hesaplar />} />
+          <Route path="/ozellestir" element={<Ozellestir />} />
           <Route path="/raporlar" element={<Raporlar />} />
           <Route path="/sabit-odemeler" element={<SabitOdemeler />} />
           <Route path="/butceler" element={<Butceler />} />
-          <Route path="/kategoriler" element={<Kategoriler />} />
         </Routes>
       </main>
 
