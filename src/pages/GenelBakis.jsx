@@ -1,4 +1,4 @@
-// src/pages/GenelBakis.jsx (TÜM HATALARI DÜZELTİLMİŞ VE YENİLENMİŞ)
+// src/pages/GenelBakis.jsx (TAM VE DÜZELTİLMİŞ)
 import { useNavigate } from 'react-router-dom';
 import { Pie, Bar } from 'react-chartjs-2';
 import { useFinans } from '../context/FinansContext';
@@ -9,18 +9,13 @@ import { FaPlus } from 'react-icons/fa';
 function GenelBakis() {
     const navigate = useNavigate();
 
-    // DÜZELTİLMİŞ: Context'ten sadece ihtiyacımız olan güncel verileri çekiyoruz.
     const {
-        seciliYil, seciliAy,
-        toplamGelir, toplamGider, butceDurumlari,
-        grafikVerisi, gelirGrafikVerisi, kategoriOzeti, kategoriRenkleri,
-        filtrelenmisGiderler, filtrelenmisGelirler,
-        setBirlesikFiltreKategori, setBirlesikFiltreTip,
+        seciliYil, seciliAy, toplamGelir, toplamGider, butceDurumlari, grafikVerisi,
+        gelirGrafikVerisi, kategoriOzeti, kategoriRenkleri, filtrelenmisGiderler,
+        filtrelenmisGelirler, setBirlesikFiltreKategori, setBirlesikFiltreTip,
         aylikHesapGiderleri,
-        toplamBakiye // "Toplam Varlık" için bunu da ekledik
     } = useFinans();
 
-    // DÜZELTİLMİŞ: 'Veri yükleniyor' koşulu güncel değişkenleri kullanıyor.
     if (!butceDurumlari || !grafikVerisi || !kategoriOzeti || !kategoriRenkleri || !aylikHesapGiderleri) {
         return <div>Veriler yükleniyor...</div>;
     }
@@ -36,7 +31,7 @@ function GenelBakis() {
         navigate('/islemler');
     };
 
-    const gelirGrafikOptions = {
+const gelirGrafikOptions = {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
@@ -66,14 +61,16 @@ function GenelBakis() {
         }
     };
 
+    // EKSİK OLAN PASTA GRAFİK OPSİYONLARI BURADA
     const pieChartOptions = {
-        responsive: true, maintainAspectRatio: false, onClick: handleGrafikTiklama,
+        responsive: true,
+        maintainAspectRatio: false,
+        onClick: handleGrafikTiklama,
         plugins: {
             legend: { display: false },
             tooltip: { enabled: true, backgroundColor: '#2f3542', titleColor: '#ffffff', bodyColor: '#ffffff', borderRadius: 8, padding: 10 }
         }
     };
-
     return (
         <>
             <TarihSecici />
@@ -89,6 +86,9 @@ function GenelBakis() {
                     <div className="ozet-kalem"><span className="ozet-baslik">Toplam Gelir</span><span className="ozet-tutar gelir-renk">+ {toplamGelir.toFixed(2)} ₺</span></div>
                     <div className="ozet-kalem"><span className="ozet-baslik">Toplam Gider</span><span className="ozet-tutar gider-renk">- {toplamGider.toFixed(2)} ₺</span></div>
                     <div className="ozet-kalem"><span className="ozet-baslik">Aylık Durum</span><span className={`ozet-tutar ${toplamGelir - toplamGider >= 0 ? 'gelir-renk' : 'gider-renk'}`}>{(toplamGelir - toplamGider).toFixed(2)} ₺</span></div>
+                </div>
+                <div className="aylik-durum-mesaji">
+                    {toplamGelir - toplamGider >= 0 ? "Harika gidiyorsun! Bu ay hedeflerine yaklaştın." : "Bu ay harcamalar geliri aştı. Önümüzdeki ay dikkatli olalım."}
                 </div>
             </div>
 
@@ -111,7 +111,6 @@ function GenelBakis() {
                         </div>
                     </div>
                 )}
-
                 {aylikHesapGiderleri.length > 0 && (
                     <div className="card">
                         <div className="card-header"><h2>Aylık Gider Dağılımı (Hesaba Göre)</h2></div>
@@ -124,14 +123,13 @@ function GenelBakis() {
                                     </div>
                                     <div className="hesap-gider-alt">
                                         <span className="hesap-gider-yuzdesi">Toplam giderin %{hesap.giderYuzdesi.toFixed(1)}'i</span>
-                                        <div className="hesap-progress-bar-konteyner"><div className="hesap-progress-bar-dolgu" style={{ width: `${hesap.giderYuzdesi}%` }}></div></div>
+                                        <div className="progress-bar-konteyner"><div className="hesap-progress-bar-dolgu" style={{ width: `${hesap.giderYuzdesi}%` }}></div></div>
                                     </div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 )}
-                
                 {filtrelenmisGelirler.length > 0 && (
                     <div className="card"><Bar options={gelirGrafikOptions} data={gelirGrafikVerisi} /></div>
                 )}
@@ -140,7 +138,27 @@ function GenelBakis() {
             {butceDurumlari.length > 0 && (
                 <div className="card">
                     <div className="card-header"><h2>Aylık Kategori Limitleri</h2></div>
-                    <div className="butce-listesi">{butceDurumlari.map(butce => (<div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}><div className="butce-bilgi"><span className="butce-kategori">{butce.kategori}</span><span className="butce-yuzde">(%{butce.yuzdeRaw ? butce.yuzdeRaw.toFixed(0) : butce.yuzde.toFixed(0)})</span></div><div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div><div className="butce-detay-yeni"><span className="butce-rakamlar">{butce.harcanan.toFixed(2)} ₺ / {butce.limit.toFixed(2)} ₺</span>{butce.kalan < 0 ? (<span className="butce-durum gider-renk">{(-butce.kalan).toFixed(2)} ₺ aşıldı!</span>) : (<span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kaldı</span>)}</div></div>))}</div>
+                    <div className="butce-listesi">
+                        {butceDurumlari.map(butce => (
+                            <div key={butce.kategori} className={`butce-kalemi ${butce.durum}`}>
+                                <div className="butce-bilgi">
+                                    <span className="butce-kategori">{butce.kategori}</span>
+                                    <span className="butce-yuzde">(%{butce.yuzdeRaw ? butce.yuzdeRaw.toFixed(0) : butce.yuzde.toFixed(0)})</span>
+                                </div>
+                                <div className="progress-bar-konteyner"><div className="progress-bar-dolgu" style={{ width: `${butce.yuzde}%` }}></div></div>
+                                <div className="butce-detay-yeni">
+                                    <span className="butce-rakamlar">{butce.harcanan.toFixed(2)} ₺ / {butce.limit.toFixed(2)} ₺</span>
+                                    <span>{butce.kalan < 0 ? <span className="butce-durum gider-renk">{(-butce.kalan).toFixed(2)} ₺ aşıldı!</span> : <span className="butce-durum">{butce.kalan.toFixed(2)} ₺ kaldı</span>}</span>
+                                </div>
+                                {butce.degisimYuzdesi !== 0 && (
+                                    <div className={`degisim-yuzdesi ${butce.degisimYuzdesi > 0 ? 'gider-renk' : 'gelir-renk'}`}>
+                                        Geçen aya göre %{butce.degisimYuzdesi.toFixed(0)}
+                                        {butce.degisimYuzdesi > 0 ? ' artış' : ' azalış'}
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
                 </div>
             )}
         </>

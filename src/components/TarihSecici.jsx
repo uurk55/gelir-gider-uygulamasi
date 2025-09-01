@@ -1,8 +1,23 @@
+// src/components/TarihSecici.jsx
 import { useFinans } from '../context/FinansContext';
 
 function TarihSecici() {
   const { seciliAy, setSeciliAy, seciliYil, setSeciliYil, mevcutYillar } = useFinans();
 
+  const handleAyDegistir = (artis) => {
+     let yeniAy = seciliAy + artis;
+     let yeniYil = seciliYil;
+
+     if (yeniAy > 12) {
+         yeniAy = 1;
+         yeniYil++;
+     } else if (yeniAy < 1) {
+         yeniAy = 12;
+         yeniYil--;
+     }
+     setSeciliAy(yeniAy);
+     setSeciliYil(yeniYil);
+  };
   const aylar = [
     { value: 1, label: 'Ocak' },
     { value: 2, label: 'Şubat' },
@@ -20,6 +35,7 @@ function TarihSecici() {
 
   return (
     <div className="zaman-filtresi-kutusu">
+      <button onClick={() => handleAyDegistir(-1)} className="tarih-yon-btn">{"<"}</button>
       <div className="kontrol-grubu">
         <label>Ay:</label>
         <select value={seciliAy} onChange={(e) => setSeciliAy(parseInt(e.target.value))}>
@@ -36,6 +52,7 @@ function TarihSecici() {
           ))}
         </select>
       </div>
+       <button onClick={() => handleAyDegistir(1)} className="tarih-yon-btn">{">"}</button>
     </div>
   );
 }

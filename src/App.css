@@ -979,12 +979,6 @@ body {
   flex-direction: column;
 }
 
-.ozet-baslik {
-  font-size: 0.9rem;
-  color: var(--secondary-text);
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-}
 
 .ozet-tutar {
   font-size: 1.75rem;
@@ -1678,13 +1672,6 @@ body {
   margin: 1.5rem 0;
 }
 
-.ozet-baslik {
-  font-size: 0.9rem;
-  color: var(--secondary-text);
-  margin-bottom: 0.5rem; /* Başlık ve rakam arasına boşluk */
-  display: block; /* Span'ın tam genişlik kaplaması için */
-}
-
 .ozet-tutar {
   font-size: 1.75rem;
   font-weight: 700;
@@ -1748,14 +1735,6 @@ body {
   padding: 1rem 1.5rem;
 }
 
-/* 2. Aylık Özet Kartı Metinlerini Kalınlaştırma */
-.ozet-tutar {
-  font-weight: 700; /* Zaten kalındı, teyit edelim */
-}
-.ozet-baslik {
-  font-weight: 500; /* Başlıkları biraz daha belirgin yapalım */
-  color: var(--secondary-text);
-}
 
 /* 3. Hesap Durumları Başlığını Belirginleştirme */
 .hesap-durumlari-listesi h3 {
@@ -1986,3 +1965,104 @@ body {
         font-size: 1.2rem;
     }
     }
+ /* ==========================================================================
+   GENEL BAKIŞ - SON STİL DÜZELTMELERİ (KESİN ÇÖZÜM)
+   ========================================================================== */
+
+/* 1. "Aylık Özet" Başlıklarını Kalınlaştırma (Daha Güçlü Seçici) */
+.aylik-ozet-kutusu .ozet-baslik {
+  font-weight: 500 !important; /* !important kuralı ezilmesini engeller */
+  color: var(--secondary-text) !important;
+}
+
+/* 2. "Aylık Gider Dağılımı" Kartını Beğenilen Tasarıma Döndürme */
+.hesap-gider-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hesap-gider-satiri {
+  /* Bu ana konteyner için ek kural gerekmiyor */
+}
+
+.hesap-gider-ust {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem; /* Üst ve alt satır arasına boşluk */
+}
+
+.hesap-gider-alt {
+  display: flex;
+  flex-direction: column; /* Yüzde metnini ve barı alt alta getirir */
+  align-items: flex-start; /* Bu ikiliyi sola hizalar */
+  gap: 0.5rem; /* Metin ve bar arasına boşluk */
+}
+
+/* Zaten var olan bu kuralların yerini teyit edelim */
+.hesap-gider-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  white-space: nowrap;
+}
+.hesap-progress-bar-konteyner {
+  width: 100%; /* Barın tam genişlikte olmasını sağlar */
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+.hesap-progress-bar-dolgu {
+  height: 100%;
+  background-color: var(--danger-color);
+  border-radius: 4px;
+}
+/* ==========================================================================
+   AKILLI GELİŞTİRMELER İÇİN YENİ STİLLER
+   ========================================================================== */
+
+/* 1. Tarih Seçici Yön Butonları */
+.tarih-yon-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+    line-height: 40px;
+    text-align: center;
+}
+.tarih-yon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 2. Aylık Durum Mesajı */
+.aylik-durum-mesaji {
+    text-align: center;
+    font-style: italic;
+    color: var(--secondary-text);
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* 3. Bütçe Karşılaştırma Metni */
+.degisim-yuzdesi {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: right;
+    margin-top: 0.5rem;
+}
+.zaman-filtresi-kutusu {
+  display: flex;
+  gap: 1rem; /* Butonlar ve select kutuları arasına boşluk */
+  background-color: #34495e;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  align-items: center; /* <<< BU SATIR HER ŞEYİ DİKEYDE ORTALAYACAK */
+}

@@ -92,12 +92,51 @@ export const FinansProvider = ({ children }) => {
     
     const filtrelenmisGelirler = useMemo(() => gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [gelirler, seciliAy, seciliYil]);
     const filtrelenmisGiderler = useMemo(() => giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [giderler, seciliAy, seciliYil]);
+    const gecenAyFiltrelenmisGiderler = useMemo(() => {
+        const simdi = new Date(seciliYil, seciliAy - 1, 1);
+        const gecenAyTarih = new Date(simdi.setMonth(simdi.getMonth() - 1));
+        const gecenAy = gecenAyTarih.getMonth() + 1;
+        const gecenAyinYili = gecenAyTarih.getFullYear();
+
+        return giderler.filter(g => 
+            new Date(g.tarih).getFullYear() === gecenAyinYili && 
+            new Date(g.tarih).getMonth() + 1 === gecenAy
+        );
+    }, [giderler, seciliAy, seciliYil]);
     const toplamGelir = useMemo(() => filtrelenmisGelirler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGelirler]);
     const toplamGider = useMemo(() => filtrelenmisGiderler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGiderler]);
     const genelHesapBakiyeleri = useMemo(() => { return hesaplar.reduce((acc, hesap) => { const toplamGiren = gelirler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.aliciHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); const toplamCikan = giderler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.gonderenHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); acc[hesap.id] = toplamGiren - toplamCikan; return acc; }, {}); }, [hesaplar, gelirler, giderler, transferler]);
     const toplamBakiye = useMemo(() => Object.values(genelHesapBakiyeleri).reduce((t, b) => t + b, 0), [genelHesapBakiyeleri]);
     const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
-    const butceDurumlari = useMemo(() => butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); const kalan = butce.limit - harcanan; const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; const yuzde = Math.min(yuzdeRaw, 100); let durum = 'normal'; if (yuzdeRaw > 100) durum = 'asildi'; else if (yuzdeRaw >= 90) durum = 'uyari'; return { ...butce, harcanan, kalan, yuzde, yuzdeRaw, durum }; }).sort((a, b) => b.yuzdeRaw - a.yuzdeRaw), [butceler, filtrelenmisGiderler]);
+ const butceDurumlari = useMemo(() => butceler.map(butce => {
+        // Bu ayki harcama (bu zaten vardı)
+        const harcanan = filtrelenmisGiderler
+            .filter(gider => gider.kategori.trim() === butce.kategori.trim())
+            .reduce((toplam, gider) => toplam + gider.tutar, 0);
+
+        // YENİ: Geçen ayki harcama
+        const gecenAyHarcanan = gecenAyFiltrelenmisGiderler
+            .filter(gider => gider.kategori.trim() === butce.kategori.trim())
+            .reduce((toplam, gider) => toplam + gider.tutar, 0);
+        
+        // YENİ: Değişim yüzdesi hesaplaması
+        let degisimYuzdesi = 0;
+        if (gecenAyHarcanan > 0) {
+            degisimYuzdesi = ((harcanan - gecenAyHarcanan) / gecenAyHarcanan) * 100;
+        } else if (harcanan > 0) {
+            degisimYuzdesi = 100; // Geçen ay 0 harcanmış, bu ay harcanmışsa %100 artış
+        }
+
+        // ... (kalan, yuzdeRaw, durum gibi eski hesaplamalar aynı kalıyor)
+        const kalan = butce.limit - harcanan;
+        const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0;
+        const yuzde = Math.min(yuzdeRaw, 100);
+        let durum = 'normal';
+        if (yuzdeRaw > 100) durum = 'asildi';
+        else if (yuzdeRaw >= 90) durum = 'uyari';
+        
+        return { ...butce, harcanan, kalan, yuzde, yuzdeRaw, durum, degisimYuzdesi };
+    }).sort((a, b) => b.yuzdeRaw - a.yuzdeRaw), [butceler, filtrelenmisGiderler, gecenAyFiltrelenmisGiderler]); // Bağımlılıklara yenisini ekle    
     const kategoriOzeti = useMemo(() => filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}), [filtrelenmisGiderler]);
     const grafikVerisi = useMemo(() => { const labels = Object.keys(kategoriOzeti); const data = Object.values(kategoriOzeti); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#CCCCCC'); return { labels, datasets: [{ label: 'Harcama Miktarı', data, backgroundColor, borderColor: '#ffffff', borderWidth: 2 }] }; }, [kategoriOzeti, kategoriRenkleri]);
     const gelirGrafikVerisi = useMemo(() => { const gelirKaynaklari = filtrelenmisGelirler.reduce((acc, gelir) => { const { kategori, tutar } = gelir; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}); const labels = Object.keys(gelirKaynaklari); const data = Object.values(gelirKaynaklari); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#2ecc71'); return { labels, datasets: [{ label: 'Gelir Kaynağı', data, backgroundColor, borderRadius: 4 }] }; }, [filtrelenmisGelirler, kategoriRenkleri]);
