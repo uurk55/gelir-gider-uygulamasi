@@ -2373,3 +2373,477 @@ body {
     cursor: grab;
     color: #c8d6e5;
 }
+/* ==========================================================================
+   ADIM 1: ANA ÖZET KARTI İYİLEŞTİRMELERİ
+   ========================================================================== */
+
+/* Özet kartındaki başlıkları (Toplam Gelir, Toplam Gider vb.) stilize edelim */
+.aylik-ozet-kutusu .ozet-baslik {
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem; /* Rakamla arasına boşluk koyar */
+}
+
+/* Rakamların (tutar) stilini daha VURUCU yapalım */
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem; /* Font boyutunu belirgin şekilde artırdık (örn: 36px) */
+  font-weight: 700;   /* Daha kalın bir font ağırlığı */
+  line-height: 1.1;   /* Satır yüksekliğini ayarlayarak dikey boşluğu toparlar */
+}
+
+/* Renkleri :root'taki değişkenlere bağlayarak tutarlılığı garantileyelim */
+.aylik-ozet-kutusu .gelir-renk {
+  color: var(--success-color);
+}
+
+.aylik-ozet-kutusu .gider-renk {
+  color: var(--danger-color);
+}
+
+/* Aylık Durum (Net Bakiye) rakamını diğerlerinden ayırt edelim */
+.aylik-ozet-kutusu .ozet-tutar.aylik-durum {
+  color: var(--primary-text); /* Ana metin rengini kullansın */
+}
+
+/* Net bakiye pozitif ise yeşil, negatif ise kırmızı olsun */
+.aylik-ozet-kutusu .ozet-tutar.aylik-durum.gelir-renk {
+  color: var(--success-color);
+}
+
+.aylik-ozet-kutusu .ozet-tutar.aylik-durum.gider-renk {
+  color: var(--danger-color);
+}
+/* ==========================================================================
+   GENEL BAKIŞ - YENİ KARTLAR İÇİN EKLENEN STİLLER
+   ========================================================================== */
+
+/* Yeni mini kartları yan yana dizmek için bir grid konteyneri */
+.yeni-kartlar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+  gap: 2rem; /* Kartlar arası boşluk */
+  margin-bottom: 2rem;
+}
+
+/* Tek bir mini kartın temel stili */
+.mini-kart {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-kart-baslik {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--secondary-text);
+  margin-bottom: 1rem;
+}
+
+.mini-kart-baslik h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.mini-kart-icerik {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Genel Bakiye Kartı'na özel stiller */
+.genel-bakiye-tutar {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-text);
+  line-height: 1.2;
+}
+
+.mini-kart-aciklama {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 0.25rem;
+}
+
+/* Yaklaşan Ödemeler Kartı'na özel stiller */
+.yaklasan-odeme-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Liste elemanları arasına boşluk */
+}
+
+.yaklasan-odeme-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: #f1f2f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--primary-text);
+}
+
+/* Mobil cihazlar için yeni kartları alt alta getir */
+@media (max-width: 900px) {
+  .yeni-kartlar-grid {
+    grid-template-columns: 1fr; /* Tek sütuna düşür */
+  }
+}
+/* ==========================================================================
+   HARCAMA LİSTESİ YÜZDE GÖSTERİMİ İÇİN STİLLER
+   ========================================================================== */
+
+/* Kategori adı ve yüzdesini bir arada tutan yeni div için */
+.kategori-detay {
+  display: flex;
+  flex-direction: column; /* İsim ve yüzdeyi alt alta getirir */
+  align-items: flex-start; /* Sola hizalar */
+}
+
+/* Yüzde metninin stili */
+.kategori-yuzdesi {
+  font-size: 0.8rem; /* Daha küçük font */
+  color: var(--secondary-text); /* Soluk metin rengi */
+  font-weight: 400; /* Daha ince font */
+  margin-top: 2px; /* Kategori adıyla arasına hafif boşluk */
+}
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI - NİHAİ STİLLER (TÜM İYİLEŞTİRMELER)
+   ========================================================================== */
+
+/* 1. SAYFA DÜZENİ: Kusursuz hizalama için Ana Grid Yapısı */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Her zaman tek sütun */
+  gap: 2rem; /* Ana satırlar (kart grupları) arasındaki dikey boşluk */
+}
+
+.grid-row-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem; /* Kartlar arasındaki yatay boşluk */
+  align-items: stretch; /* Kartların yüksekliklerini eşitler */
+}
+
+/* Grid içindeki kartların satır yüksekliğine tam olarak uymasını sağlar */
+.grid-row-2-col > .card {
+    height: 100%;
+}
+
+/* Mobil cihazlar için iki sütunlu yapıyı tek sütuna düşürür */
+@media (max-width: 900px) {
+  .grid-row-2-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* 2. KART STİLLERİ: Yeni Kartları Canlandırma ve Başlıkları Eşitleme */
+
+/* "Genel Varlık Durumu" ve "Yaklaşan Ödemeler" kart başlıklarını diğerleriyle eşitleme */
+.mini-kart-baslik h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+/* "Genel Varlık Durumu" kartına özel gradient arkaplan */
+.mini-kart.varlik-karti {
+  background: linear-gradient(45deg, #4a69bd, #6a89cc);
+  color: white;
+}
+.mini-kart.varlik-karti .mini-kart-baslik,
+.mini-kart.varlik-karti .mini-kart-aciklama {
+  color: rgba(255, 255, 255, 0.9);
+}
+.mini-kart.varlik-karti .genel-bakiye-tutar {
+  color: white;
+}
+
+/* "Yaklaşan Ödemeler" listesinde 3 gün veya daha az kalanlar için uyarı rengi */
+.yaklasan-odeme-item .kalan-gun.uyari {
+  background-color: var(--warning-color);
+  color: white;
+  font-weight: 700;
+}
+
+
+/* 3. MEVCUT KART İYİLEŞTİRMELERİ */
+
+/* "Aylık Özet" kartındaki rakamları daha vurucu yapma */
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+/* Harcama Dağılımı listesine eklenen yüzde metninin stili */
+.kategori-detay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kategori-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI - NİHAİ VE BİRLEŞTİRİLMİŞ STİLLER
+   ========================================================================== */
+
+/* 1. YENİ KARTLARIN YERLEŞİMİ ("Genel Varlık" ve "Yaklaşan Ödemeler") */
+.yeni-kartlar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+  gap: 2rem; /* Kartlar arası boşluk */
+  margin-bottom: 2rem;
+}
+
+
+/* 2. YENİ KARTLARIN İÇ STİLLERİ VE RENKLENDİRİLMESİ */
+
+/* Tek bir mini kartın temel yapısı */
+.mini-kart {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Kart başlığı (ikon ve yazı) */
+.mini-kart-baslik {
+  display: flex;
+  align-items: center; /* İkon ve metni dikeyde ortalar */
+  gap: 0.75rem;
+  color: var(--secondary-text);
+  margin-bottom: 1rem;
+}
+
+/* Başlıkların ana kart başlıklarıyla aynı stile gelmesi */
+.mini-kart-baslik h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+/* Kartların ana içerik alanı */
+.mini-kart-icerik {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* "Genel Varlık Durumu" kartına özel gradient arkaplan ve renkler */
+.mini-kart.varlik-karti {
+  background: linear-gradient(45deg, #4a69bd, #6a89cc);
+  color: white;
+}
+.mini-kart.varlik-karti .mini-kart-baslik,
+.mini-kart.varlik-karti .mini-kart-aciklama {
+  color: rgba(255, 255, 255, 0.9);
+}
+.mini-kart.varlik-karti .genel-bakiye-tutar {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mini-kart-aciklama {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 0.25rem;
+}
+
+/* "Yaklaşan Ödemeler" kartı liste stili */
+.yaklasan-odeme-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.yaklasan-odeme-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: #f1f2f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--primary-text);
+}
+
+/* 3 gün veya daha az kalan ödemeler için uyarı rengi */
+.yaklasan-odeme-item .kalan-gun.uyari {
+  background-color: var(--warning-color);
+  color: white;
+  font-weight: 700;
+}
+
+
+/* 3. ANA ÖZET KARTI İYİLEŞTİRMELERİ */
+
+.aylik-ozet-kutusu .ozet-baslik {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem;
+}
+
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+
+/* 4. HARCAMA LİSTESİ YÜZDE GÖSTERİMİ */
+
+.kategori-detay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kategori-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+
+/* 5. MOBİL UYUMLULUK */
+
+/* Mobil cihazlar için iki sütunlu yapıyı tek sütuna düşürür */
+@media (max-width: 900px) {
+  .yeni-kartlar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ==========================================================================
+   "MÜKEMMEL" GENEL BAKIŞ SAYFASI İÇİN GEREKLİ TÜM STİLLER
+   ========================================================================== */
+
+/* 1. YENİ KARTLARIN YERLEŞİMİ ("Genel Varlık" ve "Yaklaşan Ödemeler") */
+.yeni-kartlar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* 2. YENİ KARTLARIN İÇ STİLLERİ */
+.mini-kart {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-kart-baslik {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--secondary-text);
+  margin-bottom: 1rem;
+}
+
+/* Mini kart başlıklarının ana kart başlıklarıyla aynı olması */
+.mini-kart-baslik h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+.mini-kart-icerik {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.genel-bakiye-tutar {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-text);
+  line-height: 1.2;
+}
+
+.mini-kart-aciklama {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 0.25rem;
+}
+
+.yaklasan-odeme-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.yaklasan-odeme-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: #f1f2f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--primary-text);
+}
+
+/* 3. ANA ÖZET KARTI İYİLEŞTİRMELERİ */
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+/* 4. HARCAMA LİSTESİ YÜZDE GÖSTERİMİ */
+.kategori-detay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kategori-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* 5. MOBİL UYUMLULUK */
+@media (max-width: 900px) {
+  .yeni-kartlar-grid {
+    grid-template-columns: 1fr;
+  }
+}
