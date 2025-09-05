@@ -2847,3 +2847,46 @@ body {
     grid-template-columns: 1fr;
   }
 }
+/* === Form Izgara (Grid) Yapısı Düzeltmesi === */
+
+/* Formun ana iskeleti */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Formu iki eşit sütuna böler */
+    gap: 1rem; /* Sütunlar ve satırlar arasına boşluk ekler */
+    align-items: flex-end; /* Form elemanlarını dikeyde alta hizalar, daha düzenli görünür */
+}
+
+/* Formdaki her bir eleman grubu (etiket + input) */
+.form-item-full,
+.form-item-half {
+    display: flex;
+    flex-direction: column; /* Etiketi input'un üzerine getirir */
+    gap: 0.3rem; /* Etiket ile input arasına hafif bir boşluk koyar */
+}
+
+/* Tam satır kaplayan elemanlar (Açıklama, Butonlar vb.) */
+.form-item-full {
+    grid-column: 1 / -1; /* "Birinci sütundan başla, son sütuna kadar git" demektir */
+}
+
+/* Form etiketlerinin stili (örn: "Açıklama:") */
+.form-grid label {
+    font-size: 0.9rem; /* Biraz küçülttük */
+    font-weight: 500;
+    color: #555; /* Yazı rengini biraz yumuşattık */
+    margin-left: 2px;
+}
+
+/* Formdaki TÜM input ve select kutularının ortak stili */
+.form-grid input[type="text"],
+.form-grid input[type="number"],
+.form-grid input[type="date"],
+.form-grid select {
+    width: 100%; /* Bulunduğu kabı %100 doldurur */
+    padding: 0.8rem; /* İç boşluğu artırdık, daha rahat bir görünüm için */
+    border: 1px solid #ccc; /* Kenarlık rengi */
+    border-radius: 8px; /* Kenarları yuvarlaklaştırdık */
+    font-size: 1rem; /* Yazı boyutunu standart hale getirdik */
+    box-sizing: border-box; /* Padding ve border'ın genişliği etkilememesini sağlar */
+}

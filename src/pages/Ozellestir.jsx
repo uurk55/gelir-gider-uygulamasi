@@ -1,16 +1,81 @@
-// src/pages/Ozellestir.jsx (EN BASİT VE STABİL HALİ)
+// src/pages/Ozellestir.jsx (TÜM DÜZELTMELERİ İÇEREN TAM VE EKSİKSİZ VERSİYON)
 import React, { useState } from 'react';
 import { useFinans } from '../context/FinansContext';
-import { FaTrash, FaGripVertical } from 'react-icons/fa';
+import { FaTrash, FaGripVertical, FaPen } from 'react-icons/fa'; // EKSİK OLAN FaPen İKONUNU EKLEDİM
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
+// --- HESAP YÖNETİMİ BİLEŞENLERİ ---
+
+// Her bir hesap satırının mantığını ve görünümünü yöneten alt bileşen
+const HesapListItem = ({ hesap }) => {
+    const { handleHesapSil, handleHesapGuncelle, hesaplar } = useFinans();
+    const [isEditing, setIsEditing] = useState(false);
+    const [name, setName] = useState(hesap.ad);
+
+    const handleSave = () => {
+        if (name.trim() && name !== hesap.ad) {
+            handleHesapGuncelle(hesap.id, name);
+        } else {
+            // Eğer isim boş bırakıldıysa veya değişmediyse eski haline dön
+            setName(hesap.ad);
+        }
+        setIsEditing(false);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSave();
+        } else if (e.key === 'Escape') {
+            setName(hesap.ad);
+            setIsEditing(false);
+        }
+    };
+
+    return (
+        <li className="yonetim-listesi-item">
+            {isEditing ? (
+                <input
+                    className="form-modern-input-inline" // Stillerin daha iyi olması için bir class ekleyebiliriz
+                    type="text"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    onBlur={handleSave}
+                    onKeyDown={handleKeyDown}
+                    autoFocus
+                />
+            ) : (
+                <span>{hesap.ad}</span>
+            )}
+            <div className="buton-grubu">
+                <button onClick={() => setIsEditing(!isEditing)} className="icon-btn duzenle-btn" aria-label="Düzenle">
+                    <FaPen />
+                </button>
+                {hesaplar.length > 1 && (
+                    <button onClick={() => handleHesapSil(hesap.id)} className="icon-btn sil-btn" aria-label="Sil">
+                        <FaTrash />
+                    </button>
+                )}
+            </div>
+        </li>
+    );
+};
+
+// Hesaplar sekmesinin genel yapısını oluşturan ana bileşen
 const HesaplarYonetimi = () => {
-    const { hesaplar, handleHesapEkle, handleHesapSil } = useFinans();
+    const { hesaplar, handleHesapEkle } = useFinans();
     const [yeniHesapAdi, setYeniHesapAdi] = useState('');
-    const handleSubmit = (e) => { e.preventDefault(); if (!yeniHesapAdi.trim()) return; handleHesapEkle(yeniHesapAdi); setYeniHesapAdi(''); };
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!yeniHesapAdi.trim()) return;
+        handleHesapEkle(yeniHesapAdi);
+        setYeniHesapAdi('');
+    };
+
     if (!hesaplar) { return <div>Yükleniyor...</div>; }
+
     return (
         <div className="yonetim-sayfasi-layout">
             <div className="bolum">
@@ -25,13 +90,10 @@ const HesaplarYonetimi = () => {
             </div>
             <div className="bolum">
                 <h3>Mevcut Hesaplar</h3>
-                {hesaplar.length === 0 ? (<div className="empty-state"><span className="empty-state-icon">💼</span><p>İlk hesabınızı ekleyin!</p></div>) : (
+                {hesaplar.length === 0 ? (<p>Henüz hesap eklenmemiş.</p>) : (
                     <ul className="yonetim-listesi">
                         {hesaplar.map(hesap => (
-                            <li key={hesap.id} className="yonetim-listesi-item">
-                                <span>{hesap.ad}</span>
-                                {hesaplar.length > 1 && (<button onClick={() => handleHesapSil(hesap.id)} className="icon-btn sil-btn" aria-label="Sil"><FaTrash /></button>)}
-                            </li>
+                            <HesapListItem key={hesap.id} hesap={hesap} />
                         ))}
                     </ul>
                 )}
@@ -40,13 +102,64 @@ const HesaplarYonetimi = () => {
     );
 };
 
+
+// --- KATEGORİ YÖNETİMİ BİLEŞENLERİ (GERİ EKLEDİM) ---
+
 function SortableKategoriItem({ tip, kategori, handleSil }) {
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: kategori });
+    const { handleKategoriGuncelle } = useFinans();
+    const [isEditing, setIsEditing] = useState(false);
+    const [name, setName] = useState(kategori);
+
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: kategori, disabled: isEditing }); // Düzenleme modundayken sürüklemeyi devre dışı bırak
     const style = { transform: CSS.Transform.toString(transform), transition, };
+
+    const handleSave = () => {
+        if (name.trim() && name !== kategori) {
+            handleKategoriGuncelle(tip, kategori, name);
+        } else {
+            setName(kategori);
+        }
+        setIsEditing(false);
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter') {
+            handleSave();
+        } else if (e.key === 'Escape') {
+            setName(kategori);
+            setIsEditing(false);
+        }
+    };
+
     return (
         <li ref={setNodeRef} style={style} className="yonetim-listesi-item" {...attributes}>
-            <div className="kategori-sol-taraf-sirala"><span {...listeners} className="drag-handle"><FaGripVertical /></span><span>{kategori}</span></div>
-            {kategori !== 'Diğer' && (<button onClick={() => handleSil(tip, kategori)} className="icon-btn sil-btn" aria-label="Sil"><FaTrash /></button>)}
+            <div className="kategori-sol-taraf-sirala">
+                <span {...listeners} className="drag-handle" style={{ cursor: isEditing ? 'default' : 'grab' }}>
+                    <FaGripVertical />
+                </span>
+                {isEditing ? (
+                    <input
+                        type="text"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        onBlur={handleSave}
+                        onKeyDown={handleKeyDown}
+                        autoFocus
+                    />
+                ) : (
+                    <span>{kategori}</span>
+                )}
+            </div>
+            {kategori !== 'Diğer' && (
+                <div className="buton-grubu">
+                    <button onClick={() => setIsEditing(!isEditing)} className="icon-btn duzenle-btn" aria-label="Düzenle">
+                        <FaPen />
+                    </button>
+                    <button onClick={() => handleSil(tip, kategori)} className="icon-btn sil-btn" aria-label="Sil">
+                        <FaTrash />
+                    </button>
+                </div>
+            )}
         </li>
     );
 }
@@ -58,7 +171,7 @@ function KategoriYonetimBolumu({ tip, baslik, kategoriler, handleEkle, handleSil
     return (
         <div className="bolum">
             <h3>{baslik}</h3>
-            {kategoriler.length === 0 ? (<div className="empty-state"><span className="empty-state-icon">🏷️</span><p>İlk kategorinizi ekleyin!</p></div>) : (
+            {kategoriler.length === 0 ? (<p>Henüz kategori eklenmemiş.</p>) : (
                 <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                     <SortableContext items={kategoriler} strategy={verticalListSortingStrategy}>
                         <ul className="yonetim-listesi">
@@ -88,6 +201,8 @@ const KategorilerYonetimi = () => {
         </div>
     );
 };
+
+// --- ANA ÖZELLEŞTİR BİLEŞENİ (GERİ EKLEDİM) ---
 
 function Ozellestir() {
     const [aktifSekme, setAktifSekme] = useState('hesaplar');

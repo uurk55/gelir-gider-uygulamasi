@@ -1,71 +1,98 @@
-/* src/components/Modal.css */
+/* src/components/Modal.css (GÜNCELLENMİŞ VE TAM VERSİYON) */
 
+/* Modal'ın arkasındaki karartılmış arka plan */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.6);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    position: fixed; /* Ekrana sabitler */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); /* Yarı saydam siyah */
+    display: flex; /* İçeriği ortalamak için */
+    justify-content: center; /* Yatayda ortala */
+    align-items: center; /* Dikeyde ortala */
+    z-index: 1000; /* Diğer her şeyin üzerinde olmasını sağlar */
+    opacity: 0;
+    animation: fadeIn 0.3s forwards;
 }
 
+/* Modal'ın kendisi (beyaz kutu) */
 .modal-content {
-  background: white;
-  padding: 25px;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  text-align: center;
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    width: 90%; /* Mobil cihazlar için genişlik */
+    max-width: 450px; /* Maksimum genişlik */
+    text-align: center;
+    transform: scale(0.9);
+    animation: scaleIn 0.3s forwards;
 }
 
+/* Modal başlığı (Örn: "İşlemi Sil") */
 .modal-content h2 {
-  margin-top: 0;
-  border: none;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #2f3542; /* Ana metin rengiyle uyumlu */
+    font-size: 1.5rem;
 }
 
-.modal-body {
-  margin: 20px 0;
-  font-size: 16px;
+/* Modal içindeki açıklama metni */
+.modal-content p {
+    margin-bottom: 2rem;
+    color: #576574; /* İkincil metin rengi */
+    line-height: 1.6;
 }
 
-.modal-footer {
-  display: flex;
-  justify-content: center;
-  gap: 15px;
+/* Butonları içeren bölüm */
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem; /* Butonlar arası boşluk */
 }
 
-.modal-footer .sil-btn {
-  background-color: #c0392b;
+/* Genel modal butonu stili */
+.modal-actions button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
 }
 
-.modal-footer .sil-btn:hover {
-  background-color: #e74c3c;
-}
-/* App.css dosyasının en altına ekle */
-
-.islem-karti {
-  border-left: 5px solid;
-  margin-bottom: 12px !important;
+/* Onay butonu (Sil, Evet vb.) */
+.modal-actions .confirm-btn {
+    background-color: #ff4757; /* Kırmızı renk */
+    color: white;
 }
 
-.gelir-karti {
-  border-left-color: #27ae60; /* Yeşil */
-  background-color: #e8f8f5 !important;
+.modal-actions .confirm-btn:hover {
+    background-color: #e04856;
+    transform: translateY(-2px);
 }
 
-.gider-karti {
-  border-left-color: #c0392b; /* Kırmızı */
-  background-color: #fdedec !important;
+/* İptal butonu (Vazgeç, Kapat vb.) */
+.modal-actions .cancel-btn {
+    background-color: #dfe4ea; /* Açık gri */
+    color: #2f3542;
 }
 
-.tutar-yazisi {
-  font-weight: bold;
-  font-size: 1.1em;
-  min-width: 120px; /* Tutar alanının hizalı durmasını sağlar */
-  text-align: right;
+.modal-actions .cancel-btn:hover {
+    background-color: #ced6e0;
+    transform: translateY(-2px);
+}
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    to {
+        transform: scale(1);
+    }
 }
