@@ -2890,3 +2890,188 @@ body {
     font-size: 1rem; /* Yazı boyutunu standart hale getirdik */
     box-sizing: border-box; /* Padding ve border'ın genişliği etkilememesini sağlar */
 }
+/* === YENİ Authentication Sayfaları Stilleri === */
+
+/* Sayfanın tamamını kaplayan ana konteyner */
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Ana uygulamanızdaki gibi açık gri bir arka plan */
+    padding: 1rem;
+}
+
+/* Giriş/Kayıt kartının kendisi */
+.auth-card {
+    width: 100%;
+    max-width: 480px; /* Kartı biraz daha genişlettik */
+    padding: 2.5rem 3rem; /* İç boşlukları artırdık */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e8e8e8;
+}
+
+/* Yeni eklediğimiz marka başlığı bölümü */
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333; /* Ana başlık rengi */
+    margin: 0;
+}
+
+.auth-subtitle {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #666; /* Daha yumuşak bir alt başlık rengi */
+}
+
+/* Formun kendisi */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem; /* Form elemanları arası boşluğu artırdık */
+}
+
+/* Input alanlarının etiketleri (E-posta, Şifre) */
+.auth-form label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+    color: #444;
+}
+
+/* Input alanlarının kendisi */
+/* Input alanlarının kendisi */
+.auth-form input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    
+    /* YENİ EKLENEN SATIRLAR */
+    background-color: #fff !important; /* Arka planı BEYAZ olmaya zorla */
+    color: #333 !important;           /* İçindeki yazı rengini KOYU GRİ yap */
+}
+
+/* Input'a tıklandığında (focus) */
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--primary-color, #007bff); /* Ana temanızın mavi rengi */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Giriş/Kayıt butonu */
+.auth-button {
+    width: 100%; /* Butonu tam genişlik yaptık */
+    margin-top: 1rem;
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: var(--primary-color, #007bff); /* Ana temanızın mavi rengi */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.auth-button:hover {
+    background-color: var(--primary-color-dark, #0056b3); /* Hover için mavinin koyu tonu */
+}
+
+.auth-button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+/* "Hesabın yok mu? Kayıt Ol" linki */
+.auth-switch {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.auth-switch a {
+    color: var(--primary-color, #007bff);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+/* Header ve Çıkış Yap Butonu Stilleri */
+
+/* Header'ı esnek bir kutu yapıp elemanları iki uca yaslıyoruz */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-button {
+    background-color: transparent;
+    color: var(--primary-color, #007bff);
+    border: 1px solid var(--primary-color, #007bff);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.logout-button:hover {
+    background-color: var(--primary-color, #007bff);
+    color: #fff;
+}
+/* === Ana Uygulama İskeleti (Layout) === */
+
+/* Bütün uygulamayı saran ana konteyner */
+.app-layout {
+  display: grid;
+  /* İki satır tanımlıyoruz: 1. header için, 2. ana içerik için */
+  grid-template-rows: auto 1fr; 
+  min-height: 100vh;
+  background-color: #f0f2f5; /* Sayfa arka plan rengi */
+}
+
+/* Üst menü / Header */
+.app-header {
+  grid-row: 1; /* Grid'in 1. satırına yerleş */
+  background-color: #ffffff;
+  padding: 0 2rem; /* Sağ ve sol boşluklar */
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+
+  /* YAPIŞKAN HEADER: Sayfa aşağı kaydırıldığında header'ın yukarıda sabit kalmasını sağlar */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Diğer elemanların üzerinde kalması için */
+}
+
+/* Sayfaların gösterildiği ana içerik alanı */
+.main-content {
+  grid-row: 2; /* Grid'in 2. satırına yerleş */
+  overflow-y: auto; /* İçerik taşarsa, sadece bu alan scroll olur */
+  padding: 2rem; /* İçeriğe dört bir yandan boşluk verir */
+}
+
+/* Bu, App.jsx'teki <main> etiketinin içindeki .container class'ı olabilir.
+   Eğer .container adında genel bir class'ınız varsa bu padding'i ona da uygulayabilirsiniz.
+   Emin olmak için bu kuralı da ekleyelim. */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0; /* Ana .main-content zaten padding verdiği için bunu sıfırlayabiliriz */
+}
