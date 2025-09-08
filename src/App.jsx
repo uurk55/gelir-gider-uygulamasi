@@ -12,7 +12,7 @@ import { useAuth } from './context/AuthContext'; // YENİ: AuthContext'i import 
 
 // Sayfaları "lazy" olarak import ediyoruz (DOĞRU VE TAM HALİ)
 const GenelBakis = lazy(() => import('./pages/GenelBakis.jsx'));
-const IslemlerPage = lazy(() => import('./pages/Islemler/IslemlerPage.jsx'));
+const IslemlerPage = lazy(() => import('./pages/IslemlerPage.jsx'));
 const SabitOdemeler = lazy(() => import('./pages/SabitOdemeler.jsx'));
 const Raporlar = lazy(() => import('./pages/Raporlar.jsx'));
 const Butceler = lazy(() => import('./pages/Butceler.jsx'));
