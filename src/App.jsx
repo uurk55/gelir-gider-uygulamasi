@@ -10,13 +10,13 @@ import './components/Modal.css';
 import { useFinans } from './context/FinansContext';
 import { useAuth } from './context/AuthContext'; // YENİ: AuthContext'i import ediyoruz
 
-// Sayfaları "lazy" olarak import ediyoruz (Mevcut yapınız korundu)
-const GenelBakis = lazy(() => import('./pages/GenelBakis'));
-const IslemlerPage = lazy(() => import('./pages/Islemler/IslemlerPage'));
-const SabitOdemeler = lazy(() => import('./pages/SabitOdemeler'));
-const Raporlar = lazy(() => import('./pages/Raporlar'));
-const Butceler = lazy(() => import('./pages/Butceler'));
-const Ozellestir = lazy(() => import('./pages/Ozellestir'));
+// Sayfaları "lazy" olarak import ediyoruz
+const GenelBakis = lazy(() => import('./pages/GenelBakis.jsx'));
+const IslemlerPage = lazy(() => import('./pages/Islemler/IslemlerPage.jsx'));
+const SabitOdemeler = lazy(() => import('./pages/SabitOdemeler.jsx'));
+const Raporlar = lazy(() => import('./pages/Raporlar.jsx'));
+const Butceler = lazy(() => import('./pages/Butceler.jsx'));
+const Ozellestir = lazy(() => import('./pages/Ozellestir.jsx'));
 
 // YENİ: Giriş ve Kayıt sayfalarını import ediyoruz (Bunlar lazy olmamalı)
 import LoginPage from './pages/LoginPage';
