@@ -10,7 +10,7 @@ import './components/Modal.css';
 import { useFinans } from './context/FinansContext';
 import { useAuth } from './context/AuthContext'; // YENİ: AuthContext'i import ediyoruz
 
-// Sayfaları "lazy" olarak import ediyoruz
+// Sayfaları "lazy" olarak import ediyoruz (DOĞRU VE TAM HALİ)
 const GenelBakis = lazy(() => import('./pages/GenelBakis.jsx'));
 const IslemlerPage = lazy(() => import('./pages/Islemler/IslemlerPage.jsx'));
 const SabitOdemeler = lazy(() => import('./pages/SabitOdemeler.jsx'));
