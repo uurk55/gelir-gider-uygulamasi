@@ -3075,3 +3075,48 @@ body {
     margin: 0 auto;
     padding: 0; /* Ana .main-content zaten padding verdiği için bunu sıfırlayabiliriz */
 }
+/* src/App.css altına eklenecek stiller */
+
+.danger-zone {
+  border: 2px solid var(--danger-color);
+  border-radius: var(--border-radius);
+  background-color: rgba(192, 57, 43, 0.05);
+}
+
+.danger-zone h3 {
+  color: var(--danger-color);
+  padding-left: 1rem;
+}
+
+.danger-zone-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.danger-zone-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
+.danger-btn {
+  background-color: var(--danger-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.danger-btn:hover {
+  background-color: #a11d1d; /* Kırmızının daha koyu tonu */
+}
+
+.danger-btn:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}

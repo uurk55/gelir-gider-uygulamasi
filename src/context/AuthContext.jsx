@@ -1,14 +1,18 @@
-// src/context/AuthContext.jsx (MİSAFİR VERİSİNİ TAŞIMAK İÇİN GÜNCELLENDİ)
+// src/context/AuthContext.jsx (DOĞRU VE NİHAİ VERSİYON)
 
 import React, { useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  deleteUser,
+  updateProfile
 } from 'firebase/auth';
-import { useFinans } from './FinansContext'; // YENİ: FinansContext'i import ediyoruz
+import { doc, writeBatch } from 'firebase/firestore';
+import { useFinans } from './FinansContext';
+import toast from 'react-hot-toast';
 
 const AuthContext = React.createContext();
 
@@ -19,31 +23,54 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const finansContext = useFinans(); // YENİ: FinansContext'e erişim sağlıyoruz
+  const finansContext = useFinans();
 
-  // Yeni kullanıcı kaydı fonksiyonu
   async function signup(email, password) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    // YENİ: Kayıt başarılı olduktan sonra misafir verilerini taşı
     if (userCredential.user && finansContext) {
       await finansContext.transferGuestDataToFirestore(userCredential.user.uid);
     }
     return userCredential;
   }
 
-  // Mevcut kullanıcı giriş fonksiyonu
   async function login(email, password) {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    // YENİ: Giriş başarılı olduktan sonra misafir verilerini taşı
     if (userCredential.user && finansContext) {
       await finansContext.transferGuestDataToFirestore(userCredential.user.uid);
     }
     return userCredential;
   }
 
-  // Çıkış yapma fonksiyonu
   function logout() {
     return signOut(auth);
+  }
+
+  async function deleteAccount() {
+    if (!currentUser) throw new Error("Hesabı silmek için giriş yapmış olmalısınız.");
+    try {
+      const uid = currentUser.uid;
+      const batch = writeBatch(db);
+      const userSettingsRef = doc(db, 'users', uid);
+      batch.delete(userSettingsRef);
+      await batch.commit();
+      await deleteUser(currentUser);
+      toast.success("Hesabınız ve tüm verileriniz kalıcı olarak silindi.");
+    } catch (error) {
+      console.error("Hesap silme hatası:", error);
+      if (error.code === 'auth/requires-recent-login') {
+        toast.error("Bu hassas bir işlemdir. Lütfen çıkış yapıp tekrar giriş yaptıktan sonra deneyin.");
+      } else {
+        toast.error("Hesap silinirken bir hata oluştu.");
+      }
+      throw error;
+    }
+  }
+  
+  async function updateProfileName(newName) {
+    if (!currentUser) throw new Error("Profili güncellemek için giriş yapmış olmalısınız.");
+    await updateProfile(currentUser, { displayName: newName });
+    setCurrentUser(prevUser => ({ ...prevUser, displayName: newName }));
+    toast.success("Profil adınız güncellendi!");
   }
 
   useEffect(() => {
@@ -58,7 +85,9 @@ export function AuthProvider({ children }) {
     currentUser,
     signup,
     login,
-    logout
+    logout,
+    deleteAccount,
+    updateProfileName
   };
 
   return (
