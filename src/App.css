@@ -3120,3 +3120,174 @@ body {
   background-color: #e0e0e0;
   cursor: not-allowed;
 }
+/* ==========================================================================
+   YENİ MODERN DASHBOARD TASARIMI - TEMEL YAPI VE HEADER
+   ========================================================================== */
+
+/* 1. Genel Sayfa Yapısı ve Renk Paleti (Mevcut :root'u güncelleyebilir veya bunu kullanabiliriz) */
+:root {
+  --background-page: #f0f2f5; /* Sayfanın ana arka plan rengi (hafif gri/mavi) */
+  --background-card: #ffffff; /* Kartların arka plan rengi (beyaz) */
+  --primary-text: #1d2129;    /* Ana metin rengi (daha koyu) */
+  --secondary-text: #606770;  /* İkincil metin rengi (soluk gri) */
+  --primary-brand: #4a69bd;   /* Ana marka rengi (mavi tonu) */
+  --primary-brand-hover: #3b5998; /* Marka renginin hover hali */
+  --border-color: #dfe4ea;   /* Çerçeve rengi */
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Kart gölgesi */
+  --border-radius: 12px;     /* Kenar yuvarlaklığı */
+}
+
+/* Body stilini sıfırlayıp temel ayarları yapıyoruz */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background-page);
+  color: var(--primary-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 2. Ana Uygulama İskeleti (Layout) */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 3. Yeni, Şık ve Yapışkan Header (Üst Menü) */
+.app-header {
+  background-color: var(--background-card);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 64px;
+  border-bottom: 1px solid var(--border-color);
+
+  /* YAPIŞKAN HEADER: Sayfa kaydırıldığında yukarıda sabit kalır */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Diğer elemanların üzerinde kalması için */
+}
+
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-brand);
+}
+
+.header-nav {
+  display: flex;
+  height: 100%;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: var(--secondary-text);
+  padding: 0 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.header-nav a:hover {
+  color: var(--primary-brand);
+  background-color: #f5f6f7;
+}
+
+/* Aktif olan sekmeyi vurgulamak için */
+.header-nav a.active {
+  color: var(--primary-brand);
+  border-bottom-color: var(--primary-brand);
+}
+
+.header-actions .logout-button,
+.header-actions .login-button {
+  background-color: var(--primary-brand);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.header-actions .logout-button:hover,
+.header-actions .login-button:hover {
+  background-color: var(--primary-brand-hover);
+}
+
+
+/* 4. Ana İçerik Alanı */
+.main-content {
+  flex-grow: 1; /* Header'dan kalan tüm dikey boşluğu doldurur */
+  width: 100%;
+}
+
+.container {
+  max-width: 1200px; /* İçeriğin maksimum genişliği */
+  margin: 0 auto; /* Yatayda ortalar */
+  padding: 2rem; /* İçeriğe dört bir yandan boşluk verir */
+}
+/* ==========================================================================
+   "BOŞ DURUM" (EMPTY STATE) KARTI İÇİN STİLLER
+   ========================================================================== */
+
+.empty-state-container {
+  text-align: center;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+}
+
+.empty-state-container p {
+  margin: 0;
+  color: var(--secondary-text);
+  max-width: 400px; /* Metnin çok fazla yayılmasını engeller */
+  line-height: 1.5;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Küçük ve etkili butonlar için genel stiller */
+.primary-btn-small,
+.secondary-btn-small {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.primary-btn-small {
+  background-color: var(--primary-brand);
+  color: white;
+}
+.primary-btn-small:hover {
+  background-color: var(--primary-brand-hover);
+}
+
+.secondary-btn-small {
+  background-color: transparent;
+  color: var(--primary-brand);
+  border-color: var(--primary-brand);
+}
+.secondary-btn-small:hover {
+  background-color: rgba(74, 105, 189, 0.1); /* Marka renginin çok şeffaf hali */
+}
