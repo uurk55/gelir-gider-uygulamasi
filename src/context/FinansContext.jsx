@@ -223,7 +223,53 @@ export const FinansProvider = ({ children }) => {
     const genelHesapBakiyeleri = useMemo(() => { return hesaplar.reduce((acc, hesap) => { const toplamGiren = gelirler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.aliciHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); const toplamCikan = giderler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.gonderenHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); acc[hesap.id] = toplamGiren - toplamCikan; return acc; }, {}); }, [hesaplar, gelirler, giderler, transferler]);
     const toplamBakiye = useMemo(() => Object.values(genelHesapBakiyeleri).reduce((t, b) => t + b, 0), [genelHesapBakiyeleri]);
     const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
-    const butceDurumlari = useMemo(() => butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); const kalan = butce.limit - harcanan; const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; return { ...butce, harcanan, kalan, yuzde: Math.min(yuzdeRaw, 100), yuzdeRaw }; }), [butceler, filtrelenmisGiderler]);
+   // YENİ VE DÜZELTİLMİŞ HALİ
+// YENİ VE TAMAMLANMIŞ HALİ (RENK DURUMU EKLENDİ)
+const butceDurumlari = useMemo(() => {
+    const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1);
+    const oncekiAyGiderleri = giderler.filter(g => {
+        const giderTarihi = new Date(g.tarih);
+        return giderTarihi.getFullYear() === oncekiAyTarih.getFullYear() && giderTarihi.getMonth() === oncekiAyTarih.getMonth();
+    });
+
+    return butceler.map(butce => {
+        const harcanan = filtrelenmisGiderler
+            .filter(gider => gider.kategori.trim() === butce.kategori.trim())
+            .reduce((toplam, gider) => toplam + gider.tutar, 0);
+
+        const oncekiAyHarcanan = oncekiAyGiderleri
+            .filter(gider => gider.kategori.trim() === butce.kategori.trim())
+            .reduce((toplam, gider) => toplam + gider.tutar, 0);
+        
+        let degisimYuzdesi = 0;
+        if (oncekiAyHarcanan > 0) {
+            degisimYuzdesi = ((harcanan - oncekiAyHarcanan) / oncekiAyHarcanan) * 100;
+        } else if (harcanan > 0) {
+            degisimYuzdesi = 100;
+        }
+
+        const kalan = butce.limit - harcanan;
+        const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0;
+        
+        // <-- EKLENEN DURUM HESAPLAMASI
+        let durum = 'normal';
+        if (yuzdeRaw >= 100) {
+            durum = 'asildi'; // Kırmızı bar için
+        } else if (yuzdeRaw >= 90) {
+            durum = 'uyari'; // Sarı bar için
+        }
+        
+        return { 
+            ...butce, 
+            harcanan, 
+            kalan, 
+            yuzde: Math.min(yuzdeRaw, 100), 
+            yuzdeRaw,
+            degisimYuzdesi,
+            durum // <-- HESAPLANAN DURUMU OBJEYE EKLE
+        };
+    });
+}, [butceler, filtrelenmisGiderler, giderler, seciliAy, seciliYil]);
     const yaklasanOdemeler = useMemo(() => { const bugun = new Date(); const bugununGunu = bugun.getDate(); return sabitOdemeler.map(odeme => { let kalanGun = odeme.odemeGunu - bugununGunu; if (kalanGun < 0) kalanGun += new Date(bugun.getFullYear(), bugun.getMonth() + 1, 0).getDate(); return { ...odeme, kalanGun }; }).sort((a, b) => a.kalanGun - b.kalanGun).slice(0, 3); }, [sabitOdemeler]);
     const kategoriOzeti = useMemo(() => filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}), [filtrelenmisGiderler]);
     

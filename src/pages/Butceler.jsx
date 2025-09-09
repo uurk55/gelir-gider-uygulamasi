@@ -52,7 +52,8 @@ const ButceListItem = ({ butce }) => {
                     <button onClick={() => setIsEditing(!isEditing)} className="icon-btn duzenle-btn">
                         {isEditing ? <FaSave /> : <FaPen />}
                     </button>
-                    <button onClick={() => handleButceSil(butce.kategori)} className="icon-btn sil-btn">
+                    <button onClick={() => handleButceSil(butce.id)} className="icon-btn sil-btn">
+
                         <FaTrash />
                     </button>
                 </div>
