@@ -26,32 +26,37 @@ import SignupPage from './pages/SignupPage';
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title, PointElement, LineElement, Filler);
 
 
-// YENİ: ProtectedRoute Bileşeni
-// Bu bileşen, bir sayfanın sadece giriş yapmış kullanıcılar tarafından görülmesini sağlar.
-function ProtectedRoute({ children }) {
+// YENİ: ProtectedRoute'u daha esnek hale getiriyoruz
+// guestAllowed: Bu sayfanın misafir tarafından görülüp görülemeyeceğini belirtir.
+// premiumRequired: Bu sayfanın premium üyelik gerektirip gerektirmediğini belirtir (gelecek için).
+
+function ProtectedRoute({ children, guestAllowed = false }) {
   const { currentUser } = useAuth();
   
-  // Eğer kullanıcı giriş yapmamışsa, onu login sayfasına yönlendirir.
+  // Eğer kullanıcı giriş yapmamışsa...
   if (!currentUser) {
+    // ...ama bu sayfa misafir erişimine AÇIKSA, sayfayı göster.
+    if (guestAllowed) {
+      return children;
+    }
+    // ...ve sayfa misafir erişimine KAPALIYSA, login sayfasına yönlendir.
     return <Navigate to="/login" />;
   }
   
-  // Giriş yapmışsa, istenen sayfayı gösterir.
+  // Kullanıcı giriş yapmışsa her zaman sayfayı göster.
   return children;
 }
 
 
-// DEĞİŞİKLİK: AppContent bileşeninin adı LoggedInLayout olarak değiştirildi ve App içine taşındı
-// Bu, sadece giriş yapmış kullanıcıların göreceği ana uygulama düzenidir.
-function LoggedInLayout() {
+// LoggedInLayout'u artık "Ana Uygulama Düzeni" (AppLayout) olarak yeniden adlandırıyoruz,
+// çünkü artık hem giriş yapmış kullanıcılar hem de misafirler tarafından kullanılacak.
+function AppLayout() {
   const { isModalOpen } = useFinans();
-  const { logout } = useAuth(); // YENİ: AuthContext'ten logout fonksiyonunu alıyoruz
+  const { currentUser, logout } = useAuth();
 
-  // YENİ: Çıkış yapma işlemini yönetecek fonksiyon
   const handleLogout = async () => {
     try {
       await logout();
-      // Yönlendirmeye gerek yok, AuthContext'teki değişiklik App.jsx'i otomatik olarak güncelleyecek.
       toast.success("Başarıyla çıkış yapıldı.");
     } catch {
       toast.error("Çıkış yapılamadı.");
@@ -63,33 +68,49 @@ function LoggedInLayout() {
       <header className="app-header">
         <div className="header-logo">FinansTakip</div>
         <nav className="header-nav">
+          {/* NavLink'leri artık ProtectedRoute gibi sarmalamaya gerek yok,
+              çünkü hangi sayfanın görüneceğine Route kendisi karar verecek */}
           <NavLink to="/">Genel Bakış</NavLink>
           <NavLink to="/Islemler">İşlemler</NavLink>
-          <NavLink to="/ozellestir">Özelleştir</NavLink>
-          <NavLink to="/raporlar">Raporlar</NavLink>
-          <NavLink to="/sabit-odemeler">Sabit Ödemeler</NavLink>
-          <NavLink to="/butceler">Bütçeler</NavLink>
+          {/* Sadece giriş yapmış kullanıcıların görebileceği linkler */}
+          {currentUser && (
+            <>
+              <NavLink to="/ozellestir">Özelleştir</NavLink>
+              <NavLink to="/raporlar">Raporlar</NavLink>
+              <NavLink to="/sabit-odemeler">Sabit Ödemeler</NavLink>
+              <NavLink to="/butceler">Bütçeler</NavLink>
+            </>
+          )}
         </nav>
 
-        {/* YENİ: Çıkış Yap Butonu */}
-        <button onClick={handleLogout} className="logout-button">Çıkış Yap</button>
-
+        {/* Duruma göre "Çıkış Yap" veya "Giriş Yap" butonu göster */}
+        {currentUser ? (
+          <button onClick={handleLogout} className="logout-button">Çıkış Yap</button>
+        ) : (
+          <NavLink to="/login" className="login-button">Giriş Yap</NavLink>
+        )}
       </header>
 
       <main className="main-content">
          <Suspense fallback={<div className="sayfa-yukleniyor">Yükleniyor...</div>}>
           <Routes>
-            <Route path="/" element={<ProtectedRoute><GenelBakis /></ProtectedRoute>} />
-            <Route path="/Islemler" element={<ProtectedRoute><IslemlerPage /></ProtectedRoute>} />
+            {/* Misafirlerin görebileceği sayfalar */}
+            <Route path="/" element={<ProtectedRoute guestAllowed={true}><GenelBakis /></ProtectedRoute>} />
+            <Route path="/Islemler" element={<ProtectedRoute guestAllowed={true}><IslemlerPage /></ProtectedRoute>} />
+
+            {/* SADECE giriş yapmış kullanıcıların görebileceği sayfalar */}
             <Route path="/ozellestir" element={<ProtectedRoute><Ozellestir /></ProtectedRoute>} />
             <Route path="/raporlar" element={<ProtectedRoute><Raporlar /></ProtectedRoute>} />
             <Route path="/sabit-odemeler" element={<ProtectedRoute><SabitOdemeler /></ProtectedRoute>} />
             <Route path="/butceler" element={<ProtectedRoute><Butceler /></ProtectedRoute>} />
+            
+            {/* Yanlış bir adrese gidilirse ana sayfaya yönlendir */}
             <Route path="*" element={<Navigate to="/" />} />
           </Routes>
         </Suspense>
       </main>
 
+      {/* Modal, hala tüm uygulama içinde kullanılabilir olmalı */}
       <Modal title="İşlemi Sil">
         <p>Bu işlemi kalıcı olarak silmek istediğinizden emin misiniz?</p>
       </Modal>
@@ -97,32 +118,21 @@ function LoggedInLayout() {
   );
 }
 
-// DEĞİŞİKLİK: Ana App bileşeni artık tüm yönlendirme mantığını yönetiyor.
+// Ana App bileşeni artık çok daha basit.
 function App() {
-  const { currentUser } = useAuth();
-
   return (
     <>
       <Toaster position="top-center" reverseOrder={false} />
       
       <Routes>
-        {currentUser ? (
-          // Eğer kullanıcı giriş yapmışsa, ana uygulama düzenini ve korumalı rotaları göster
-          <Route path="/*" element={<LoggedInLayout />} />
-        ) : (
-          // Eğer kullanıcı giriş yapmamışsa, sadece login ve signup sayfalarını göster
-          <>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
-            {/* Giriş yapmamış kullanıcı başka bir adrese giderse login'e yönlendir */}
-            <Route path="*" element={<Navigate to="/login" />} />
-          </>
-        )}
+          {/* Giriş ve Kayıt sayfaları her zaman ana düzenin dışında olacak */}
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+
+          {/* Diğer tüm adresler (*), ana uygulama düzenini (AppLayout) render edecek */}
+          <Route path="/*" element={<AppLayout />} />
       </Routes>
     </>
   );
 }
-
-// DEĞİŞİKLİK: Buradaki Router ve FinansProvider sarmalayıcıları,
-// zaten main.jsx dosyasında olduğu için buradan kaldırıldı.
 export default App;

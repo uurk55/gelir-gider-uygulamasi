@@ -1,13 +1,14 @@
-// src/context/AuthContext.jsx
+// src/context/AuthContext.jsx (MİSAFİR VERİSİNİ TAŞIMAK İÇİN GÜNCELLENDİ)
 
 import React, { useContext, useState, useEffect } from 'react';
-import { auth } from '../firebase'; // firebase.js'ten auth'u import ediyoruz
+import { auth } from '../firebase';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signOut,
   onAuthStateChanged
 } from 'firebase/auth';
+import { useFinans } from './FinansContext'; // YENİ: FinansContext'i import ediyoruz
 
 const AuthContext = React.createContext();
 
@@ -17,16 +18,27 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
-  const [loading, setLoading] = useState(true); // Başlangıçta kimlik doğrulama durumu kontrol ediliyor
+  const [loading, setLoading] = useState(true);
+  const finansContext = useFinans(); // YENİ: FinansContext'e erişim sağlıyoruz
 
   // Yeni kullanıcı kaydı fonksiyonu
-  function signup(email, password) {
-    return createUserWithEmailAndPassword(auth, email, password);
+  async function signup(email, password) {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    // YENİ: Kayıt başarılı olduktan sonra misafir verilerini taşı
+    if (userCredential.user && finansContext) {
+      await finansContext.transferGuestDataToFirestore(userCredential.user.uid);
+    }
+    return userCredential;
   }
 
   // Mevcut kullanıcı giriş fonksiyonu
-  function login(email, password) {
-    return signInWithEmailAndPassword(auth, email, password);
+  async function login(email, password) {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    // YENİ: Giriş başarılı olduktan sonra misafir verilerini taşı
+    if (userCredential.user && finansContext) {
+      await finansContext.transferGuestDataToFirestore(userCredential.user.uid);
+    }
+    return userCredential;
   }
 
   // Çıkış yapma fonksiyonu
@@ -34,15 +46,12 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
-  // Firebase'in kendi kullanıcı durumu dinleyicisi.
-  // Bu sayede sayfa yenilense bile kullanıcı giriş yapmışsa bilgisi kaybolmaz.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user);
-      setLoading(false); // Kullanıcı durumu belirlendi, yükleme bitti.
+      setLoading(false);
     });
-
-    return unsubscribe; // Component kaldırıldığında listener'ı temizle
+    return unsubscribe;
   }, []);
 
   const value = {
@@ -52,8 +61,6 @@ export function AuthProvider({ children }) {
     logout
   };
 
-  // loading false olana kadar (yani kullanıcı durumu netleşene kadar) children'ı render etme.
-  // Bu, kullanıcı giriş yapmışken sayfa yenilendiğinde kısa bir anlığına giriş sayfasının görünmesini engeller.
   return (
     <AuthContext.Provider value={value}>
       {!loading && children}
