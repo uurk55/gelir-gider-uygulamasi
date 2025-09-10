@@ -1,14 +1,12 @@
-// src/App.jsx (EKSİK IMPORT'LARI VE HATALARI DÜZELTİLMİŞ NİHAİ VERSİYON)
+// src/App.jsx (TÜM HATALARI GİDERİLMİŞ NİHAİ VERSİYON)
 
 import { lazy, Suspense } from 'react';
-// YENİ: useNavigate'i react-router-dom'dan import ediyoruz
 import { Routes, Route, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title, PointElement, LineElement, Filler } from 'chart.js';
-// YENİ: toast'ı react-hot-toast'tan import ediyoruz
 import { Toaster, toast } from 'react-hot-toast';
 import './App.css';
 import Modal from './components/Modal';
-import './components/Modal.css';
+import './components/Modal.css'; 
 import { useFinans } from './context/FinansContext';
 import { useAuth } from './context/AuthContext';
 
@@ -28,7 +26,7 @@ import SignupPage from './pages/SignupPage';
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, Title, PointElement, LineElement, Filler);
 
 
-// ProtectedRoute bileşeni (değişiklik yok)
+// ProtectedRoute bileşeni
 function ProtectedRoute({ children, guestAllowed = false }) {
   const { currentUser } = useAuth();
   if (!currentUser) {
@@ -40,18 +38,19 @@ function ProtectedRoute({ children, guestAllowed = false }) {
   return children;
 }
 
-
-// Ana Uygulama Düzeni (AppLayout)
+// Ana Uygulama Düzeni (Layout)
 function AppLayout() {
-  const { isModalOpen } = useFinans();
+  // DEĞİŞİKLİK: handleCloseModal ve handleConfirmDelete'i buradan sildik.
+  // Çünkü Modal bileşeni bu işi kendi içinde hallediyor.
+  const { isModalOpen } = useFinans(); 
   const { currentUser, logout } = useAuth();
-  const navigate = useNavigate(); // Artık import edildiği için hata vermeyecek
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     try {
       await logout();
       navigate('/login');
-      toast.success("Başarıyla çıkış yapıldı."); // Artık import edildiği için hata vermeyecek
+      toast.success("Başarıyla çıkış yapıldı.");
     } catch {
       toast.error("Çıkış yapılamadı.");
     }
@@ -82,12 +81,10 @@ function AppLayout() {
           )}
         </div>
       </header>
-
       <main className="main-content">
         <div className="container">
           <Suspense fallback={<div className="sayfa-yukleniyor">Yükleniyor...</div>}>
             <Routes>
-              {/* Rotalar aynı kalıyor */}
               <Route path="/" element={<ProtectedRoute guestAllowed={true}><GenelBakis /></ProtectedRoute>} />
               <Route path="/Islemler" element={<ProtectedRoute guestAllowed={true}><IslemlerPage /></ProtectedRoute>} />
               <Route path="/ozellestir" element={<ProtectedRoute><Ozellestir /></ProtectedRoute>} />
@@ -100,18 +97,20 @@ function AppLayout() {
           </Suspense>
         </div>
       </main>
-
-      {/* DÜZELTME: Modal'ı isModalOpen kontrolü ile gösteriyoruz */}
+      
+      {/* DEĞİŞİKLİK: Modal çağrısı basitleştirildi. Artık prop göndermiyoruz. */}
       {isModalOpen && (
-        <Modal title="İşlemi Sil">
-            <p>Bu işlemi kalıcı olarak silmek istediğinizden emin misiniz?</p>
+        <Modal 
+          title="İşlemi Sil" 
+        >
+          <p>Bu işlemi kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.</p>
         </Modal>
       )}
     </div>
   );
 }
 
-// Ana App bileşeni (değişiklik yok)
+// Ana App bileşeni
 function App() {
   return (
     <>

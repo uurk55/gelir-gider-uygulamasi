@@ -1,11 +1,39 @@
-// src/components/GenelBakis/GelirKaynaklariKarti.jsx
+// src/components/GenelBakis/GelirKaynaklariKarti.jsx (Akıllı "Boş Durum" Eklenmiş Hali)
 
 import { Bar } from 'react-chartjs-2';
 import { useFinans } from '../../context/FinansContext';
+import { useAuth } from '../../context/AuthContext'; // YENİ: AuthContext'i import ediyoruz
+import { Link } from 'react-router-dom'; // YENİ: Link'i import ediyoruz
 import { formatCurrency } from '../../utils/formatters';
 
+// YENİ: Bu kart için özel "Boş Durum" bileşeni
+function EmptyState() {
+    const { currentUser } = useAuth();
+
+    if (currentUser) {
+        return (
+            <div className="empty-state-container">
+                <p>Bu ay için gösterilecek gelir verisi bulunmuyor.</p>
+                <Link to="/islemler" className="primary-btn-small">
+                    İlk Gelirini Ekle
+                </Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="empty-state-container">
+            <p>Gelir kaynaklarınızı grafik üzerinde görmek için giriş yapın.</p>
+            <div className="empty-state-actions">
+                <Link to="/login" className="primary-btn-small">Giriş Yap</Link>
+                <Link to="/signup" className="secondary-btn-small">Kayıt Ol</Link>
+            </div>
+        </div>
+    );
+}
+
+
 function GelirKaynaklariKarti() {
-    // Bu bileşenin ihtiyacı olan verileri çekiyoruz
     const { 
         gelirGrafikVerisi, 
         filtrelenmisGelirler,
@@ -13,24 +41,17 @@ function GelirKaynaklariKarti() {
         seciliAy
     } = useFinans();
 
-    // Eğer gösterilecek gelir yoksa, bu kartı hiç göstermeyelim.
-    if (!filtrelenmisGelirler || filtrelenmisGelirler.length === 0) {
-        return null;
-    }
-
     const ayAdi = new Date(seciliYil, seciliAy - 1, 1).toLocaleString('tr-TR', { month: 'long' });
 
-    // Grafik ayarlarını (options) doğrudan bu bileşene taşıdık
+    // Grafik ayarları (options)
     const gelirGrafikOptions = {
         indexAxis: 'y',
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: false, // Kartın yüksekliğine uyması için false olmalı
         plugins: {
             legend: { display: false },
-            title: {
-                display: true, text: `${ayAdi} Ayı Gelir Kaynakları`, padding: { bottom: 25 },
-                font: { family: "'Roboto', sans-serif", size: 20, weight: '600' }, color: '#2f3542'
-            },
+            // YENİ: Başlığı artık kartın kendi başlığı yönetecek, buradan kaldırıyoruz.
+            title: { display: false },
             tooltip: {
                 backgroundColor: '#2f3542', titleColor: '#ffffff', bodyColor: '#ffffff', borderRadius: 8, padding: 10,
                 callbacks: {
@@ -53,7 +74,20 @@ function GelirKaynaklariKarti() {
 
     return (
         <div className="card">
-            <Bar options={gelirGrafikOptions} data={gelirGrafikVerisi} />
+            {/* YENİ: Kart başlığını tutarlılık için buraya taşıdık */}
+            <div className="card-header"><h2>{ayAdi} Ayı Gelir Kaynakları</h2></div>
+            
+            {/* YENİ MANTIK: filtrelenmisGelirler dizisi boş mu diye kontrol ediyoruz */}
+            {(!filtrelenmisGelirler || filtrelenmisGelirler.length === 0) ? (
+                // Eğer BOŞSA, EmptyState bileşenini göster
+                <EmptyState />
+            ) : (
+                // Eğer DOLUYSA, mevcut bar grafiğini göster
+                // YENİ: Grafiğin yüksekliğini ayarlamak için bir sarmalayıcı ekledik
+                <div style={{ height: '300px', position: 'relative' }}>
+                    <Bar options={gelirGrafikOptions} data={gelirGrafikVerisi} />
+                </div>
+            )}
         </div>
     );
 }

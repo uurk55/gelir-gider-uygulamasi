@@ -3291,3 +3291,102 @@ body {
 .secondary-btn-small:hover {
   background-color: rgba(74, 105, 189, 0.1); /* Marka renginin çok şeffaf hali */
 }
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI - MİNİ KART İYİLEŞTİRMELERİ
+   ========================================================================== */
+
+/* Mini kartlar içindeki boş durumun padding'ini azaltıyoruz */
+.empty-state-container.mini-kart-empty {
+  padding: 1rem 0.5rem;
+  margin-top: 0;
+  gap: 0.75rem;
+}
+
+.empty-state-container.mini-kart-empty p {
+    font-size: 0.9rem; /* Yazıyı biraz küçültelim */
+}
+
+/* Yaklaşan ödemeler listesindeki "kalan gün" etiketinin stili */
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.85rem;
+  background-color: #f1f2f6;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: var(--primary-text);
+  white-space: nowrap; /* "gün sonra" yazısının alta kaymasını engeller */
+}
+
+/* 3 gün veya daha az kalan ödemeler için UYARI rengi */
+.yaklasan-odeme-item .kalan-gun.uyari {
+  background-color: var(--warning-color);
+  color: white;
+  font-weight: 700;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - ÇOKLU SEÇİM STİLLERİ
+   ========================================================================== */
+
+.liste-eylemler {
+  display: flex;
+  gap: 1rem;
+}
+
+.islem-listesi-yeni li.secilebilir {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.islem-listesi-yeni li.secilebilir:hover {
+  background-color: #f0f2f5;
+}
+
+.islem-listesi-yeni li.secili {
+  background-color: #e7f3ff !important; /* Mavi tonda bir seçim rengi */
+  border-left-color: #007bff !important;
+}
+
+.secim-kutusu {
+  margin-right: 1rem;
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.islem-listesi-yeni li.secili .secim-kutusu {
+    color: #0056b3;
+}
+
+/* Sayfanın üstündeki eylem çubuğu */
+.secim-eylem-cubugu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: var(--border-radius);
+  margin-top: 1.5rem;
+}
+
+.secim-eylem-cubugu span {
+  font-weight: 600;
+}
+
+.secim-eylem-cubugu .secim-eylem-btn,
+.secim-eylem-cubugu .danger-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.secim-eylem-cubugu .danger-btn {
+  border-color: #ffdddd;
+  background-color: var(--danger-color);
+}
+.secim-eylem-cubugu .danger-btn:disabled {
+  background-color: #a0a0a0;
+  border-color: #a0a0a0;
+}
