@@ -3390,3 +3390,23 @@ body {
   background-color: #a0a0a0;
   border-color: #a0a0a0;
 }
+/* ==========================================================================
+   YAKLAŞAN ÖDEMELER KARTI - TUTAR GÖSTERİMİ İÇİN STİLLER
+   ========================================================================== */
+
+.yaklasan-odeme-item .odeme-detay {
+  display: flex;
+  flex-direction: column; /* Açıklama ve tutarı alt alta getirir */
+  align-items: flex-start; /* Sola hizalar */
+  gap: 2px; /* Aralarına çok hafif bir boşluk koyar */
+}
+
+.yaklasan-odeme-item .odeme-aciklama {
+  font-weight: 500; /* Açıklamayı biraz daha belirgin yapar */
+  color: var(--primary-text);
+}
+
+.yaklasan-odeme-item .odeme-tutar {
+  font-size: 0.85rem; /* Tutarı biraz daha küçük yapar */
+  color: var(--secondary-text); /* Rengini soluklaştırır */
+}
