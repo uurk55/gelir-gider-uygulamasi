@@ -1,5 +1,5 @@
 // src/context/FinansContext.jsx (TOPLU SİLME FONKSİYONU EKLENMİŞ NİHAİ VERSİYON)
-
+import Papa from 'papaparse';
 import { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { arrayMove } from '@dnd-kit/sortable';
@@ -290,12 +290,96 @@ export const FinansProvider = ({ children }) => {
         await deleteDoc(doc(db, 'users', currentUser.uid, collectionName, id));
     };
 
+const handleButceGuncelle = async (id, guncelButce) => {
+    // Misafir Modu
+    if (!currentUser) {
+        const key = 'guest_butceler';
+        const currentData = getLocalData(key, []);
+        const updatedData = currentData.map(item => 
+            item.id === id ? { ...item, ...guncelButce } : item
+        );
+        setLocalData(key, updatedData);
+        setButceler(updatedData);
+        toast.success("Bütçe güncellendi! (Misafir)");
+        return;
+    }
+
+    // Giriş Yapmış Kullanıcı Modu
+    try {
+        const docRef = doc(db, 'users', currentUser.uid, 'butceler', id);
+        await updateDoc(docRef, guncelButce);
+        toast.success("Bütçe başarıyla güncellendi.");
+    } catch (error) {
+        console.error("Bütçe güncelleme hatası:", error);
+        toast.error("Bütçe güncellenirken bir hata oluştu.");
+    }
+};
+
     const handleButceEkle = (yeniButce) => addOrUpdateDocument('butceler', yeniButce).then(() => toast.success("Bütçe eklendi!"));
     const handleButceSil = (id) => deleteDocument('butceler', id).then(() => toast.error("Bütçe silindi."));
     const handleSabitOdemeEkle = (yeniOdeme) => addOrUpdateDocument('sabitOdemeler', yeniOdeme).then(() => toast.success("Sabit ödeme eklendi!"));
     const handleSabitOdemeSil = (id) => deleteDocument('sabitOdemeler', id).then(() => toast.error("Sabit ödeme silindi."));
     const handleSabitOdemeGuncelle = (id, guncelOdeme) => addOrUpdateDocument('sabitOdemeler', guncelOdeme, id).then(() => toast.success("Sabit ödeme güncellendi!"));
-    const handleVeriIndir = () => {};
+ const handleVeriIndir = () => {
+        if (!gelirler && !giderler && !transferler) {
+            return toast.error("İndirilecek veri bulunmuyor.");
+        }
+
+        const toastId = toast.loading("Veriler hazırlanıyor...");
+
+        try {
+            // Tüm işlemleri tek bir listede topla ve CSV için hazırla
+            const raporVerisi = [
+                ...gelirler.map(item => ({
+                    Tip: 'Gelir',
+                    Tarih: item.tarih,
+                    Aciklama: item.aciklama,
+                    Kategori: item.kategori,
+                    Hesap: hesaplar.find(h => h.id === item.hesapId)?.ad || 'Bilinmiyor',
+                    Tutar: item.tutar
+                })),
+                ...giderler.map(item => ({
+                    Tip: 'Gider',
+                    Tarih: item.tarih,
+                    Aciklama: item.aciklama,
+                    Kategori: item.kategori,
+                    Hesap: hesaplar.find(h => h.id === item.hesapId)?.ad || 'Bilinmiyor',
+                    Tutar: -item.tutar // Giderleri negatif olarak göster
+                })),
+                ...transferler.map(item => ({
+                    Tip: 'Transfer',
+                    Tarih: item.tarih,
+                    Aciklama: item.aciklama || 'Transfer',
+                    Kategori: '',
+                    Hesap: `${hesaplar.find(h => h.id === item.gonderenHesapId)?.ad || '?'} -> ${hesaplar.find(h => h.id === item.aliciHesapId)?.ad || '?'}`,
+                    Tutar: -item.tutar // Transferler de bir çıkış olarak görülebilir
+                }))
+            ];
+
+            // Tarihe göre sırala
+            raporVerisi.sort((a, b) => new Date(b.Tarih) - new Date(a.Tarih));
+
+            // PapaParse ile CSV'ye çevir
+            const csv = Papa.unparse(raporVerisi);
+
+            // İndirme işlemini tetikle
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            const today = new Date().toISOString().slice(0, 10);
+            link.setAttribute("download", `FinansTakip-Rapor-${today}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            toast.success("Veriler başarıyla indirildi!", { id: toastId });
+
+        } catch (error) {
+            console.error("CSV indirme hatası:", error);
+            toast.error("Veriler indirilirken bir hata oluştu.", { id: toastId });
+        }
+    };
 
     // --- YENİ: Toplu Silme Fonksiyonu ---
     const handleTopluSil = async (silinecekIdBilgileri) => {
@@ -367,7 +451,7 @@ const toplamBakiye = useMemo(() => {
         addIslem, updateIslem, openDeleteModal, handleCloseModal, handleConfirmDelete, handleTopluSil,
         handleHesapEkle, handleHesapSil, handleHesapGuncelle,
         handleKategoriEkle, handleKategoriSil, handleKategoriSirala, handleKategoriGuncelle,
-        handleButceEkle, handleButceSil,
+        handleButceEkle, handleButceSil, handleButceGuncelle,
         handleSabitOdemeEkle, handleSabitOdemeSil, handleSabitOdemeGuncelle,
         handleVeriIndir,
         seciliAy, setSeciliAy, seciliYil, setSeciliYil,

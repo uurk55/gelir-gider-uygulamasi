@@ -1,35 +1,40 @@
-// src/pages/Ozellestir.jsx (TÜM DÜZELTMELERİ İÇEREN TAM VE EKSİKSİZ VERSİYON)
+// src/pages/Ozellestir.jsx (DAHA İYİ DÜZENLEME AKIŞI İÇİN GÜNCELLENDİ)
 import React, { useState } from 'react';
 import { useFinans } from '../context/FinansContext';
-import { FaTrash, FaGripVertical, FaPen } from 'react-icons/fa'; // EKSİK OLAN FaPen İKONUNU EKLEDİM
+import { FaTrash, FaGripVertical, FaPen, FaSave } from 'react-icons/fa'; // YENİ: FaSave ikonu eklendi
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 // --- HESAP YÖNETİMİ BİLEŞENLERİ ---
 
-// Her bir hesap satırının mantığını ve görünümünü yöneten alt bileşen
 const HesapListItem = ({ hesap }) => {
     const { handleHesapSil, handleHesapGuncelle, hesaplar } = useFinans();
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(hesap.ad);
 
     const handleSave = () => {
-        if (name.trim() && name !== hesap.ad) {
-            handleHesapGuncelle(hesap.id, name);
+        if (name.trim() && name.trim() !== hesap.ad) {
+            handleHesapGuncelle(hesap.id, name.trim());
         } else {
-            // Eğer isim boş bırakıldıysa veya değişmediyse eski haline dön
             setName(hesap.ad);
         }
         setIsEditing(false);
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            handleSave();
-        } else if (e.key === 'Escape') {
+        if (e.key === 'Enter') handleSave();
+        else if (e.key === 'Escape') {
             setName(hesap.ad);
             setIsEditing(false);
+        }
+    };
+
+    const handleEditToggle = () => {
+        if (isEditing) {
+            handleSave(); // Eğer zaten düzenleme modundaysa, kaydet
+        } else {
+            setIsEditing(true); // Değilse, düzenleme moduna geç
         }
     };
 
@@ -37,11 +42,10 @@ const HesapListItem = ({ hesap }) => {
         <li className="yonetim-listesi-item">
             {isEditing ? (
                 <input
-                    className="form-modern-input-inline" // Stillerin daha iyi olması için bir class ekleyebiliriz
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    onBlur={handleSave}
+                    onBlur={handleSave} // Input'tan çıkıldığında otomatik kaydet
                     onKeyDown={handleKeyDown}
                     autoFocus
                 />
@@ -49,10 +53,12 @@ const HesapListItem = ({ hesap }) => {
                 <span>{hesap.ad}</span>
             )}
             <div className="buton-grubu">
-                <button onClick={() => setIsEditing(!isEditing)} className="icon-btn duzenle-btn" aria-label="Düzenle">
-                    <FaPen />
+                {/* DEĞİŞİKLİK: Buton artık hem düzenleme modunu açıyor hem de kaydediyor */}
+                <button onClick={handleEditToggle} className="icon-btn duzenle-btn" aria-label={isEditing ? 'Kaydet' : 'Düzenle'}>
+                    {isEditing ? <FaSave /> : <FaPen />}
                 </button>
-                {hesaplar.length > 1 && (
+                {/* Silme butonu, düzenleme modunda değilken görünür */}
+                {!isEditing && hesaplar.length > 1 && (
                     <button onClick={() => handleHesapSil(hesap.id)} className="icon-btn sil-btn" aria-label="Sil">
                         <FaTrash />
                     </button>
@@ -62,7 +68,6 @@ const HesapListItem = ({ hesap }) => {
     );
 };
 
-// Hesaplar sekmesinin genel yapısını oluşturan ana bileşen
 const HesaplarYonetimi = () => {
     const { hesaplar, handleHesapEkle } = useFinans();
     const [yeniHesapAdi, setYeniHesapAdi] = useState('');
@@ -103,19 +108,19 @@ const HesaplarYonetimi = () => {
 };
 
 
-// --- KATEGORİ YÖNETİMİ BİLEŞENLERİ (GERİ EKLEDİM) ---
+// --- KATEGORİ YÖNETİMİ BİLEŞENLERİ ---
 
 function SortableKategoriItem({ tip, kategori, handleSil }) {
     const { handleKategoriGuncelle } = useFinans();
     const [isEditing, setIsEditing] = useState(false);
     const [name, setName] = useState(kategori);
 
-    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: kategori, disabled: isEditing }); // Düzenleme modundayken sürüklemeyi devre dışı bırak
-    const style = { transform: CSS.Transform.toString(transform), transition, };
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: kategori, disabled: isEditing });
+    const style = { transform: CSS.Transform.toString(transform), transition };
 
     const handleSave = () => {
-        if (name.trim() && name !== kategori) {
-            handleKategoriGuncelle(tip, kategori, name);
+        if (name.trim() && name.trim() !== kategori) {
+            handleKategoriGuncelle(tip, kategori, name.trim());
         } else {
             setName(kategori);
         }
@@ -123,11 +128,18 @@ function SortableKategoriItem({ tip, kategori, handleSil }) {
     };
 
     const handleKeyDown = (e) => {
-        if (e.key === 'Enter') {
-            handleSave();
-        } else if (e.key === 'Escape') {
+        if (e.key === 'Enter') handleSave();
+        else if (e.key === 'Escape') {
             setName(kategori);
             setIsEditing(false);
+        }
+    };
+
+    const handleEditToggle = () => {
+        if (isEditing) {
+            handleSave();
+        } else {
+            setIsEditing(true);
         }
     };
 
@@ -152,12 +164,16 @@ function SortableKategoriItem({ tip, kategori, handleSil }) {
             </div>
             {kategori !== 'Diğer' && (
                 <div className="buton-grubu">
-                    <button onClick={() => setIsEditing(!isEditing)} className="icon-btn duzenle-btn" aria-label="Düzenle">
-                        <FaPen />
+                    {/* DEĞİŞİKLİK: Buton artık hem düzenleme modunu açıyor hem de kaydediyor */}
+                    <button onClick={handleEditToggle} className="icon-btn duzenle-btn" aria-label={isEditing ? 'Kaydet' : 'Düzenle'}>
+                        {isEditing ? <FaSave /> : <FaPen />}
                     </button>
-                    <button onClick={() => handleSil(tip, kategori)} className="icon-btn sil-btn" aria-label="Sil">
-                        <FaTrash />
-                    </button>
+                    {/* Silme butonu, düzenleme modunda değilken görünür */}
+                    {!isEditing && (
+                        <button onClick={() => handleSil(tip, kategori)} className="icon-btn sil-btn" aria-label="Sil">
+                            <FaTrash />
+                        </button>
+                    )}
                 </div>
             )}
         </li>
@@ -202,7 +218,8 @@ const KategorilerYonetimi = () => {
     );
 };
 
-// --- ANA ÖZELLEŞTİR BİLEŞENİ (GERİ EKLEDİM) ---
+
+// --- ANA ÖZELLEŞTİR BİLEŞENİ ---
 
 function Ozellestir() {
     const [aktifSekme, setAktifSekme] = useState('hesaplar');

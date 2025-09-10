@@ -1,5 +1,5 @@
-// src/pages/Butceler.jsx (DÜZENLEME ÖZELLİĞİ EKLENMİŞ NİHAİ VERSİYON)
-import { useState } from 'react';
+// src/pages/Butceler.jsx (DÜZENLEME HATASI GİDERİLMİŞ NİHAİ VERSİYON)
+import { useState, useEffect } from 'react'; // useEffect'i import et
 import toast from 'react-hot-toast';
 import { useFinans } from '../context/FinansContext';
 import { FaTrash, FaPen, FaSave } from 'react-icons/fa';
@@ -7,18 +7,22 @@ import { formatCurrency } from '../utils/formatters';
 
 // Her bir bütçe satırını yönetecek alt bileşen
 const ButceListItem = ({ butce }) => {
-    const { handleButceSil, handleButceEkle } = useFinans(); // handleButceEkle'yi güncelleme için de kullanacağız
+    // DEĞİŞİKLİK: Yeni handleButceGuncelle fonksiyonunu context'ten çekiyoruz
+    const { handleButceSil, handleButceGuncelle } = useFinans(); 
     const [isEditing, setIsEditing] = useState(false);
     const [limit, setLimit] = useState(butce.limit);
 
     const handleSave = () => {
-        if (limit > 0 && limit !== butce.limit) {
-            handleButceEkle({ kategori: butce.kategori, limit: parseFloat(limit) });
+        // Değişiklik var mı ve limit geçerli mi diye kontrol et
+        if (limit > 0 && parseFloat(limit) !== butce.limit) {
+            // DEĞİŞİKLİK: Artık handleButceEkle yerine handleButceGuncelle'yi çağırıyoruz.
+            // İlk argüman bütçenin ID'si, ikincisi ise güncellenecek alanları içeren obje.
+            handleButceGuncelle(butce.id, { limit: parseFloat(limit) });
         } else if (limit <= 0) {
             toast.error("Bütçe limiti 0'dan büyük olmalıdır.");
-            setLimit(butce.limit); // Eski değere geri dön
+            setLimit(butce.limit); // Hata durumunda eski değere geri dön
         }
-        setIsEditing(false);
+        setIsEditing(false); // Her durumda düzenleme modunu kapat
     };
 
     const handleKeyDown = (e) => {
@@ -52,8 +56,8 @@ const ButceListItem = ({ butce }) => {
                     <button onClick={() => setIsEditing(!isEditing)} className="icon-btn duzenle-btn">
                         {isEditing ? <FaSave /> : <FaPen />}
                     </button>
+                    {/* Silme butonunda 'butce.id' kullanımı zaten doğruydu, o yüzden dokunmuyoruz. */}
                     <button onClick={() => handleButceSil(butce.id)} className="icon-btn sil-btn">
-
                         <FaTrash />
                     </button>
                 </div>
@@ -65,8 +69,21 @@ const ButceListItem = ({ butce }) => {
 
 function Butceler() {
   const { giderKategorileri, butceler, handleButceEkle } = useFinans();
-  const [kategori, setKategori] = useState(giderKategorileri[0]);
+  // DEĞİŞİKLİK: useState'e fonksiyon vererek başlangıç değerinin sadece bir kez hesaplanmasını sağlıyoruz
+  const [kategori, setKategori] = useState(() => giderKategorileri.filter(kat => kat !== 'Diğer' && !butceler.some(b => b.kategori === kat))[0] || '');
   const [limit, setLimit] = useState('');
+
+  // DEĞİŞİKLİK: bütçeler veya kategoriler değiştiğinde, seçili kategoriyi güncelle
+  useEffect(() => {
+    const bütçesiOlmayanKategoriler = giderKategorileri.filter(kat => 
+        kat !== 'Diğer' && !butceler.some(b => b.kategori === kat)
+    );
+    // Eğer mevcut seçili kategori artık listede yoksa veya hiç seçilmemişse, listeyi güncelle
+    if (!bütçesiOlmayanKategoriler.includes(kategori)) {
+        setKategori(bütçesiOlmayanKategoriler[0] || '');
+    }
+  }, [butceler, giderKategorileri, kategori]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -76,22 +93,16 @@ function Butceler() {
     }
     handleButceEkle({ kategori, limit: parseFloat(limit) });
     setLimit('');
-    setKategori(giderKategorileri[0]);
+    // Kategori otomatik olarak useEffect tarafından güncellenecek
   };
 
   if (!giderKategorileri || !butceler) {
       return <div>Yükleniyor...</div>
   }
   
-  // Bütçesi olmayan kategorileri formda göstermek için filtrele
   const bütçesiOlmayanKategoriler = giderKategorileri.filter(kat => 
       kat !== 'Diğer' && !butceler.some(b => b.kategori === kat)
   );
-
-  // Formun state'ini, filtrelenmiş listedeki ilk elemana ayarla
-  if (kategori !== bütçesiOlmayanKategoriler[0] && bütçesiOlmayanKategoriler.length > 0) {
-      setKategori(bütçesiOlmayanKategoriler[0]);
-  }
 
 
   return (
@@ -124,8 +135,9 @@ function Butceler() {
           <h3>Mevcut Bütçeler</h3>
           {butceler.length === 0 ? <p style={{marginTop: '1rem', color: 'var(--secondary-text)'}}>Henüz bir bütçe belirlemediniz.</p> : (
             <ul className="yonetim-listesi">
+              {/* DEĞİŞİKLİK: key olarak daha güvenilir olan butce.id'yi kullanıyoruz */}
               {butceler.map(butce => (
-                <ButceListItem key={butce.kategori} butce={butce} />
+                <ButceListItem key={butce.id} butce={butce} />
               ))}
             </ul>
           )}

@@ -1,9 +1,67 @@
-// src/pages/Raporlar.jsx (TARİH SEÇİCİLİ VE İYİLEŞTİRİLMİŞ NİHAİ VERSİYON)
+// src/pages/Raporlar.jsx (YENİ RAPOR TABLOSU EKLENMİŞ, TAM VE EKSİKSİZ VERSİYON)
 import { Line } from 'react-chartjs-2';
 import { useFinans } from '../context/FinansContext';
 import { formatCurrency } from '../utils/formatters';
 import { FaDownload } from 'react-icons/fa';
-import TarihSecici from '../components/TarihSecici'; // TarihSecici'yi geri getirdik
+
+// YENİ: Kategori Detay Analizi için özel bir bileşen
+function KategoriDetayTablosu() {
+    // Bu rapor için TÜM giderlere ihtiyacımız var, filtrelenmemiş.
+    const { giderler } = useFinans();
+    
+    // Toplam gideri bu bileşen içinde yeniden hesaplıyoruz
+    const toplamTumGiderler = giderler.reduce((acc, gider) => acc + gider.tutar, 0);
+
+    if (giderler.length === 0) {
+        return <p style={{textAlign: 'center', padding: '1rem 0', color: 'var(--secondary-text)'}}>Analiz için gösterilecek gider verisi bulunmuyor.</p>;
+    }
+
+    const kategoriAnalizi = giderler.reduce((acc, gider) => {
+        const { kategori, tutar } = gider;
+        if (!acc[kategori]) {
+            acc[kategori] = { toplam: 0, sayi: 0 };
+        }
+        acc[kategori].toplam += tutar;
+        acc[kategori].sayi += 1;
+        return acc;
+    }, {});
+
+    const analizListesi = Object.entries(kategoriAnalizi)
+        .map(([kategori, { toplam, sayi }]) => ({
+            kategori,
+            toplam,
+            sayi,
+            ortalama: toplam / sayi,
+            yuzde: toplamTumGiderler > 0 ? (toplam / toplamTumGiderler) * 100 : 0,
+        }))
+        .sort((a, b) => b.toplam - a.toplam);
+
+    return (
+        <table className="yillik-rapor-tablosu">
+            <thead>
+                <tr>
+                    <th>Kategori</th>
+                    <th style={{textAlign: 'right'}}>Toplam Harcama</th>
+                    <th style={{textAlign: 'right'}}>İşlem Sayısı</th>
+                    <th style={{textAlign: 'right'}}>Ortalama Harcama</th>
+                    <th style={{textAlign: 'right'}}>Yüzdelik Pay</th>
+                </tr>
+            </thead>
+            <tbody>
+                {analizListesi.map(item => (
+                    <tr key={item.kategori}>
+                        <td>{item.kategori}</td>
+                        <td className="gider-renk">{formatCurrency(item.toplam)}</td>
+                        <td>{item.sayi} adet</td>
+                        <td>{formatCurrency(item.ortalama)}</td>
+                        <td>%{item.yuzde.toFixed(1)}</td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+    );
+}
+
 
 function Raporlar() {
   const { trendVerisi, yillikRaporVerisi, seciliYil, handleVeriIndir } = useFinans();
@@ -59,7 +117,6 @@ function Raporlar() {
           beginAtZero: true,
           ticks: {
              callback: function(value) {
-                // Y eksenindeki sayıları daha kısa formatta göstermek için (Örn: 10k ₺)
                 if (value >= 1000) {
                     return `${value / 1000}k ₺`;
                 }
@@ -71,11 +128,7 @@ function Raporlar() {
   };
 
   return (
-    <>
-      {/* TarihSecici'yi isteğin üzerine en üste geri ekledik. */}
-      {/* Bu, kullanıcının yılı değiştirmesine olanak tanır ve aşağıdaki tablo anında güncellenir. */}
-      <TarihSecici />
-      
+    <div className="raporlar-sayfasi">
       <div className="card">
         <div className="card-header">
            <h2>Rapor Araçları</h2>
@@ -91,6 +144,13 @@ function Raporlar() {
         <div style={{ height: '400px', position: 'relative' }}>
           <Line options={trendGrafikOptions} data={trendGrafikVerisi} />
         </div>
+      </div>
+      
+      <div className="card">
+          <div className="card-header">
+            <h2>Kategori Detay Analizi (Tüm Zamanlar)</h2>
+          </div>
+          <KategoriDetayTablosu />
       </div>
 
       {yillikRaporVerisi.aylar.length > 0 ? (
@@ -136,7 +196,7 @@ function Raporlar() {
           <p>{seciliYil} yılında gösterilecek veri bulunmuyor.</p>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
