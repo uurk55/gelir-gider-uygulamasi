@@ -1,5 +1,5 @@
-// src/pages/GenelBakis.jsx (YAKLAŞAN ÖDEMELER KARTINA TUTAR EKLENDİ)
-
+// src/pages/GenelBakis.jsx (SELAMLAMA MESAJI EKLENMİŞ NİHAİ VERSİYON)
+import { FaPiggyBank, FaBell, FaRegHandPeace } from 'react-icons/fa';
 import { useFinans } from '../context/FinansContext';
 import { useAuth } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
@@ -9,7 +9,6 @@ import HarcamaDagilimiKarti from '../components/GenelBakis/HarcamaDagilimiKarti'
 import HesapGiderleriKarti from '../components/GenelBakis/HesapGiderleriKarti';
 import GelirKaynaklariKarti from '../components/GenelBakis/GelirKaynaklariKarti';
 import ButceDurumlariKarti from '../components/GenelBakis/ButceDurumlariKarti';
-import { FaPiggyBank, FaBell } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatters';
 
 function YaklasanOdemelerEmptyState() {
@@ -40,13 +39,31 @@ function GenelBakis() {
         toplamBakiye, 
         yaklasanOdemeler
     } = useFinans();
+    
+    // YENİ: currentUser bilgisini AuthContext'ten çekiyoruz
+    const { currentUser } = useAuth();
 
     if (toplamBakiye === undefined || !yaklasanOdemeler) {
-        return <div>Veriler yükleniyor...</div>;
+        return 
+<div>Veriler yükleniyor...</div>;
     }
+
+    // YENİ: Görünen adı veya e-postanın bir kısmını alıyoruz
+    const kullaniciAdi = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Kullanıcı';
 
     return (
         <>
+            {/* YENİ: Selamlama Başlığı */}
+            <div className="selamlama-kutusu">
+    <div className="selamlama-ikon">
+    <FaRegHandPeace />
+</div>
+    <div className="selamlama-metin">
+        <h1>Hoş Geldin, {kullaniciAdi}!</h1>
+        <p>Finansal durumuna genel bir bakış atalım.</p>
+    </div>
+</div>
+
             <TarihSecici />
             <div className="yeni-kartlar-grid">
                 <div className="card mini-kart">
@@ -60,12 +77,10 @@ function GenelBakis() {
                             <ul className="yaklasan-odeme-listesi">
                                 {yaklasanOdemeler.map(odeme => (
                                     <li key={odeme.id} className="yaklasan-odeme-item">
-                                        {/* DEĞİŞİKLİK BURADA BAŞLIYOR */}
                                         <div className="odeme-detay">
                                             <span className="odeme-aciklama">{odeme.aciklama}</span>
                                             <span className="odeme-tutar">{formatCurrency(odeme.tutar)}</span>
                                         </div>
-                                        {/* DEĞİŞİKLİK BURADA BİTİYOR */}
                                         <span className={`kalan-gun ${odeme.kalanGun <= 3 ? 'uyari' : ''}`}>{odeme.kalanGun} gün sonra</span>
                                     </li>
                                 ))}
