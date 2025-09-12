@@ -1,70 +1,41 @@
-// src/pages/Raporlar.jsx (YENİ RAPOR TABLOSU EKLENMİŞ, TAM VE EKSİKSİZ VERSİYON)
+// src/pages/Raporlar.jsx (YENİ TARİH SEÇİCİLİ NİHAİ VERSİYON)
+
+import { useState, useRef, useEffect } from 'react';
 import { Line } from 'react-chartjs-2';
 import { useFinans } from '../context/FinansContext';
 import { formatCurrency } from '../utils/formatters';
 import { FaDownload } from 'react-icons/fa';
+import { DateRangePicker } from 'react-date-range';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import { tr } from 'date-fns/locale';
+import { endOfDay, startOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addDays, startOfYear, endOfYear } from 'date-fns';
 
-// YENİ: Kategori Detay Analizi için özel bir bileşen
-function KategoriDetayTablosu() {
-    // Bu rapor için TÜM giderlere ihtiyacımız var, filtrelenmemiş.
-    const { giderler } = useFinans();
-    
-    // Toplam gideri bu bileşen içinde yeniden hesaplıyoruz
-    const toplamTumGiderler = giderler.reduce((acc, gider) => acc + gider.tutar, 0);
-
-    if (giderler.length === 0) {
-        return <p style={{textAlign: 'center', padding: '1rem 0', color: 'var(--secondary-text)'}}>Analiz için gösterilecek gider verisi bulunmuyor.</p>;
-    }
-
-    const kategoriAnalizi = giderler.reduce((acc, gider) => {
-        const { kategori, tutar } = gider;
-        if (!acc[kategori]) {
-            acc[kategori] = { toplam: 0, sayi: 0 };
-        }
-        acc[kategori].toplam += tutar;
-        acc[kategori].sayi += 1;
-        return acc;
-    }, {});
-
-    const analizListesi = Object.entries(kategoriAnalizi)
-        .map(([kategori, { toplam, sayi }]) => ({
-            kategori,
-            toplam,
-            sayi,
-            ortalama: toplam / sayi,
-            yuzde: toplamTumGiderler > 0 ? (toplam / toplamTumGiderler) * 100 : 0,
-        }))
-        .sort((a, b) => b.toplam - a.toplam);
-
-    return (
-        <table className="yillik-rapor-tablosu">
-            <thead>
-                <tr>
-                    <th>Kategori</th>
-                    <th style={{textAlign: 'right'}}>Toplam Harcama</th>
-                    <th style={{textAlign: 'right'}}>İşlem Sayısı</th>
-                    <th style={{textAlign: 'right'}}>Ortalama Harcama</th>
-                    <th style={{textAlign: 'right'}}>Yüzdelik Pay</th>
-                </tr>
-            </thead>
-            <tbody>
-                {analizListesi.map(item => (
-                    <tr key={item.kategori}>
-                        <td>{item.kategori}</td>
-                        <td className="gider-renk">{formatCurrency(item.toplam)}</td>
-                        <td>{item.sayi} adet</td>
-                        <td>{formatCurrency(item.ortalama)}</td>
-                        <td>%{item.yuzde.toFixed(1)}</td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
-    );
-}
-
+const predefinedRanges = [
+    { label: 'Bugün', range: () => ({ startDate: startOfDay(new Date()), endDate: endOfDay(new Date()) }) },
+    { label: 'Dün', range: () => ({ startDate: startOfDay(addDays(new Date(), -1)), endDate: endOfDay(addDays(new Date(), -1)) }) },
+    { label: 'Bu Hafta', range: () => ({ startDate: startOfWeek(new Date(), { locale: tr }), endDate: endOfWeek(new Date(), { locale: tr }) }) },
+    { label: 'Bu Ay', range: () => ({ startDate: startOfMonth(new Date()), endDate: endOfMonth(new Date()) }) },
+    { label: 'Bu Yıl', range: () => ({ startDate: startOfYear(new Date()), endDate: endOfYear(new Date()) }) },
+    { label: 'Önceki Ay', range: () => ({ startDate: startOfMonth(addDays(startOfMonth(new Date()), -1)), endDate: endOfMonth(addDays(startOfMonth(new Date()), -1)) }) }
+];
 
 function Raporlar() {
-  const { trendVerisi, yillikRaporVerisi, seciliYil, handleVeriIndir } = useFinans();
+  const { 
+      trendVerisi, yillikRaporVerisi, handleVeriIndir,
+      tarihAraligi, setTarihAraligi, // Context'ten bunları çekiyoruz
+      seciliYil // Yıllık özet için hala buna ihtiyacımız var
+  } = useFinans();
+
+  useEffect(() => {
+    // Raporlar sayfası her açıldığında, tarih aralığını bu yıla ayarla
+    const bugun = new Date();
+    setTarihAraligi([{
+        startDate: startOfYear(bugun),
+        endDate: endOfYear(bugun),
+        key: 'selection'
+    }]);
+  }, [setTarihAraligi]);
 
   if (!trendVerisi || !yillikRaporVerisi) {
       return <div>Yükleniyor...</div>;
@@ -129,29 +100,37 @@ function Raporlar() {
 
   return (
     <div className="raporlar-sayfasi">
-      <div className="card">
-        <div className="card-header">
-           <h2>Rapor Araçları</h2>
+        <div className="card">
+            <DateRangePicker
+                onChange={item => setTarihAraligi([item.selection])}
+                showSelectionPreview={true}
+                moveRangeOnFirstSelection={false}
+                months={2}
+                ranges={tarihAraligi}
+                direction="horizontal"
+                locale={tr}
+                className="sabit-takvim-ust"
+                staticRanges={predefinedRanges.map(range => ({ ...range, isSelected() { return false; } }))}
+                inputRanges={[]}
+            />
         </div>
-        <p style={{margin: '0 0 1rem 0', color: 'var(--secondary-text)'}}>Tüm işlem verilerinizi CSV formatında bilgisayarınıza indirebilirsiniz.</p>
-        <button onClick={handleVeriIndir} className="primary-btn">
-          <FaDownload />
-          Tüm Verileri İndir (CSV)
-        </button>
-      </div>
 
-      <div className="card">
-        <div style={{ height: '400px', position: 'relative' }}>
-          <Line options={trendGrafikOptions} data={trendGrafikVerisi} />
+        <div className="card">
+            <div className="card-header">
+               <h2>Rapor Araçları</h2>
+            </div>
+            <p style={{margin: '0 0 1rem 0', color: 'var(--secondary-text)'}}>Tüm işlem verilerinizi CSV formatında bilgisayarınıza indirebilirsiniz.</p>
+            <button onClick={handleVeriIndir} className="primary-btn">
+              <FaDownload />
+              Tüm Verileri İndir (CSV)
+            </button>
         </div>
-      </div>
-      
-      <div className="card">
-          <div className="card-header">
-            <h2>Kategori Detay Analizi (Tüm Zamanlar)</h2>
-          </div>
-          <KategoriDetayTablosu />
-      </div>
+
+        <div className="card">
+            <div style={{ height: '400px', position: 'relative' }}>
+              <Line options={trendGrafikOptions} data={trendGrafikVerisi} />
+            </div>
+        </div>
 
       {yillikRaporVerisi.aylar.length > 0 ? (
         <div className="card">
