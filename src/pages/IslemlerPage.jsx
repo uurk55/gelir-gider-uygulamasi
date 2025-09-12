@@ -1,10 +1,14 @@
-// src/pages/IslemlerPage.jsx (ÇOKLU SİLME ARAYÜZÜ EKLENMİŞ NİHAİ VERSİYON)
+// src/pages/IslemlerPage.jsx (ÜSTTE SABİT TAKVİMLİ NİHAİ VE TAM VERSİYON)
 
 import { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaPen, FaTrash, FaTag, FaWallet, FaCalendarAlt, FaExchangeAlt, FaFilter, FaCheckSquare, FaSquare } from 'react-icons/fa';
 import { useFinans } from '../context/FinansContext';
-import TarihSecici from '../components/TarihSecici';
+import { DateRangePicker } from 'react-date-range';
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import { tr } from 'date-fns/locale';
+import { endOfDay, startOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addDays, startOfYear, endOfYear } from 'date-fns';
 import { getCategoryIcon } from '../utils/iconMap';
 import { ISLEM_TURLERI, SIRALAMA_KRITERLERI } from '../utils/constants';
 import { formatCurrency } from '../utils/formatters';
@@ -12,23 +16,30 @@ import toast from 'react-hot-toast';
 
 const getBugununTarihi = () => new Date().toISOString().split('T')[0];
 
+// Türkçe hazır tarih aralıkları
+const predefinedRanges = [
+    { label: 'Bugün', range: () => ({ startDate: startOfDay(new Date()), endDate: endOfDay(new Date()) }) },
+    { label: 'Dün', range: () => ({ startDate: startOfDay(addDays(new Date(), -1)), endDate: endOfDay(addDays(new Date(), -1)) }) },
+    { label: 'Bu Hafta', range: () => ({ startDate: startOfWeek(new Date(), { locale: tr }), endDate: endOfWeek(new Date(), { locale: tr }) }) },
+    { label: 'Bu Ay', range: () => ({ startDate: startOfMonth(new Date()), endDate: endOfMonth(new Date()) }) },
+    { label: 'Bu Yıl', range: () => ({ startDate: startOfYear(new Date()), endDate: endOfYear(new Date()) }) },
+    { label: 'Önceki Ay', range: () => ({ startDate: startOfMonth(addDays(startOfMonth(new Date()), -1)), endDate: endOfMonth(addDays(startOfMonth(new Date()), -1)) }) }
+];
+
 function IslemlerPage() {
     const {
-        hesaplar, giderKategorileri, gelirKategorileri, addIslem, updateIslem, openDeleteModal,
-        birlesikIslemler, toplamGelir, toplamGider, birlesikFiltreTip, setBirlesikFiltreTip,
+        hesaplar, giderKategorileri, gelirKategorileri, addIslem, updateIslem, openDeleteModal, handleTopluSil,
+        birlesikIslemler, birlesikFiltreTip, setBirlesikFiltreTip,
         birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri,
         birlesikFiltreHesap, setBirlesikFiltreHesap,
-        handleTopluSil 
+        tarihAraligi, setTarihAraligi
     } = useFinans();
 
     const [aktifIslemTipi, setAktifIslemTipi] = useState(ISLEM_TURLERI.GIDER);
     const [duzenlenecekIslem, setDuzenlenecekIslem] = useState(null);
     const [filtrePaneliAcik, setFiltrePaneliAcik] = useState(false);
-
-    // YENİ: Çoklu silme için state'ler
     const [secimModu, setSecimModu] = useState(false);
     const [secilenIslemler, setSecilenIslemler] = useState([]);
-
     const [formVerisi, setFormVerisi] = useState({
         aciklama: '', tutar: '', kategori: giderKategorileri[0] || '', tarih: getBugununTarihi(),
         hesapId: hesaplar[0]?.id || '', gonderenHesapId: hesaplar[0]?.id || '',
@@ -36,6 +47,22 @@ function IslemlerPage() {
     });
 
     const formRef = useRef(null);
+
+    useEffect(() => {
+        // Bu effect, bileşen ilk yüklendiğinde SADECE BİR KEZ çalışır.
+        // Tarih aralığını, içinde bulunulan ayın başlangıç ve bitişine ayarlar.
+        const bugun = new Date();
+        const baslangic = new Date(bugun.getFullYear(), bugun.getMonth(), 1);
+        const bitis = new Date(bugun.getFullYear(), bugun.getMonth() + 1, 0);
+
+        setTarihAraligi([
+            {
+                startDate: baslangic,
+                endDate: bitis,
+                key: 'selection'
+            }
+        ]);
+    }, [setTarihAraligi]);
 
     useEffect(() => {
         if (!duzenlenecekIslem) {
@@ -68,9 +95,7 @@ function IslemlerPage() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // ... handleSubmit içeriği öncekiyle aynı ...
         const { aciklama, tutar, kategori, tarih, hesapId, gonderenHesapId, aliciHesapId } = formVerisi;
-
         if (aktifIslemTipi === ISLEM_TURLERI.TRANSFER) {
             if (!tutar || !gonderenHesapId || !aliciHesapId || parseFloat(tutar) <= 0) return toast.error("Lütfen tüm transfer alanlarını doğru doldurun.");
             if (gonderenHesapId === aliciHesapId) return toast.error("Gönderen ve alıcı hesap aynı olamaz.");
@@ -93,66 +118,82 @@ function IslemlerPage() {
     };
 
     const handleDuzenleBaslat = (islem) => {
-        // ... handleDuzenleBaslat içeriği öncekiyle aynı ...
         setAktifIslemTipi(islem.tip);
         setDuzenlenecekIslem(islem);
-        
         if (islem.tip === ISLEM_TURLERI.TRANSFER) {
              setFormVerisi({ aciklama: islem.aciklama || '', tutar: islem.tutar, tarih: islem.tarih, gonderenHesapId: islem.gonderenHesapId, aliciHesapId: islem.aliciHesapId, kategori: '', hesapId: '' });
         } else {
             setFormVerisi({ aciklama: islem.aciklama, tutar: islem.tutar, kategori: islem.kategori, tarih: islem.tarih, hesapId: islem.hesapId, gonderenHesapId: '', aliciHesapId: '' });
         }
-        
         formRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    // YENİ FONKSİYONLAR
     const handleSecimModuToggle = () => {
         setSecimModu(!secimModu);
         setSecilenIslemler([]);
     };
 
-    const handleIslemSec = (islem) => { // Artık tüm işlem objesini alıyoruz
-    setSecilenIslemler(prev =>
-        // Objelerin içinde id'ye göre arama yap
-        prev.some(item => item.id === islem.id) 
-            ? prev.filter(item => item.id !== islem.id) // Varsa çıkar
-            : [...prev, { id: islem.id, tip: islem.tip }] // Yoksa {id, tip} objesi olarak ekle
-    );
-};
+    const handleIslemSec = (islem) => {
+        setSecilenIslemler(prev =>
+            prev.some(item => item.id === islem.id) 
+                ? prev.filter(item => item.id !== islem.id)
+                : [...prev, { id: islem.id, tip: islem.tip }]
+        );
+    };
 
     const handleTumunuSec = () => {
-    if (secilenIslemler.length === birlesikIslemler.length) {
-        setSecilenIslemler([]);
-    } else {
-        // Her işlemden {id, tip} objesi oluştur
-        setSecilenIslemler(birlesikIslemler.map(islem => ({ id: islem.id, tip: islem.tip })));
-    }
-};
+        if (secilenIslemler.length === birlesikIslemler.length) {
+            setSecilenIslemler([]);
+        } else {
+            setSecilenIslemler(birlesikIslemler.map(islem => ({ id: islem.id, tip: islem.tip })));
+        }
+    };
+
     const handleSecilenleriSil = () => {
-    if (secilenIslemler.length === 0) return;
-    const eminMisin = window.confirm(`${secilenIslemler.length} adet işlemi silmek istediğinizden emin misiniz?`);
-    if (eminMisin) {
-        // Artık doğru formatta olan listeyi doğrudan gönderiyoruz
-        handleTopluSil(secilenIslemler); 
-        setSecimModu(false);
-        setSecilenIslemler([]);
-    }
-};
+        if (secilenIslemler.length === 0) return;
+        const eminMisin = window.confirm(`${secilenIslemler.length} adet işlemi silmek istediğinizden emin misiniz?`);
+        if (eminMisin) {
+            handleTopluSil(secilenIslemler); 
+            setSecimModu(false);
+            setSecilenIslemler([]);
+        }
+    };
+
+    const handleFiltreTemizle = () => { 
+        setBirlesikFiltreTip(ISLEM_TURLERI.TUMU); 
+        setBirlesikFiltreKategori('Tümü'); 
+        setBirlesikFiltreHesap('Tümü');
+    };
 
     if (!hesaplar || !birlesikIslemler) return <div className="sayfa-yukleniyor">Yükleniyor...</div>;
 
     const tumKategoriler = [...new Set([...giderKategorileri, ...gelirKategorileri])];
-    const handleFiltreTemizle = () => { setBirlesikFiltreTip(ISLEM_TURLERI.TUMU); setBirlesikFiltreKategori('Tümü'); setBirlesikFiltreHesap('Tümü'); };
     const listItemVariants = { initial: { opacity: 0, y: 20 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, x: -100, transition: { duration: 0.2 } }, };
     const isEditing = duzenlenecekIslem !== null;
+    const birseySeciliMi = secilenIslemler.length > 0;
+    
+    const filtrelenmisToplamGelir = birlesikIslemler.filter(i => i.tip === 'gelir').reduce((acc, i) => acc + i.tutar, 0);
+    const filtrelenmisToplamGider = birlesikIslemler.filter(i => i.tip === 'gider').reduce((acc, i) => acc + i.tutar, 0);
 
     return (
         <>
-            <TarihSecici />
+            <div className="card">
+                <DateRangePicker
+                    onChange={item => setTarihAraligi([item.selection])}
+                    showSelectionPreview={true}
+                    moveRangeOnFirstSelection={false}
+                    months={2}
+                    ranges={tarihAraligi}
+                    direction="horizontal"
+                    locale={tr}
+                    className="sabit-takvim-ust"
+                    staticRanges={predefinedRanges.map(range => ({ ...range, isSelected() { return false; } }))}
+                    inputRanges={[]}
+                />
+            </div>
+
             <div className="card" ref={formRef}>
                 <div className="islem-tipi-secici">
-                    {/* DEĞİŞİKLİK: onClick olaylarını yeni fonksiyona bağladık */}
                     <button onClick={() => handleTabClick(ISLEM_TURLERI.GIDER)} className={aktifIslemTipi === ISLEM_TURLERI.GIDER ? 'aktif' : ''}>Gider</button>
                     <button onClick={() => handleTabClick(ISLEM_TURLERI.GELIR)} className={aktifIslemTipi === ISLEM_TURLERI.GELIR ? 'aktif' : ''}>Gelir</button>
                     <button onClick={() => handleTabClick(ISLEM_TURLERI.TRANSFER)} className={aktifIslemTipi === ISLEM_TURLERI.TRANSFER ? 'aktif' : ''}>Transfer</button>
@@ -192,33 +233,50 @@ function IslemlerPage() {
                 </form>
             </div>
             
-            {/* İşlem Listesi (Bu bölümde değişiklik yok) */}
             <div className="card">
                 <div className="liste-baslik">
                     <h2>İşlem Listesi</h2>
                     <div className="liste-eylemler">
-                        <button onClick={() => setFiltrePaneliAcik(!filtrePaneliAcik)} className="filtre-ac-btn"><FaFilter /> Filtrele & Sırala</button>
+                        <button onClick={() => setFiltrePaneliAcik(!filtrePaneliAcik)} className="filtre-ac-btn"><FaFilter /> Diğer Filtreler</button>
                         <button onClick={handleSecimModuToggle} className="filtre-ac-btn">{secimModu ? 'İptal' : 'Seç'}</button>
                     </div>
-                </div>           
-                <AnimatePresence>{filtrePaneliAcik && (<motion.div className="acilir-filtre-kutusu" initial={{ height: 0, opacity: 0, marginTop: 0 }} animate={{ height: 'auto', opacity: 1, marginTop: '1.5rem' }} exit={{ height: 0, opacity: 0, marginTop: 0 }}><div className="filtre-grid"><div className="kontrol-grubu"><label>Tipe Göre Filtrele:</label><select value={birlesikFiltreTip} onChange={(e) => setBirlesikFiltreTip(e.target.value)}><option value={ISLEM_TURLERI.TUMU}>Tümü</option><option value={ISLEM_TURLERI.GELIR}>Gelir</option><option value={ISLEM_TURLERI.GIDER}>Gider</option><option value={ISLEM_TURLERI.TRANSFER}>Transfer</option></select></div><div className="kontrol-grubu"><label>Kategoriye Göre Filtrele:</label><select value={birlesikFiltreKategori} onChange={(e) => setBirlesikFiltreKategori(e.target.value)}><option value="Tümü">Tümü</option>{tumKategoriler.map(kat => (<option key={kat} value={kat}>{kat}</option>))}</select></div><div className="kontrol-grubu"><label>Hesaba Göre Filtrele:</label><select value={birlesikFiltreHesap} onChange={(e) => setBirlesikFiltreHesap(e.target.value === 'Tümü' ? 'Tümü' : parseInt(e.target.value))}><option value="Tümü">Tümü</option>{hesaplar.map(hesap => (<option key={hesap.id} value={hesap.id}>{hesap.ad}</option>))}</select></div><div className="kontrol-grubu"><label>Sırala:</label><select value={birlesikSiralamaKriteri} onChange={(e) => setBirlesikSiralamaKriteri(e.target.value)}><option value={SIRALAMA_KRITERLERI.TARIH_YENI}>Tarihe Göre (En Yeni)</option><option value={SIRALAMA_KRITERLERI.TARIH_ESKI}>Tarihe Göre (En Eski)</option><option value={SIRALAMA_KRITERLERI.TUTAR_ARTAN}>Tutara Göre (Artan)</option><option value={SIRALAMA_KRITERLERI.TUTAR_AZALAN}>Tutara Göre (Azalan)</option></select></div></div><button onClick={handleFiltreTemizle} className="filtre-temizle-btn">Filtreleri Temizle</button></motion.div>)}</AnimatePresence>
-                 <AnimatePresence>
+                </div>
+                
+                <AnimatePresence>
+                    {filtrePaneliAcik && (
+                        <motion.div className="acilir-filtre-kutusu" initial={{ height: 0, opacity: 0, marginTop: 0 }} animate={{ height: 'auto', opacity: 1, marginTop: '1.5rem' }} exit={{ height: 0, opacity: 0, marginTop: 0 }}>
+                            <div className="filtre-grid">
+                                <div className="kontrol-grubu"><label>Tipe Göre Filtrele:</label><select value={birlesikFiltreTip} onChange={(e) => setBirlesikFiltreTip(e.target.value)}><option value={ISLEM_TURLERI.TUMU}>Tümü</option><option value={ISLEM_TURLERI.GELIR}>Gelir</option><option value={ISLEM_TURLERI.GIDER}>Gider</option><option value={ISLEM_TURLERI.TRANSFER}>Transfer</option></select></div>
+                                <div className="kontrol-grubu"><label>Kategoriye Göre Filtrele:</label><select value={birlesikFiltreKategori} onChange={(e) => setBirlesikFiltreKategori(e.target.value)}><option value="Tümü">Tümü</option>{tumKategoriler.map(kat => (<option key={kat} value={kat}>{kat}</option>))}</select></div>
+                                <div className="kontrol-grubu"><label>Hesaba Göre Filtrele:</label><select value={birlesikFiltreHesap} onChange={(e) => setBirlesikFiltreHesap(e.target.value === 'Tümü' ? 'Tümü' : parseInt(e.target.value))}><option value="Tümü">Tümü</option>{hesaplar.map(hesap => (<option key={hesap.id} value={hesap.id}>{hesap.ad}</option>))}</select></div>
+                                <div className="kontrol-grubu"><label>Sırala:</label><select value={birlesikSiralamaKriteri} onChange={(e) => setBirlesikSiralamaKriteri(e.target.value)}><option value={SIRALAMA_KRITERLERI.TARIH_YENI}>Tarihe Göre (En Yeni)</option><option value={SIRALAMA_KRITERLERI.TARIH_ESKI}>Tarihe Göre (En Eski)</option><option value={SIRALAMA_KRITERLERI.TUTAR_ARTAN}>Tutara Göre (Artan)</option><option value={SIRALAMA_KRITERLERI.TUTAR_AZALAN}>Tutara Göre (Azalan)</option></select></div>
+                            </div>
+                            <button onClick={handleFiltreTemizle} className="filtre-temizle-btn">Tüm Filtreleri Temizle</button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                
+                <AnimatePresence>
                     {secimModu && (
-                        <motion.div className="secim-eylem-cubugu" initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}>
+                        <motion.div className="secim-eylem-cubugu" initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}>
                             <button onClick={handleTumunuSec} className="secim-eylem-btn">
                                 {secilenIslemler.length === birlesikIslemler.length ? <FaCheckSquare /> : <FaSquare />}
                                 {secilenIslemler.length === birlesikIslemler.length ? ' Seçimi Kaldır' : ' Tümünü Seç'}
                             </button>
                             <span>{secilenIslemler.length} adet seçildi</span>
-                            <button onClick={handleSecilenleriSil} className="danger-btn" disabled={secilenIslemler.length === 0}>
+                            <button onClick={handleSecilenleriSil} className="danger-btn" disabled={!birseySeciliMi}>
                                 <FaTrash /> Seçilenleri Sil
                             </button>
                         </motion.div>
                     )}
                 </AnimatePresence>
-
-                <div className="sayfa-ici-ozet"><div className="ozet-kalem"><span>Aylık Toplam Gelir:</span><span className="gelir-renk">{formatCurrency(toplamGelir)}</span></div><div className="ozet-kalem"><span>Aylık Toplam Gider:</span><span className="gider-renk">{formatCurrency(toplamGider)}</span></div></div>
-                <ul className="islem-listesi-yeni">
+                
+                <div className="sayfa-ici-ozet">
+                    <div className="ozet-kalem"><span>Toplam Gelir:</span><span className="gelir-renk">{formatCurrency(filtrelenmisToplamGelir)}</span></div>
+                    <div className="ozet-kalem"><span>Toplam Gider:</span><span className="gider-renk">{formatCurrency(filtrelenmisToplamGider)}</span></div>
+                </div>
+                
+                <ul className={`islem-listesi-yeni ${secimModu && birseySeciliMi ? 'secim-modu-aktif' : ''}`}>
                     <AnimatePresence>
                         {birlesikIslemler.map(islem => {
                             const isTransfer = islem.tip === ISLEM_TURLERI.TRANSFER;
@@ -226,7 +284,6 @@ function IslemlerPage() {
                             const aliciHesap = isTransfer ? hesaplar.find(h => h.id === islem.aliciHesapId) : null;
                             const hesap = !isTransfer ? hesaplar.find(h => h.id === islem.hesapId) : null;
                             const isSelected = secilenIslemler.some(item => item.id === islem.id);
-
                             return (
                                 <motion.li 
                                     key={islem.id} 
@@ -253,7 +310,6 @@ function IslemlerPage() {
                                     </div>
                                     <div className="islem-sag">
                                         <span className={`islem-tutar ${islem.tip === 'gelir' ? 'gelir-renk' : islem.tip === 'gider' ? 'gider-renk' : 'notr-renk'}`}>{formatCurrency(islem.tutar)}</span>
-                                        {/* DEĞİŞİKLİK: Butonları sadece seçim modunda değilken göster */}
                                         {!secimModu && (
                                             <div className="buton-grubu">
                                                 <button onClick={() => handleDuzenleBaslat(islem)} className="icon-btn duzenle-btn"><FaPen /></button>
@@ -266,7 +322,7 @@ function IslemlerPage() {
                         })}
                     </AnimatePresence>
                 </ul>
-                {birlesikIslemler.length === 0 && (<p style={{ textAlign: "center", padding: "2rem", color: "var(--secondary-text)" }}>Bu ay için gösterilecek işlem bulunmuyor.</p>)}
+                {birlesikIslemler.length === 0 && (<p style={{ textAlign: "center", padding: "2rem", color: "var(--secondary-text)" }}>Seçilen kriterlere uygun işlem bulunmuyor.</p>)}
             </div>
         </>
     );

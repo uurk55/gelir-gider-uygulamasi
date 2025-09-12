@@ -3581,3 +3581,82 @@ div.akilli-bildirim-cubugu {
 .akilli-bildirim-cubugu button.secondary-btn-small:hover {
   background-color: rgba(0, 0, 0, 0.1) !important;
 }
+/* ==========================================================================
+   İŞLEMLER SAYFASI - NİHAİ TAKVİM STİLLERİ
+   ========================================================================== */
+
+/* Takvimi saran .card'ın iç boşluklarını sıfırlayarak tam oturmasını sağlıyoruz */
+.sabit-takvim-ust .rdrCalendarWrapper {
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  border: none;
+  background-color: transparent !important;
+  color: var(--primary-text) !important;
+}
+
+/* Üstteki tarih gösterge alanını gizliyoruz, gereksiz */
+.sabit-takvim-ust .rdrDateDisplayWrapper {
+  display: none !important;
+}
+
+/* Sol taraftaki hazır aralıklar menüsü ("Bugün", "Dün" vb.) */
+.sabit-takvim-ust .rdrDefinedRangesWrapper {
+  border-right: 1px solid var(--border-color) !important;
+  width: 160px; /* Genişliği biraz artıralım */
+  background-color: #f8f9fa; /* Hafif gri bir arka plan */
+}
+
+.sabit-takvim-ust .rdrStaticRange {
+  border-bottom: none !important; /* Aradaki çizgileri kaldır */
+  background: transparent !important;
+}
+
+/* Sol menüdeki yazıların rengini ve stilini düzeltiyoruz */
+.sabit-takvim-ust .rdrStaticRangeLabel {
+  color: var(--secondary-text) !important;
+  font-weight: 500;
+  padding: 12px 20px !important;
+}
+
+.sabit-takvim-ust .rdrStaticRange:hover .rdrStaticRangeLabel {
+  background: rgba(74, 105, 189, 0.08) !important;
+}
+
+.sabit-takvim-ust .rdrStaticRangeSelected .rdrStaticRangeLabel {
+  background: rgba(74, 105, 189, 0.15) !important;
+  color: var(--primary-brand) !important;
+  font-weight: 600;
+}
+
+/* Takvimin ana gövdesi (günler, ay/yıl) */
+.sabit-takvim-ust .rdrMonthAndYearPickers select {
+  color: var(--primary-text);
+  font-weight: 600;
+}
+
+.sabit-takvim-ust .rdrDayNumber span {
+  color: var(--primary-text);
+}
+
+.sabit-takvim-ust .rdrDayPassive .rdrDayNumber span {
+  color: var(--secondary-text);
+  opacity: 0.5;
+}
+
+/* Seçili olan günlerin stilleri */
+.sabit-takvim-ust .rdrDay:not(.rdrDayPassive) .rdrInRange ~ .rdrDayNumber span,
+.sabit-takvim-ust .rdrDay:not(.rdrDayPassive) .rdrStartEdge ~ .rdrDayNumber span,
+.sabit-takvim-ust .rdrDay:not(.rdrDayPassive) .rdrEndEdge ~ .rdrDayNumber span {
+  color: white !important;
+}
+
+.sabit-takvim-ust .rdrDayToday .rdrDayNumber span:after {
+  background: var(--primary-brand) !important;
+}
+.sabit-takvim-ust .rdrStartEdge, .rdrEndEdge {
+  background: var(--primary-brand) !important;
+  border-radius: 1.5em; /* Daha yuvarlak kenarlar */
+}
+.sabit-takvim-ust .rdrInRange {
+  background: rgba(74, 105, 189, 0.15) !important;
+}
