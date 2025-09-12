@@ -3452,3 +3452,132 @@ body {
   margin-top: 0.25rem;
   margin-bottom: 0;
 }
+/* ==========================================================================
+   SABİT ÖDEMELER - BEKLEYEN ÖDEME VURGULAMA STİLLERİ
+   ========================================================================== */
+
+.yonetim-listesi-item.bekleyen-odeme {
+  position: relative; /* İkonun konumlanması için gerekli */
+  background-color: rgba(243, 156, 18, 0.08); /* --warning-color'ın çok şeffaf hali */
+  border-left: 4px solid var(--warning-color);
+  /* Sol kenarlık kadar içeri kaydırarak hizayı koru */
+  padding-left: calc(1rem - 4px); 
+}
+
+.bekleyen-odeme-ikon {
+  position: absolute;
+  left: -12px; /* Kenarlığın ortasına yerleştirir */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--warning-color);
+  background-color: var(--background-card); /* Arka planı kart rengi yaparak kenarlığı keser */
+  border-radius: 50%;
+  font-size: 1.2rem; /* İkonu biraz büyütelim */
+  padding: 2px;
+}
+
+/* ==========================================================================
+   SABİT ÖDEMELER - BEKLEYEN İŞLEM BUTONLARI
+   ========================================================================== */
+   
+.icon-btn.birincil-btn,
+.icon-btn.ikincil-btn {
+    background: none;
+    border: 1px solid;
+    color: currentColor;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    width: auto;
+    height: auto;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.icon-btn.birincil-btn {
+    border-color: var(--success-color);
+    background-color: var(--success-color);
+    color: white;
+}
+.icon-btn.birincil-btn:hover {
+    background-color: #239b55;
+    border-color: #239b55;
+    transform: none; /* İkon hover efektini iptal et */
+}
+
+.icon-btn.ikincil-btn {
+    border-color: var(--secondary-text);
+    color: var(--secondary-text);
+}
+.icon-btn.ikincil-btn:hover {
+    background-color: #f1f2f6;
+    border-color: #f1f2f6;
+    color: var(--primary-text);
+    transform: none; /* İkon hover efektini iptal et */
+}
+/* ==========================================================================
+   AKILLI BİLDİRİM ÇUBUĞU İÇİN STİLLER (DAHA GÜÇLÜ VERSİYON)
+   ========================================================================== */
+
+/* Ana konteynere ID vererek özgüllüğü artırabiliriz veya direkt class ile devam edebiliriz.
+   Şimdilik mevcut class'ı daha güçlü hale getirelim. */
+div.akilli-bildirim-cubugu {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 1rem 1.5rem !important;
+  margin-bottom: 2rem !important;
+  background-color: var(--warning-color) !important;
+  color: #333 !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3) !important;
+}
+
+.akilli-bildirim-cubugu .bildirim-sol-taraf {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-ikon {
+  font-size: 1.75rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-metin {
+  display: flex;
+  flex-direction: column;
+}
+
+.akilli-bildirim-cubugu .bildirim-metin strong {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-metin span {
+  font-size: 0.9rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-sag-taraf {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Butonları da daha güçlü seçicilerle hedef alalım */
+.akilli-bildirim-cubugu button.primary-btn-small {
+  background-color: #ffffff !important;
+  color: var(--primary-text) !important;
+  border: 1px solid transparent !important;
+}
+.akilli-bildirim-cubugu button.primary-btn-small:hover {
+  background-color: #f5f6f7 !important;
+}
+
+.akilli-bildirim-cubugu button.secondary-btn-small {
+  background-color: transparent !important;
+  color: #333 !important;
+  border-color: #333 !important;
+}
+.akilli-bildirim-cubugu button.secondary-btn-small:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}

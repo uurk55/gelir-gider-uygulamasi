@@ -1,4 +1,4 @@
-// src/context/FinansContext.jsx (YAKLAŞAN ÖDEMELERE TUTAR EKLENMİŞ NİHAİ VERSİYON)
+// src/context/FinansContext.jsx (AKILLI ÖDEME NİHAİ DÜZELTME - TAM VE TEMİZ KOD)
 
 import Papa from 'papaparse';
 import { useState, useEffect, createContext, useContext, useMemo } from 'react';
@@ -66,6 +66,7 @@ export const FinansProvider = ({ children }) => {
     const [giderKategorileri, setGiderKategorileri] = useState(() => currentUser ? GIDER_KATEGORILERI_VARSAYILAN : getLocalData('guest_giderKategorileri', GIDER_KATEGORILERI_VARSAYILAN));
     const [gelirKategorileri, setGelirKategorileri] = useState(() => currentUser ? GELIR_KATEGORILERI_VARSAYILAN : getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
     
+    const [bekleyenOdemeler, setBekleyenOdemeler] = useState([]);
     const [kategoriRenkleri, setKategoriRenkleri] = useState({});
     const [seciliAy, setSeciliAy] = useState(new Date().getMonth() + 1);
     const [seciliYil, setSeciliYil] = useState(new Date().getFullYear());
@@ -131,6 +132,40 @@ export const FinansProvider = ({ children }) => {
             setGiderKategorileri(getLocalData('guest_giderKategorileri', GIDER_KATEGORILERI_VARSAYILAN)); setGelirKategorileri(getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
         }
     }, [currentUser]);
+    
+    useEffect(() => {
+        if (!currentUser || sabitOdemeler.length === 0) {
+            setBekleyenOdemeler([]);
+            return;
+        }
+
+        const bugun = new Date();
+        const buAy = bugun.getMonth();
+        const buYil = bugun.getFullYear();
+        const yeniBekleyenOdemeler = [];
+
+        const vadesiGecenler = sabitOdemeler.filter(odeme => {
+            const odemeGunu = parseInt(odeme.odemeGunu, 10);
+            if (!odeme.baslangicTarihi || isNaN(odemeGunu)) return false;
+            const ilkOdemeTarihi = new Date(odeme.baslangicTarihi);
+            return odemeGunu <= bugun.getDate() && ilkOdemeTarihi <= bugun;
+        });
+
+        vadesiGecenler.forEach(odeme => {
+            const zatenEklenmis = giderler.some(gider => 
+                gider.sabitOdemeId === odeme.id &&
+                new Date(gider.tarih).getMonth() === buAy &&
+                new Date(gider.tarih).getFullYear() === buYil
+            );
+
+            if (!zatenEklenmis) {
+                const odemeGunu = parseInt(odeme.odemeGunu, 10);
+                const islenecekTarih = new Date(buYil, buAy, odemeGunu).toISOString().split('T')[0];
+                yeniBekleyenOdemeler.push({ ...odeme, islenecekTarih });
+            }
+        });
+        setBekleyenOdemeler(yeniBekleyenOdemeler);
+    }, [sabitOdemeler, giderler, currentUser]);
 
     useEffect(() => {
         const tumKategoriler = [...giderKategorileri, ...gelirKategorileri];
@@ -141,6 +176,41 @@ export const FinansProvider = ({ children }) => {
         setKategoriRenkleri(yeniRenkHaritasi);
     }, [giderKategorileri, gelirKategorileri]);
 
+    const handleBekleyenOdemeleriIsle = async (islemListesi = bekleyenOdemeler) => {
+        if (islemListesi.length === 0 || !currentUser) return;
+        const toastId = toast.loading(`${islemListesi.length} adet ödeme işleniyor...`);
+        try {
+            const batch = writeBatch(db);
+            const uid = currentUser.uid;
+            islemListesi.forEach(odeme => {
+                if (!odeme.hesapId) {
+                    throw new Error(`'${odeme.aciklama}' için bir ödeme hesabı belirtilmemiş.`);
+                }
+                const giderVerisi = {
+                    aciklama: odeme.aciklama,
+                    tutar: odeme.tutar,
+                    kategori: odeme.kategori,
+                    tarih: odeme.islenecekTarih,
+                    sabitOdemeId: odeme.id,
+                    hesapId: odeme.hesapId 
+                };
+                const docRef = doc(collection(db, 'users', uid, 'giderler'));
+                batch.set(docRef, giderVerisi);
+            });
+            await batch.commit();
+            toast.success(`${islemListesi.length} adet ödeme giderlere eklendi.`, { id: toastId });
+        } catch (error) {
+            console.error("Bekleyen ödemeler işlenirken hata:", error);
+            toast.error(error.message || "Ödemeler işlenirken bir hata oluştu.", { id: toastId });
+        }
+    };
+    
+    const handleBekleyenOdemeyiAtla = (atlananOdeme) => {
+        if (!currentUser) return;
+        setBekleyenOdemeler(prev => prev.filter(odeme => odeme.id !== atlananOdeme.id));
+        toast.info(`'${atlananOdeme.aciklama}' ödemesi bu ay için atlandı.`);
+    };
+    
     const updateAyarlar = async (yeniAyarlar) => {
         if (!currentUser) {
             Object.keys(yeniAyarlar).forEach(key => {
@@ -242,7 +312,7 @@ export const FinansProvider = ({ children }) => {
     };
 
     const handleKategoriSil = (tip, kategori) => {
-        if (kategori === 'Diğer') return toast.error("'Diğer' kategorisi silinemez."); const isUsed = (tip === 'gider' ? giderler : gelirler).some(islem => islem.kategori === kategori);
+        if (kategori === 'Diğer') return toast.error("'Diğer' kategorisi silinemez."); const isUsed = (tip === 'gider' ? giderler : gelirKategorileri).some(islem => islem.kategori === kategori);
         if (isUsed) return toast.error("Bu kategori kullanımda olduğu için silinemez."); const key = tip === 'gider' ? 'giderKategorileri' : 'gelirKategorileri';
         const kategoriler = tip === 'gider' ? giderKategorileri : gelirKategorileri; updateAyarlar({ [key]: kategoriler.filter(k => k !== kategori) }); toast.error(`Kategori silindi.`);
     };
@@ -363,19 +433,15 @@ export const FinansProvider = ({ children }) => {
     const toplamBakiye = useMemo(() => Object.values(genelHesapBakiyeleri).reduce((t, b) => t + b, 0), [genelHesapBakiyeleri]);
     const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
     const butceDurumlari = useMemo(() => { const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1); const oncekiAyGiderleri = giderler.filter(g => { const giderTarihi = new Date(g.tarih); return giderTarihi.getFullYear() === oncekiAyTarih.getFullYear() && giderTarihi.getMonth() === oncekiAyTarih.getMonth(); }); return butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); const oncekiAyHarcanan = oncekiAyGiderleri.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); let degisimYuzdesi = 0; if (oncekiAyHarcanan > 0) { degisimYuzdesi = ((harcanan - oncekiAyHarcanan) / oncekiAyHarcanan) * 100; } else if (harcanan > 0) { degisimYuzdesi = 100; } const kalan = butce.limit - harcanan; const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; let durum = 'normal'; if (yuzdeRaw >= 100) { durum = 'asildi'; } else if (yuzdeRaw >= 90) { durum = 'uyari'; } return { ...butce, harcanan, kalan, yuzde: Math.min(yuzdeRaw, 100), yuzdeRaw, degisimYuzdesi, durum }; }); }, [butceler, filtrelenmisGiderler, giderler, seciliAy, seciliYil]);
-    
-    // --- DEĞİŞİKLİK BURADA ---
     const yaklasanOdemeler = useMemo(() => { 
         const bugun = new Date(); 
         const bugununGunu = bugun.getDate(); 
         return sabitOdemeler.map(odeme => { 
             let kalanGun = odeme.odemeGunu - bugununGunu; 
             if (kalanGun < 0) kalanGun += new Date(bugun.getFullYear(), bugun.getMonth() + 1, 0).getDate(); 
-            // 'tutar' alanını da objeye ekliyoruz
             return { ...odeme, kalanGun, tutar: odeme.tutar || 0 }; 
         }).sort((a, b) => a.kalanGun - b.kalanGun).slice(0, 3); 
     }, [sabitOdemeler]);
-
     const kategoriOzeti = useMemo(() => filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}), [filtrelenmisGiderler]);
     const grafikVerisi = useMemo(() => { const labels = Object.keys(kategoriOzeti); if (labels.length === 0) { return { labels: ['Veri Yok'], datasets: [{ label: 'Harcama Miktarı', data: [1], backgroundColor: ['#E0E0E0'], borderColor: '#ffffff', borderWidth: 2 }], }; } const data = Object.values(kategoriOzeti); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#CCCCCC'); return { labels, datasets: [{ label: 'Harcama Miktarı', data, backgroundColor, borderColor: '#ffffff', borderWidth: 2 }], }; }, [kategoriOzeti, kategoriRenkleri]);
     const gelirGrafikVerisi = useMemo(() => { const gelirKaynaklari = filtrelenmisGelirler.reduce((acc, gelir) => { const { kategori, tutar } = gelir; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}); const labels = Object.keys(gelirKaynaklari); if (labels.length === 0) { return { labels: ['Veri Yok'], datasets: [{ label: 'Gelir Kaynağı', data: [], backgroundColor: [] }], }; } const data = Object.values(gelirKaynaklari); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#2ecc71'); return { labels, datasets: [{ label: 'Gelir Kaynağı', data, backgroundColor, borderRadius: 4 }], }; }, [filtrelenmisGelirler, kategoriRenkleri]);
@@ -387,6 +453,9 @@ export const FinansProvider = ({ children }) => {
     const contextValue = {
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
         addIslem, updateIslem, openDeleteModal, handleCloseModal, handleConfirmDelete, handleTopluSil,
+        bekleyenOdemeler,
+        handleBekleyenOdemeleriIsle,
+        handleBekleyenOdemeyiAtla,
         handleHesapEkle, handleHesapSil, handleHesapGuncelle,
         handleKategoriEkle, handleKategoriSil, handleKategoriSirala, handleKategoriGuncelle,
         handleButceEkle, handleButceSil, handleButceGuncelle,

@@ -1,15 +1,53 @@
-// src/pages/GenelBakis.jsx (SELAMLAMA MESAJI EKLENMİŞ NİHAİ VERSİYON)
-import { FaPiggyBank, FaBell, FaRegHandPeace } from 'react-icons/fa';
+// src/pages/GenelBakis.jsx (AKILLI BİLDİRİM ÇUBUĞU EKLENMİŞ NİHAİ VERSİYON)
+
 import { useFinans } from '../context/FinansContext';
 import { useAuth } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import TarihSecici from '../components/TarihSecici';
 import AylikOzetKarti from '../components/GenelBakis/AylikOzetKarti';
 import HarcamaDagilimiKarti from '../components/GenelBakis/HarcamaDagilimiKarti';
 import HesapGiderleriKarti from '../components/GenelBakis/HesapGiderleriKarti';
 import GelirKaynaklariKarti from '../components/GenelBakis/GelirKaynaklariKarti';
 import ButceDurumlariKarti from '../components/GenelBakis/ButceDurumlariKarti';
+import { FaPiggyBank, FaBell, FaRegHandPeace, FaExclamationCircle } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatters';
+
+function AkilliBildirimCubugu() {
+    const { bekleyenOdemeler, handleBekleyenOdemeleriIsle } = useFinans();
+    const navigate = useNavigate();
+
+    if (bekleyenOdemeler.length === 0) {
+        return null;
+    }
+
+    const handleYonet = () => {
+        navigate('/sabit-odemeler');
+    };
+
+    return (
+        <AnimatePresence>
+            <motion.div 
+                className="akilli-bildirim-cubugu"
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -50 }}
+            >
+                <div className="bildirim-sol-taraf">
+                    <FaExclamationCircle className="bildirim-ikon" />
+                    <div className="bildirim-metin">
+                        <strong>İşlenmeyi Bekleyen Ödemeler</strong>
+                        <span>{bekleyenOdemeler.length} adet vadesi geçmiş sabit ödemeniz var.</span>
+                    </div>
+                </div>
+                <div className="bildirim-sag-taraf">
+                    <button onClick={handleYonet} className="secondary-btn-small">Detayları Yönet</button>
+                    <button onClick={handleBekleyenOdemeleriIsle} className="primary-btn-small">Tümünü Gider Ekle</button>
+                </div>
+            </motion.div>
+        </AnimatePresence>
+    );
+}
 
 function YaklasanOdemelerEmptyState() {
     const { currentUser } = useAuth();
@@ -39,30 +77,27 @@ function GenelBakis() {
         toplamBakiye, 
         yaklasanOdemeler
     } = useFinans();
-    
-    // YENİ: currentUser bilgisini AuthContext'ten çekiyoruz
     const { currentUser } = useAuth();
 
     if (toplamBakiye === undefined || !yaklasanOdemeler) {
-        return 
-<div>Veriler yükleniyor...</div>;
+        return <div>Veriler yükleniyor...</div>;
     }
 
-    // YENİ: Görünen adı veya e-postanın bir kısmını alıyoruz
     const kullaniciAdi = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Kullanıcı';
 
     return (
         <>
-            {/* YENİ: Selamlama Başlığı */}
+            <AkilliBildirimCubugu />
+
             <div className="selamlama-kutusu">
-    <div className="selamlama-ikon">
-    <FaRegHandPeace />
-</div>
-    <div className="selamlama-metin">
-        <h1>Hoş Geldin, {kullaniciAdi}!</h1>
-        <p>Finansal durumuna genel bir bakış atalım.</p>
-    </div>
-</div>
+                <div className="selamlama-ikon">
+                    <FaRegHandPeace />
+                </div>
+                <div className="selamlama-metin">
+                    <h1>Hoş Geldin, {kullaniciAdi}!</h1>
+                    <p>Finansal durumuna genel bir bakış atalım.</p>
+                </div>
+            </div>
 
             <TarihSecici />
             <div className="yeni-kartlar-grid">
