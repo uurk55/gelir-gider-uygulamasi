@@ -10,6 +10,7 @@ import HarcamaDagilimiKarti from '../components/GenelBakis/HarcamaDagilimiKarti'
 import HesapGiderleriKarti from '../components/GenelBakis/HesapGiderleriKarti';
 import GelirKaynaklariKarti from '../components/GenelBakis/GelirKaynaklariKarti';
 import ButceDurumlariKarti from '../components/GenelBakis/ButceDurumlariKarti';
+import KrediKartiOzetKarti from '../components/GenelBakis/KrediKartiOzetKarti'; // YENİ
 import { FaPiggyBank, FaBell, FaRegHandPeace, FaExclamationCircle } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatters';
 
@@ -126,6 +127,7 @@ function GenelBakis() {
                     </div>
                 </div>
             </div>
+            <KrediKartiOzetKarti />
             <AylikOzetKarti />
             <div className="analiz-bolumu-grid">
                 <HarcamaDagilimiKarti />

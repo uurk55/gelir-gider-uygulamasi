@@ -28,7 +28,7 @@ const predefinedRanges = [
 
 function IslemlerPage() {
     const {
-        hesaplar, giderKategorileri, gelirKategorileri, addIslem, updateIslem, openDeleteModal, handleTopluSil,
+        hesaplar, tumHesaplar, giderKategorileri, gelirKategorileri, addIslem, updateIslem, openDeleteModal, handleTopluSil,
         birlesikIslemler, birlesikFiltreTip, setBirlesikFiltreTip,
         birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikSiralamaKriteri, setBirlesikSiralamaKriteri,
         birlesikFiltreHesap, setBirlesikFiltreHesap,
@@ -41,10 +41,11 @@ function IslemlerPage() {
     const [secimModu, setSecimModu] = useState(false);
     const [secilenIslemler, setSecilenIslemler] = useState([]);
     const [formVerisi, setFormVerisi] = useState({
-        aciklama: '', tutar: '', kategori: giderKategorileri[0] || '', tarih: getBugununTarihi(),
-        hesapId: hesaplar[0]?.id || '', gonderenHesapId: hesaplar[0]?.id || '',
-        aliciHesapId: hesaplar[1]?.id || hesaplar[0]?.id || '',
-    });
+    aciklama: '', tutar: '', kategori: giderKategorileri[0] || '', tarih: getBugununTarihi(),
+    hesapId: tumHesaplar[0]?.id || '', // 'tumHesaplar' kullanıyor
+    gonderenHesapId: hesaplar[0]?.id || '', // Transfer için sadece normal hesaplar
+    aliciHesapId: hesaplar[1]?.id || hesaplar[0]?.id || '', // Transfer için sadece normal hesaplar
+});
 
     const formRef = useRef(null);
 
@@ -99,7 +100,7 @@ function IslemlerPage() {
         if (aktifIslemTipi === ISLEM_TURLERI.TRANSFER) {
             if (!tutar || !gonderenHesapId || !aliciHesapId || parseFloat(tutar) <= 0) return toast.error("Lütfen tüm transfer alanlarını doğru doldurun.");
             if (gonderenHesapId === aliciHesapId) return toast.error("Gönderen ve alıcı hesap aynı olamaz.");
-            const transferVerisi = { tutar: parseFloat(tutar), gonderenHesapId: parseInt(gonderenHesapId, 10), aliciHesapId: parseInt(aliciHesapId, 10), tarih, aciklama: aciklama || "Hesaplar Arası Transfer", tip: ISLEM_TURLERI.TRANSFER };
+            const transferVerisi = { tutar: parseFloat(tutar), gonderenHesapId: gonderenHesapId, aliciHesapId: aliciHesapId, tarih, aciklama: aciklama || "Hesaplar Arası Transfer", tip: ISLEM_TURLERI.TRANSFER };
             if (duzenlenecekIslem) {
                 updateIslem(ISLEM_TURLERI.TRANSFER, duzenlenecekIslem.id, transferVerisi);
             } else {
@@ -107,7 +108,8 @@ function IslemlerPage() {
             }
         } else {
             if (!aciklama || !tutar || !kategori || !hesapId || parseFloat(tutar) <= 0) return toast.error("Lütfen tüm alanları doğru doldurun.");
-            const islemVerisi = { aciklama, tutar: parseFloat(tutar), kategori, tarih, hesapId: parseInt(hesapId, 10) };
+            const islemVerisi = { aciklama, tutar: parseFloat(tutar), kategori, tarih, hesapId: hesapId };
+
             if (duzenlenecekIslem) {
                 updateIslem(aktifIslemTipi, duzenlenecekIslem.id, islemVerisi);
             } else {
@@ -205,15 +207,15 @@ function IslemlerPage() {
                                 <>
                                     <div className="form-item-full"><label>Açıklama:</label><input name="aciklama" type="text" placeholder="Örn: Akşam yemeği" value={formVerisi.aciklama} onChange={handleInputChange} /></div>
                                     <div className="form-item-half"><label>Kategori:</label><select name="kategori" value={formVerisi.kategori} onChange={handleInputChange}>{giderKategorileri.map(k => (<option key={k} value={k}>{k}</option>))}</select></div>
-                                    <div className="form-item-half"><label>Hesap:</label><select name="hesapId" value={formVerisi.hesapId} onChange={handleInputChange}>{hesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}</select></div>
-                                </>
+                                    <div className="form-item-half"><label>Hesap:</label><select name="hesapId" value={formVerisi.hesapId} onChange={handleInputChange}>{tumHesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}</select>
+</div>                                </>
                             )}
                             {aktifIslemTipi === ISLEM_TURLERI.GELIR && (
                                 <>
                                     <div className="form-item-full"><label>Açıklama:</label><input name="aciklama" type="text" placeholder="Örn: Maaş" value={formVerisi.aciklama} onChange={handleInputChange} /></div>
                                     <div className="form-item-half"><label>Kategori:</label><select name="kategori" value={formVerisi.kategori} onChange={handleInputChange}>{gelirKategorileri.map(k => (<option key={k} value={k}>{k}</option>))}</select></div>
-                                    <div className="form-item-half"><label>Hesap:</label><select name="hesapId" value={formVerisi.hesapId} onChange={handleInputChange}>{hesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}</select></div>
-                                </>
+                                    <div className="form-item-half"><label>Hesap:</label><select name="hesapId" value={formVerisi.hesapId} onChange={handleInputChange}>{tumHesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}</select>
+</div>                                </>
                             )}
                             {aktifIslemTipi === ISLEM_TURLERI.TRANSFER && (
                                  <>
@@ -248,7 +250,7 @@ function IslemlerPage() {
                             <div className="filtre-grid">
                                 <div className="kontrol-grubu"><label>Tipe Göre Filtrele:</label><select value={birlesikFiltreTip} onChange={(e) => setBirlesikFiltreTip(e.target.value)}><option value={ISLEM_TURLERI.TUMU}>Tümü</option><option value={ISLEM_TURLERI.GELIR}>Gelir</option><option value={ISLEM_TURLERI.GIDER}>Gider</option><option value={ISLEM_TURLERI.TRANSFER}>Transfer</option></select></div>
                                 <div className="kontrol-grubu"><label>Kategoriye Göre Filtrele:</label><select value={birlesikFiltreKategori} onChange={(e) => setBirlesikFiltreKategori(e.target.value)}><option value="Tümü">Tümü</option>{tumKategoriler.map(kat => (<option key={kat} value={kat}>{kat}</option>))}</select></div>
-                                <div className="kontrol-grubu"><label>Hesaba Göre Filtrele:</label><select value={birlesikFiltreHesap} onChange={(e) => setBirlesikFiltreHesap(e.target.value === 'Tümü' ? 'Tümü' : parseInt(e.target.value))}><option value="Tümü">Tümü</option>{hesaplar.map(hesap => (<option key={hesap.id} value={hesap.id}>{hesap.ad}</option>))}</select></div>
+                                <div className="kontrol-grubu"><label>Hesaba Göre Filtrele:</label><select value={birlesikFiltreHesap} onChange={(e) => setBirlesikFiltreHesap(e.target.value)}><option value="Tümü">Tümü</option>{tumHesaplar.map(hesap => (<option key={hesap.id} value={hesap.id}>{hesap.ad}</option>))}</select></div>
                                 <div className="kontrol-grubu"><label>Sırala:</label><select value={birlesikSiralamaKriteri} onChange={(e) => setBirlesikSiralamaKriteri(e.target.value)}><option value={SIRALAMA_KRITERLERI.TARIH_YENI}>Tarihe Göre (En Yeni)</option><option value={SIRALAMA_KRITERLERI.TARIH_ESKI}>Tarihe Göre (En Eski)</option><option value={SIRALAMA_KRITERLERI.TUTAR_ARTAN}>Tutara Göre (Artan)</option><option value={SIRALAMA_KRITERLERI.TUTAR_AZALAN}>Tutara Göre (Azalan)</option></select></div>
                             </div>
                             <button onClick={handleFiltreTemizle} className="filtre-temizle-btn">Tüm Filtreleri Temizle</button>
@@ -279,12 +281,20 @@ function IslemlerPage() {
                 <ul className={`islem-listesi-yeni ${secimModu && birseySeciliMi ? 'secim-modu-aktif' : ''}`}>
                     <AnimatePresence>
                         {birlesikIslemler.map(islem => {
-                            const isTransfer = islem.tip === ISLEM_TURLERI.TRANSFER;
-                            const gonderenHesap = isTransfer ? hesaplar.find(h => h.id === islem.gonderenHesapId) : null;
-                            const aliciHesap = isTransfer ? hesaplar.find(h => h.id === islem.aliciHesapId) : null;
-                            const hesap = !isTransfer ? hesaplar.find(h => h.id === islem.hesapId) : null;
-                            const isSelected = secilenIslemler.some(item => item.id === islem.id);
-                            return (
+    const isTransfer = islem.tip === ISLEM_TURLERI.TRANSFER;
+    const gonderenHesap = isTransfer ? hesaplar.find(h => h.id === islem.gonderenHesapId) : null;
+    const aliciHesap = isTransfer ? hesaplar.find(h => h.id === islem.aliciHesapId) : null;
+
+    // --- DEĞİŞİKLİK BURADA ---
+    // ESKİ HALİ:
+    // const hesap = !isTransfer ? hesaplar.find(h => h.id === islem.hesapId) : null;
+    
+    // YENİ VE DOĞRU HALİ:
+    const hesap = !isTransfer ? tumHesaplar.find(h => h.id === islem.hesapId) : null;
+    
+    const isSelected = secilenIslemler.some(item => item.id === islem.id);
+
+    return (
                                 <motion.li 
                                     key={islem.id} 
                                     layout 

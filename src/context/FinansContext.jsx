@@ -65,7 +65,8 @@ export const FinansProvider = ({ children }) => {
     const [hesaplar, setHesaplar] = useState(() => currentUser ? VARSAYILAN_HESAPLAR : getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR));
     const [giderKategorileri, setGiderKategorileri] = useState(() => currentUser ? GIDER_KATEGORILERI_VARSAYILAN : getLocalData('guest_giderKategorileri', GIDER_KATEGORILERI_VARSAYILAN));
     const [gelirKategorileri, setGelirKategorileri] = useState(() => currentUser ? GELIR_KATEGORILERI_VARSAYILAN : getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
-    
+    const [krediKartlari, setKrediKartlari] = useState(() => currentUser ? [] : getLocalData('guest_krediKartlari', []));
+
     const [bekleyenOdemeler, setBekleyenOdemeler] = useState([]);
     const [kategoriRenkleri, setKategoriRenkleri] = useState({});
     const [seciliAy, setSeciliAy] = useState(new Date().getMonth() + 1);
@@ -122,6 +123,7 @@ export const FinansProvider = ({ children }) => {
                 onSnapshot(collection(db, 'users', uid, 'transferler'), s => setTransferler(s.docs.map(d => ({ id: d.id, ...d.data() })))),
                 onSnapshot(collection(db, 'users', uid, 'butceler'), s => setButceler(s.docs.map(d => ({ id: d.id, ...d.data() })))),
                 onSnapshot(collection(db, 'users', uid, 'sabitOdemeler'), s => setSabitOdemeler(s.docs.map(d => ({ id: d.id, ...d.data() })))),
+                onSnapshot(collection(db, 'users', uid, 'krediKartlari'), s => setKrediKartlari(s.docs.map(d => ({ id: d.id, ...d.data() })))),
                 onSnapshot(doc(db, 'users', uid), async (docSnapshot) => {
                     if (docSnapshot.exists()) {
                         const data = docSnapshot.data();
@@ -136,7 +138,7 @@ export const FinansProvider = ({ children }) => {
             return () => unsubscribers.forEach(unsub => unsub());
         } else {
             setGelirler(getLocalData('guest_gelirler', [])); setGiderler(getLocalData('guest_giderler', [])); setTransferler(getLocalData('guest_transferler', []));
-            setButceler(getLocalData('guest_butceler', [])); setSabitOdemeler(getLocalData('guest_sabitOdemeler', [])); setHesaplar(getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR));
+            setButceler(getLocalData('guest_butceler', [])); setSabitOdemeler(getLocalData('guest_sabitOdemeler', [])); setKrediKartlari(getLocalData('guest_krediKartlari', [])); setHesaplar(getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR));
             setGiderKategorileri(getLocalData('guest_giderKategorileri', GIDER_KATEGORILERI_VARSAYILAN)); setGelirKategorileri(getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
         }
     }, [currentUser]);
@@ -405,7 +407,9 @@ export const FinansProvider = ({ children }) => {
     const handleSabitOdemeEkle = (yeniOdeme) => addOrUpdateDocument('sabitOdemeler', yeniOdeme).then(() => toast.success("Sabit ödeme eklendi!"));
     const handleSabitOdemeSil = (id) => deleteDocument('sabitOdemeler', id).then(() => toast.error("Sabit ödeme silindi."));
     const handleSabitOdemeGuncelle = (id, guncelOdeme) => addOrUpdateDocument('sabitOdemeler', guncelOdeme, id).then(() => toast.success("Sabit ödeme güncellendi!"));
-    
+    const handleKrediKartiEkle = (yeniKart) => addOrUpdateDocument('krediKartlari', yeniKart).then(() => toast.success("Kredi kartı eklendi!"));
+    const handleKrediKartiSil = (id) => deleteDocument('krediKartlari', id).then(() => toast.error("Kredi kartı silindi."));
+    const handleKrediKartiGuncelle = (id, guncelKart) => addOrUpdateDocument('krediKartlari', guncelKart, id).then(() => toast.success("Kredi kartı güncellendi!"));
     const handleVeriIndir = () => {
         if (!gelirler && !giderler && !transferler) { return toast.error("İndirilecek veri bulunmuyor."); }
         const toastId = toast.loading("Veriler hazırlanıyor...");
@@ -462,6 +466,22 @@ export const FinansProvider = ({ children }) => {
     const toplamGider = useMemo(() => filtrelenmisGiderler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGiderler]);
     const genelHesapBakiyeleri = useMemo(() => { return hesaplar.reduce((acc, hesap) => { const toplamGiren = gelirler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.aliciHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); const toplamCikan = giderler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.gonderenHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); acc[hesap.id] = toplamGiren - toplamCikan; return acc; }, {}); }, [hesaplar, gelirler, giderler, transferler]);
     const toplamBakiye = useMemo(() => Object.values(genelHesapBakiyeleri).reduce((t, b) => t + b, 0), [genelHesapBakiyeleri]);
+    const tumHesaplar = useMemo(() => {
+        // Her kredi kartı objesine, normal hesaplarla uyumlu olması için 'ad' ve 'id' anahtarları olduğundan emin olalım.
+        // Ayrıca, bir "tip" ekleyerek onları ayırt edebiliriz.
+        const formatlanmisKrediKartlari = krediKartlari.map(kart => ({
+            ...kart,
+            ad: `${kart.ad} (KK)`, // Arayüzde "Garanti Bonus (KK)" gibi görünmesi için
+            tip: 'krediKarti'
+        }));
+
+        const formatlanmisNakitHesaplar = hesaplar.map(hesap => ({
+            ...hesap,
+            tip: 'varlik'
+        }));
+
+        return [...formatlanmisNakitHesaplar, ...formatlanmisKrediKartlari];
+    }, [hesaplar, krediKartlari]);
     const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
     const butceDurumlari = useMemo(() => { const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1); const oncekiAyGiderleri = giderler.filter(g => { const giderTarihi = new Date(g.tarih); return giderTarihi.getFullYear() === oncekiAyTarih.getFullYear() && giderTarihi.getMonth() === oncekiAyTarih.getMonth(); }); return butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); const oncekiAyHarcanan = oncekiAyGiderleri.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); let degisimYuzdesi = 0; if (oncekiAyHarcanan > 0) { degisimYuzdesi = ((harcanan - oncekiAyHarcanan) / oncekiAyHarcanan) * 100; } else if (harcanan > 0) { degisimYuzdesi = 100; } const kalan = butce.limit - harcanan; const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; let durum = 'normal'; if (yuzdeRaw >= 100) { durum = 'asildi'; } else if (yuzdeRaw >= 90) { durum = 'uyari'; } return { ...butce, harcanan, kalan, yuzde: Math.min(yuzdeRaw, 100), yuzdeRaw, degisimYuzdesi, durum }; }); }, [butceler, filtrelenmisGiderler, giderler, seciliAy, seciliYil]);
     const yaklasanOdemeler = useMemo(() => { 
@@ -473,6 +493,62 @@ export const FinansProvider = ({ children }) => {
             return { ...odeme, kalanGun, tutar: odeme.tutar || 0 }; 
         }).sort((a, b) => a.kalanGun - b.kalanGun).slice(0, 3); 
     }, [sabitOdemeler]);
+    const krediKartiOzetleri = useMemo(() => {
+        if (krediKartlari.length === 0) return [];
+
+        const bugun = new Date();
+        const buYil = bugun.getFullYear();
+        const buAy = bugun.getMonth();
+
+        return krediKartlari.map(kart => {
+            const kesimGunu = parseInt(kart.kesimGunu, 10);
+            const sonOdemeGunu = parseInt(kart.sonOdemeGunu, 10);
+            
+            // Bu ayki hesap kesim ve son ödeme tarihlerini belirle
+            let hesapKesimTarihi = new Date(buYil, buAy, kesimGunu);
+            let sonOdemeTarihi = new Date(buYil, buAy, sonOdemeGunu);
+
+            // Eğer son ödeme günü, kesim gününden küçükse (örn: kesim 27, ödeme 9), 
+            // son ödeme bir sonraki ayın demektir.
+            if (sonOdemeGunu < kesimGunu) {
+                sonOdemeTarihi.setMonth(buAy + 1);
+            }
+            
+            // Eğer bugünün tarihi, bu ayın kesim gününü geçmişse,
+            // bir sonraki ekstreyi ve ödemeyi hesaplıyoruz.
+            if (bugun.getDate() > kesimGunu) {
+                hesapKesimTarihi.setMonth(buAy + 1);
+                sonOdemeTarihi.setMonth(buAy + 2); // Son ödeme 2 ay sonraya kalır
+                if (sonOdemeGunu >= kesimGunu) { // Eğer aynı aydaysa
+                    sonOdemeTarihi.setMonth(buAy + 1);
+                }
+            }
+
+            // Önceki ayın kesim tarihini bul
+            const oncekiKesimTarihi = new Date(hesapKesimTarihi);
+            oncekiKesimTarihi.setMonth(oncekiKesimTarihi.getMonth() - 1);
+
+            // Son ekstre dönemindeki harcamaları topla
+            const donemHarcamalari = giderler.filter(gider => {
+                if (gider.hesapId !== kart.id) return false;
+                const giderTarihi = new Date(gider.tarih);
+                // Harcama, önceki kesimden sonra VE bu ayki kesimden önce mi yapılmış?
+                return giderTarihi > oncekiKesimTarihi && giderTarihi <= hesapKesimTarihi;
+            }).reduce((toplam, gider) => toplam + gider.tutar, 0);
+
+            // Son ödeme gününe kalan günü hesapla
+            const zamanFarki = sonOdemeTarihi.getTime() - bugun.getTime();
+            const kalanGun = Math.ceil(zamanFarki / (1000 * 60 * 60 * 24));
+
+            return {
+                id: kart.id,
+                ad: kart.ad,
+                guncelBorc: donemHarcamalari, // Bu şimdilik sadece harcamalar, ödemeleri de düşebiliriz
+                kalanGun: kalanGun,
+                sonOdemeTarihi: sonOdemeTarihi.toLocaleDateString('tr-TR')
+            };
+        });
+    }, [krediKartlari, giderler]);
     const kategoriOzeti = useMemo(() => filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}), [filtrelenmisGiderler]);
     const grafikVerisi = useMemo(() => { const labels = Object.keys(kategoriOzeti); if (labels.length === 0) { return { labels: ['Veri Yok'], datasets: [{ label: 'Harcama Miktarı', data: [1], backgroundColor: ['#E0E0E0'], borderColor: '#ffffff', borderWidth: 2 }], }; } const data = Object.values(kategoriOzeti); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#CCCCCC'); return { labels, datasets: [{ label: 'Harcama Miktarı', data, backgroundColor, borderColor: '#ffffff', borderWidth: 2 }], }; }, [kategoriOzeti, kategoriRenkleri]);
     const gelirGrafikVerisi = useMemo(() => { const gelirKaynaklari = filtrelenmisGelirler.reduce((acc, gelir) => { const { kategori, tutar } = gelir; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}); const labels = Object.keys(gelirKaynaklari); if (labels.length === 0) { return { labels: ['Veri Yok'], datasets: [{ label: 'Gelir Kaynağı', data: [], backgroundColor: [] }], }; } const data = Object.values(gelirKaynaklari); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#2ecc71'); return { labels, datasets: [{ label: 'Gelir Kaynağı', data, backgroundColor, borderRadius: 4 }], }; }, [filtrelenmisGelirler, kategoriRenkleri]);
@@ -520,6 +596,8 @@ export const FinansProvider = ({ children }) => {
 
     const contextValue = {
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
+        krediKartlari,
+        tumHesaplar,
         addIslem, updateIslem, openDeleteModal, handleCloseModal, handleConfirmDelete, handleTopluSil,
         bekleyenOdemeler,
         handleBekleyenOdemeleriIsle,
@@ -528,6 +606,9 @@ export const FinansProvider = ({ children }) => {
         handleKategoriEkle, handleKategoriSil, handleKategoriSirala, handleKategoriGuncelle,
         handleButceEkle, handleButceSil, handleButceGuncelle,
         handleSabitOdemeEkle, handleSabitOdemeSil, handleSabitOdemeGuncelle,
+        handleKrediKartiEkle, // YENİ
+        handleKrediKartiSil, // YENİ
+        handleKrediKartiGuncelle, // YENİ
         handleVeriIndir,
         tarihAraligi,        
         setTarihAraligi,
@@ -540,7 +621,7 @@ export const FinansProvider = ({ children }) => {
         mevcutYillar, 
         trendVerisi, 
         yillikRaporVerisi,
-        yaklasanOdemeler, genelHesapBakiyeleri, aylikHesapGiderleri,
+        yaklasanOdemeler, krediKartiOzetleri, genelHesapBakiyeleri, aylikHesapGiderleri,
         transferGuestDataToFirestore
     };
 
