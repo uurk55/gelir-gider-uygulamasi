@@ -143,6 +143,11 @@ export const FinansProvider = ({ children }) => {
         const buAy = bugun.getMonth();
         const buYil = bugun.getFullYear();
         const yeniBekleyenOdemeler = [];
+        
+        // YENİ: Bu ay için atlanmış olanları localStorage'dan çek
+        const buAyYil = `${buYil}-${buAy}`;
+        const atlananlarKey = `atlananOdemeler_${currentUser.uid}_${buAyYil}`;
+        const buAyAtlananlar = getLocalData(atlananlarKey, []);
 
         const vadesiGecenler = sabitOdemeler.filter(odeme => {
             const odemeGunu = parseInt(odeme.odemeGunu, 10);
@@ -158,7 +163,11 @@ export const FinansProvider = ({ children }) => {
                 new Date(gider.tarih).getFullYear() === buYil
             );
 
-            if (!zatenEklenmis) {
+            // YENİ: Bu ödeme, bu ay için atlanmış mı diye kontrol et
+            const buAyAtlandi = buAyAtlananlar.includes(odeme.id);
+
+            // GÜNCELLENMİŞ KONTROL: Eğer eklenmemişse VE atlanmamışsa
+            if (!zatenEklenmis && !buAyAtlandi) {
                 const odemeGunu = parseInt(odeme.odemeGunu, 10);
                 const islenecekTarih = new Date(buYil, buAy, odemeGunu).toISOString().split('T')[0];
                 yeniBekleyenOdemeler.push({ ...odeme, islenecekTarih });
@@ -166,7 +175,6 @@ export const FinansProvider = ({ children }) => {
         });
         setBekleyenOdemeler(yeniBekleyenOdemeler);
     }, [sabitOdemeler, giderler, currentUser]);
-
     useEffect(() => {
         const tumKategoriler = [...giderKategorileri, ...gelirKategorileri];
         const yeniRenkHaritasi = {};
@@ -207,8 +215,23 @@ export const FinansProvider = ({ children }) => {
     
     const handleBekleyenOdemeyiAtla = (atlananOdeme) => {
         if (!currentUser) return;
+
+        // 1. O anki ay ve yılı al (Örn: "2025-9")
+        const bugun = new Date();
+        const buAyYil = `${bugun.getFullYear()}-${bugun.getMonth()}`;
+
+        // 2. localStorage'dan bu aya ait atlananlar listesini çek
+        const atlananlarKey = `atlananOdemeler_${currentUser.uid}_${buAyYil}`;
+        const mevcutAtlananlar = getLocalData(atlananlarKey, []);
+
+        // 3. Yeni atlanan ödemenin ID'sini listeye ekle ve tekrar kaydet
+        const yeniAtlananlar = [...mevcutAtlananlar, atlananOdeme.id];
+        setLocalData(atlananlarKey, yeniAtlananlar);
+
+        // 4. Arayüzün anında güncellenmesi için "bekleyenler" state'inden çıkar
         setBekleyenOdemeler(prev => prev.filter(odeme => odeme.id !== atlananOdeme.id));
-        toast.info(`'${atlananOdeme.aciklama}' ödemesi bu ay için atlandı.`);
+        
+        toast.info(`'${atlananOdeme.aciklama}' ödemesi bu ay için kalıcı olarak atlandı.`);
     };
     
     const updateAyarlar = async (yeniAyarlar) => {
