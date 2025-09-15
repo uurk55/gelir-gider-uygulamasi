@@ -1,14 +1,13 @@
-// src/components/GenelBakis/AylikOzetKarti.jsx
+// src/components/GenelBakis/AylikOzetKarti.jsx (RENKLER DÜZELTİLDİ)
 
 import { useNavigate } from 'react-router-dom';
-import { useFinans } from '../../context/FinansContext'; // Dosya yolu önemli: ../../context/FinansContext
+import { useFinans } from '../../context/FinansContext';
 import { FaPlus } from 'react-icons/fa';
-import { formatCurrency } from '../../utils/formatters'; // Dosya yolu önemli: ../../utils/formatters
+// formatCurrency'e artık ihtiyacımız yok, silebiliriz
+import CountUp from 'react-countup'; 
 
 function AylikOzetKarti() {
     const navigate = useNavigate();
-
-    // Sadece bu bileşenin ihtiyacı olan verileri Context'ten çekiyoruz
     const { seciliYil, seciliAy, toplamGelir, toplamGider } = useFinans();
 
     const ayAdi = new Date(seciliYil, seciliAy - 1, 1).toLocaleString('tr-TR', { month: 'long' });
@@ -25,16 +24,23 @@ function AylikOzetKarti() {
             <div className="aylik-ozet-kutusu">
                 <div className="ozet-kalem">
                     <span className="ozet-baslik">Toplam Gelir</span>
-                    <span className="ozet-tutar gelir-renk">+ {formatCurrency(toplamGelir)}</span>
+                    {/* DÜZELTME: "gelir-renk" sınıfını geri ekledik */}
+                    <span className="ozet-tutar gelir-renk"> 
+                        + <CountUp end={toplamGelir} duration={1.5} separator="." decimal="," prefix="₺" />
+                    </span>
                 </div>
                 <div className="ozet-kalem">
                     <span className="ozet-baslik">Toplam Gider</span>
-                    <span className="ozet-tutar gider-renk">- {formatCurrency(toplamGider)}</span>
+                    {/* DÜZELTME: "gider-renk" sınıfını geri ekledik */}
+                    <span className="ozet-tutar gider-renk">
+                        - <CountUp end={toplamGider} duration={1.5} separator="." decimal="," prefix="₺" />
+                    </span>
                 </div>
                 <div className="ozet-kalem">
                     <span className="ozet-baslik">Aylık Durum</span>
+                    {/* DÜZELTME: Dinamik sınıfı geri ekledik */}
                     <span className={`ozet-tutar aylik-durum ${aylikDurum >= 0 ? 'gelir-renk' : 'gider-renk'}`}>
-                        {formatCurrency(aylikDurum)}
+                        <CountUp end={aylikDurum} duration={1.5} separator="." decimal="," prefix="₺" />
                     </span>
                 </div>
             </div>

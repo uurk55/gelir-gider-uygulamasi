@@ -3999,3 +3999,304 @@ div.akilli-bildirim-cubugu {
 .hedefler-sayfasi-container .sayfa-baslik .primary-btn:hover {
     background-color: #155cb0;
 }
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI YENİ TASARIM (KOKPİT GÖRÜNÜMÜ)
+   ========================================================================== */
+
+/* --- 1. KAHRAMAN BÖLÜMÜ --- */
+.kahraman-bolumu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa; /* Hafif kırık beyaz bir arka plan */
+    padding: 2rem;
+    border-radius: 16px; /* Daha modern, yuvarlak köşeler */
+    margin-bottom: 2.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.selamlama-alani {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.selamlama-ikon {
+    font-size: 2.5rem;
+    color: #1a73e8;
+}
+
+.selamlama-metin h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    color: #333;
+}
+
+.selamlama-metin p {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #666;
+}
+
+
+/* --- 2. KOKPİT GRID YAPISI --- */
+.kokpit-grid {
+    display: grid;
+    /* Ana sütun, yan sütunun yaklaşık 2 katı genişliğinde olacak */
+    grid-template-columns: minmax(0, 2fr) 1fr; 
+    gap: 2rem; /* Sütunlar arasındaki boşluk */
+    align-items: start; /* Sütunların içeriğini yukarıdan başlatır */
+}
+
+/* Sütunların içindeki kartlar için genel düzenlemeler */
+.ana-sutun,
+.yan-sutun {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Kartlar arasındaki dikey boşluk */
+}
+
+
+/* --- 3. MOBİL UYUMLULUK (RESPONSIVE) --- */
+/* Ekran genişliği 1024px'den küçük olduğunda... */
+@media (max-width: 1024px) {
+    /* Kahraman bölümünü alt alta getir */
+    .kahraman-bolumu {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    /* Grid yapısını tek sütuna düşür */
+    .kokpit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ==========================================================================
+   FİNAL CİLA: ANİMASYONLU RAKAMLAR VE TİPOGRAFİ
+   ========================================================================== */
+
+/* --- Genel Kart Başlıkları için --- */
+.card .card-header h2,
+.card .mini-kart-baslik h3 {
+    font-size: 1.1rem;
+    font-weight: 600; /* Başlıkları biraz daha kalın yapıyoruz */
+    color: #444; /* Rengi hafifçe koyulaştırıyoruz */
+}
+
+/* --- Genel Varlık Kartı Rakamı --- */
+.genel-bakiye-tutar {
+    font-size: 2.25rem; /* Rakamı büyütüyoruz */
+    font-weight: 500; /* Daha zarif bir kalınlık */
+    color: #222;
+    line-height: 1.2;
+}
+
+/* --- Aylık Özet Kartı Rakamları --- */
+.aylik-ozet-kutusu .ozet-tutar {
+    font-size: 1.5rem; /* Rakamları büyütüyoruz */
+    font-weight: 600;
+}
+/* ==========================================================================
+   ÖZELLEŞTİR SAYFASI YENİ TASARIM
+   ========================================================================== */
+
+/* --- Ana Kapsayıcı ve Kart --- */
+.ozellestir-sayfasi-container {
+    max-width: 1000px; /* Sayfanın çok genişlemesini engeller */
+    margin: 0 auto; /* Sayfayı ortalar */
+}
+
+.ozellestir-sayfasi-container .card {
+    padding: 0; /* İçerideki elementlerin boşluklarını kendimiz yöneteceğiz */
+    overflow: hidden; /* Köşelerden taşmaları engeller */
+}
+
+/* --- Sayfa Başlığı ve Sekmeler --- */
+.ozellestir-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+.ozellestir-header h1 {
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+.sekme-kontrol {
+    display: flex;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 0.25rem;
+}
+
+.sekme-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.2s ease-in-out;
+}
+
+.sekme-btn.aktif {
+    background-color: #fff;
+    color: #1a73e8;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- İçerik Alanı --- */
+.ozellestir-icerik {
+    padding: 2rem;
+}
+
+.yonetim-bolumu h2,
+.kategori-listesi-alani h3 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Genel Liste ve Satır Stilleri --- */
+.ozellestir-liste {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Satırlar arası "nefes boşluğu" */
+}
+
+.ozellestir-liste-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem; /* Satır içi "nefes boşluğu" */
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+}
+
+.ozellestir-liste-item span {
+    font-weight: 500;
+}
+
+.liste-item-aksiyonlar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.liste-item-aksiyonlar .icon-btn {
+    color: #888;
+}
+.liste-item-aksiyonlar .icon-btn:hover {
+    color: #333;
+}
+.liste-item-aksiyonlar .icon-btn.danger:hover {
+    color: #d32f2f;
+}
+
+/* --- Satır İçi Form ve Inputlar --- */
+.liste-item-input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0;
+}
+.liste-item-input:focus {
+    outline: none;
+}
+
+.ozellestir-liste-item.ekleme-formu {
+    background-color: #f8f9fa; /* Form satırını hafifçe farklılaştırır */
+}
+
+/* --- Ekle Butonu --- */
+.ekle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    font-weight: 600;
+    border: 1px dashed #1a73e8;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.ekle-btn:hover {
+    background-color: #dbe7fb;
+}
+
+.ekle-btn-small {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* --- Kategori Sayfasına Özel Stiller --- */
+.yonetim-bolumu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+}
+
+.drag-handle-btn {
+    background: none;
+    border: none;
+    cursor: grab;
+    color: #ccc;
+    margin-right: 1rem;
+}
+.drag-handle-btn:active {
+    cursor: grabbing;
+}
+
+/* --- Kredi Kartı Sayfasına Özel Stiller --- */
+.kk-item-bilgi {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.kk-item-bilgi small {
+    color: #888;
+    font-size: 0.9rem;
+}
+.yonetim-bolumu-grid .form-grup {
+    margin-bottom: 1.25rem;
+}
+.yonetim-bolumu-grid label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.yonetim-bolumu-grid input {
+    width: 100%;
+}
+
+/* --- Mobil Uyumluluk --- */
+@media (max-width: 768px) {
+    .ozellestir-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    .yonetim-bolumu-grid {
+        grid-template-columns: 1fr;
+    }
+}
