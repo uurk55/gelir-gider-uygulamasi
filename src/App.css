@@ -4431,3 +4431,134 @@ tfoot .toplam-satiri td {
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
+/* ==========================================================================
+   YÖNETİM SAYFALARI ORTAK STİLLERİ (Özelleştir & Bütçeler)
+   ========================================================================== */
+
+/* --- Ana Kapsayıcı ve Kart --- */
+.ozellestir-sayfasi-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.ozellestir-sayfasi-container .card {
+    padding: 0;
+    overflow: hidden;
+}
+
+/* --- Sayfa Başlığı ve Sekmeler --- */
+.ozellestir-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+.ozellestir-header h1 {
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+/* --- İçerik Alanı --- */
+.ozellestir-icerik {
+    padding: 2rem;
+}
+
+/* --- Genel Liste ve Satır Stilleri --- */
+.ozellestir-liste {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ozellestir-liste-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    min-height: 60px; /* Tüm satırların aynı yükseklikte olmasını sağlar */
+}
+
+.ozellestir-liste-item span {
+    font-weight: 500;
+}
+
+.liste-item-aksiyonlar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.liste-item-aksiyonlar .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    color: #888;
+}
+.liste-item-aksiyonlar .icon-btn:hover {
+    color: #333;
+}
+.liste-item-aksiyonlar .icon-btn.danger:hover {
+    color: #d32f2f;
+}
+
+/* --- Satır İçi Form ve Inputlar --- */
+.liste-item-input,
+.liste-item-select {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0;
+}
+.liste-item-input:focus,
+.liste-item-select:focus {
+    outline: none;
+}
+
+.ozellestir-liste-item.ekleme-formu {
+    background-color: #f8f9fa;
+}
+
+/* --- Ekle Butonu --- */
+.ekle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    font-weight: 600;
+    border: 1px dashed #1a73e8;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.ekle-btn:hover {
+    background-color: #dbe7fb;
+}
+
+
+/* --- BÜTÇELER SAYFASINA ÖZEL EK STİLLER --- */
+.ozellestir-liste-item .liste-item-sag-taraf {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.ozellestir-liste-item .liste-item-deger {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    min-width: 100px;
+    text-align: right;
+}

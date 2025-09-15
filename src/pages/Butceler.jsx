@@ -1,150 +1,154 @@
-// src/pages/Butceler.jsx (DÜZENLEME HATASI GİDERİLMİŞ NİHAİ VERSİYON)
-import { useState, useEffect } from 'react'; // useEffect'i import et
-import toast from 'react-hot-toast';
+// src/pages/Butceler.jsx (YENİDEN YAPILANDIRILMIŞ HALİ)
+
+import { useState, useEffect } from 'react';
 import { useFinans } from '../context/FinansContext';
-import { FaTrash, FaPen, FaSave } from 'react-icons/fa';
+import { FaPlus, FaSave, FaTimes, FaTrash, FaEdit } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatters';
 
-// Her bir bütçe satırını yönetecek alt bileşen
-const ButceListItem = ({ butce }) => {
-    // DEĞİŞİKLİK: Yeni handleButceGuncelle fonksiyonunu context'ten çekiyoruz
-    const { handleButceSil, handleButceGuncelle } = useFinans(); 
+// --- Tek bir Bütçe Satırını Yöneten Alt Bileşen ---
+function ButceSatiri({ butce }) {
+    const { handleButceSil, handleButceGuncelle, giderKategorileri } = useFinans();
     const [isEditing, setIsEditing] = useState(false);
-    const [limit, setLimit] = useState(butce.limit);
+    
+    // Düzenleme state'ini, prop değiştiğinde güncel tutmak için
+    const [editState, setEditState] = useState({ 
+        kategori: butce.kategori, 
+        limit: butce.limit 
+    });
 
-    const handleSave = () => {
-        // Değişiklik var mı ve limit geçerli mi diye kontrol et
-        if (limit > 0 && parseFloat(limit) !== butce.limit) {
-            // DEĞİŞİKLİK: Artık handleButceEkle yerine handleButceGuncelle'yi çağırıyoruz.
-            // İlk argüman bütçenin ID'si, ikincisi ise güncellenecek alanları içeren obje.
-            handleButceGuncelle(butce.id, { limit: parseFloat(limit) });
-        } else if (limit <= 0) {
-            toast.error("Bütçe limiti 0'dan büyük olmalıdır.");
-            setLimit(butce.limit); // Hata durumunda eski değere geri dön
-        }
-        setIsEditing(false); // Her durumda düzenleme modunu kapat
-    };
+    useEffect(() => {
+        setEditState({ kategori: butce.kategori, limit: butce.limit });
+    }, [butce]);
 
-    const handleKeyDown = (e) => {
-        if (e.key === 'Enter') handleSave();
-        else if (e.key === 'Escape') {
-            setLimit(butce.limit);
+
+    const onGuncelle = () => {
+        if (editState.limit > 0) {
+            handleButceGuncelle(butce.id, { 
+                ...butce, // Mevcut diğer verileri koru
+                kategori: editState.kategori,
+                limit: parseFloat(editState.limit) 
+            });
             setIsEditing(false);
         }
     };
-    
+
     return (
-        <li className="yonetim-listesi-item">
-            <span>{butce.kategori}</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                {isEditing ? (
-                    <input
-                        type="number"
-                        value={limit}
-                        onChange={(e) => setLimit(e.target.value)}
-                        onBlur={handleSave}
-                        onKeyDown={handleKeyDown}
-                        autoFocus
-                        style={{width: '100px', textAlign: 'right'}}
+        <div className="ozellestir-liste-item">
+            {isEditing ? (
+                <>
+                    <select 
+                        value={editState.kategori} 
+                        onChange={(e) => setEditState({...editState, kategori: e.target.value})}
+                        className="liste-item-select"
+                    >
+                        {giderKategorileri.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
+                    </select>
+                    <input 
+                        type="number" 
+                        value={editState.limit} 
+                        onChange={(e) => setEditState({...editState, limit: e.target.value})} 
+                        className="liste-item-input"
+                        style={{textAlign: 'right', maxWidth: '120px'}}
                     />
-                ) : (
-                    <span style={{ color: 'var(--primary-text)', fontWeight: '500' }}>
-                        {formatCurrency(butce.limit)}
-                    </span>
-                )}
-                <div className="buton-grubu">
-                    <button onClick={() => setIsEditing(!isEditing)} className="icon-btn duzenle-btn">
-                        {isEditing ? <FaSave /> : <FaPen />}
-                    </button>
-                    {/* Silme butonunda 'butce.id' kullanımı zaten doğruydu, o yüzden dokunmuyoruz. */}
-                    <button onClick={() => handleButceSil(butce.id)} className="icon-btn sil-btn">
-                        <FaTrash />
-                    </button>
+                    <div className="liste-item-aksiyonlar">
+                        <button onClick={onGuncelle} className="icon-btn"><FaSave /></button>
+                        <button onClick={() => setIsEditing(false)} className="icon-btn"><FaTimes /></button>
+                    </div>
+                </>
+            ) : (
+                <>
+                    <span>{butce.kategori}</span>
+                    <div className="liste-item-sag-taraf">
+                        <span className="liste-item-deger">{formatCurrency(butce.limit)}</span>
+                        <div className="liste-item-aksiyonlar">
+                            <button onClick={() => setIsEditing(true)} className="icon-btn"><FaEdit /></button>
+                            <button onClick={() => handleButceSil(butce.id)} className="icon-btn danger"><FaTrash /></button>
+                        </div>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
+
+// --- Ana Bütçeler Sayfası ---
+function Butceler() {
+    const { butceler, giderKategorileri, handleButceEkle } = useFinans();
+    const [isAdding, setIsAdding] = useState(false);
+
+    // Henüz bütçesi oluşturulmamış kategorileri bul
+    const mevcutButceKategorileri = new Set(butceler.map(b => b.kategori));
+    const eklenmemisKategoriler = giderKategorileri.filter(k => !mevcutButceKategorileri.has(k));
+
+    const [yeniButce, setYeniButce] = useState({
+        kategori: eklenmemisKategoriler[0] || '',
+        limit: ''
+    });
+    
+    // eklenmemiş kategori listesi değiştiğinde, formdaki varsayılan kategoriyi güncelle
+    useEffect(() => {
+        if (eklenmemisKategoriler.length > 0) {
+            setYeniButce(prev => ({ ...prev, kategori: eklenmemisKategoriler[0] }));
+        }
+    }, [giderKategorileri, butceler]);
+
+    const onEkle = () => {
+        if (yeniButce.limit > 0 && yeniButce.kategori) {
+            handleButceEkle({
+                kategori: yeniButce.kategori,
+                limit: parseFloat(yeniButce.limit)
+            });
+            setIsAdding(false);
+            setYeniButce({ ...yeniButce, limit: '' }); // Sadece limiti sıfırla
+        }
+    };
+
+    return (
+        <div className="ozellestir-sayfasi-container">
+            <div className="card">
+                <div className="ozellestir-header">
+                    <h1>Aylık Kategori Bütçeleri</h1>
+                </div>
+                <div className="ozellestir-icerik">
+                    <div className="ozellestir-liste">
+                        {butceler.map(butce => <ButceSatiri key={butce.id} butce={butce} />)}
+                        
+                        {isAdding && (
+                            <div className="ozellestir-liste-item ekleme-formu">
+                                <select
+                                    value={yeniButce.kategori}
+                                    onChange={(e) => setYeniButce({...yeniButce, kategori: e.target.value})}
+                                    className="liste-item-select"
+                                    autoFocus
+                                >
+                                    {eklenmemisKategoriler.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
+                                </select>
+                                <input
+                                    type="number"
+                                    value={yeniButce.limit}
+                                    onChange={(e) => setYeniButce({...yeniButce, limit: e.target.value})}
+                                    placeholder="Aylık Limit (₺)"
+                                    className="liste-item-input"
+                                    style={{textAlign: 'right'}}
+                                />
+                                <div className="liste-item-aksiyonlar">
+                                    <button onClick={onEkle} className="icon-btn"><FaSave /></button>
+                                    <button onClick={() => setIsAdding(false)} className="icon-btn"><FaTimes /></button>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {!isAdding && eklenmemisKategoriler.length > 0 && (
+                        <button onClick={() => setIsAdding(true)} className="ekle-btn">
+                            <FaPlus /> Yeni Bütçe Ekle
+                        </button>
+                    )}
                 </div>
             </div>
-        </li>
-    );
-};
-
-
-function Butceler() {
-  const { giderKategorileri, butceler, handleButceEkle } = useFinans();
-  // DEĞİŞİKLİK: useState'e fonksiyon vererek başlangıç değerinin sadece bir kez hesaplanmasını sağlıyoruz
-  const [kategori, setKategori] = useState(() => giderKategorileri.filter(kat => kat !== 'Diğer' && !butceler.some(b => b.kategori === kat))[0] || '');
-  const [limit, setLimit] = useState('');
-
-  // DEĞİŞİKLİK: bütçeler veya kategoriler değiştiğinde, seçili kategoriyi güncelle
-  useEffect(() => {
-    const bütçesiOlmayanKategoriler = giderKategorileri.filter(kat => 
-        kat !== 'Diğer' && !butceler.some(b => b.kategori === kat)
-    );
-    // Eğer mevcut seçili kategori artık listede yoksa veya hiç seçilmemişse, listeyi güncelle
-    if (!bütçesiOlmayanKategoriler.includes(kategori)) {
-        setKategori(bütçesiOlmayanKategoriler[0] || '');
-    }
-  }, [butceler, giderKategorileri, kategori]);
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!kategori || !limit || limit <= 0) {
-      toast.error("Lütfen bir kategori seçin ve 0'dan büyük bir limit girin.");
-      return;
-    }
-    handleButceEkle({ kategori, limit: parseFloat(limit) });
-    setLimit('');
-    // Kategori otomatik olarak useEffect tarafından güncellenecek
-  };
-
-  if (!giderKategorileri || !butceler) {
-      return <div>Yükleniyor...</div>
-  }
-  
-  const bütçesiOlmayanKategoriler = giderKategorileri.filter(kat => 
-      kat !== 'Diğer' && !butceler.some(b => b.kategori === kat)
-  );
-
-
-  return (
-    <div className="card">
-      <div className="card-header">
-        <h2>Aylık Kategori Bütçeleri</h2>
-      </div>
-      <div className="yonetim-sayfasi-layout">
-        <div className="bolum">
-          <h3>Yeni Bütçe Ekle</h3>
-          {bütçesiOlmayanKategoriler.length > 0 ? (
-            <form onSubmit={handleSubmit} className="form-modern">
-              <div>
-                <label htmlFor="kategori-sec">Kategori Seç</label>
-                <select id="kategori-sec" value={kategori} onChange={(e) => setKategori(e.target.value)}>
-                  {bütçesiOlmayanKategoriler.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
-                </select>
-              </div>
-              <div>
-                <label htmlFor="aylik-limit">Aylık Limit (₺)</label>
-                <input id="aylik-limit" type="number" min="1" placeholder="Örn: 500" value={limit} onChange={(e) => setLimit(e.target.value)} />
-              </div>
-              <button type="submit" className="primary-btn" style={{width: '100%'}}>Kaydet</button>
-            </form>
-          ) : (
-             <p style={{marginTop: '1rem', color: 'var(--secondary-text)'}}>Tüm kategoriler için bütçe belirlendi.</p>
-          )}
         </div>
-        <div className="bolum">
-          <h3>Mevcut Bütçeler</h3>
-          {butceler.length === 0 ? <p style={{marginTop: '1rem', color: 'var(--secondary-text)'}}>Henüz bir bütçe belirlemediniz.</p> : (
-            <ul className="yonetim-listesi">
-              {/* DEĞİŞİKLİK: key olarak daha güvenilir olan butce.id'yi kullanıyoruz */}
-              {butceler.map(butce => (
-                <ButceListItem key={butce.id} butce={butce} />
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Butceler;
