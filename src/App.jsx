@@ -18,6 +18,8 @@ const Raporlar = lazy(() => import('./pages/Raporlar.jsx'));
 const Butceler = lazy(() => import('./pages/Butceler.jsx'));
 const Ozellestir = lazy(() => import('./pages/Ozellestir.jsx'));
 const Ayarlar = lazy(() => import('./pages/Ayarlar.jsx'));
+const HedeflerPage = lazy(() => import('./pages/HedeflerPage.jsx'));
+
 
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
@@ -69,6 +71,7 @@ function AppLayout() {
               <NavLink to="/raporlar">Raporlar</NavLink>
               <NavLink to="/sabit-odemeler">Sabit Ödemeler</NavLink>
               <NavLink to="/butceler">Bütçeler</NavLink>
+              <NavLink to="/hedefler">Hedefler</NavLink> 
               <NavLink to="/ayarlar">Ayarlar</NavLink>
             </>
           )}
@@ -91,6 +94,7 @@ function AppLayout() {
               <Route path="/raporlar" element={<ProtectedRoute><Raporlar /></ProtectedRoute>} />
               <Route path="/sabit-odemeler" element={<ProtectedRoute><SabitOdemeler /></ProtectedRoute>} />
               <Route path="/butceler" element={<ProtectedRoute><Butceler /></ProtectedRoute>} />
+              <Route path="/hedefler" element={<ProtectedRoute><HedeflerPage /></ProtectedRoute>} />
               <Route path="/ayarlar" element={<ProtectedRoute><Ayarlar /></ProtectedRoute>} />
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>

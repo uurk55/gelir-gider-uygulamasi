@@ -66,7 +66,7 @@ export const FinansProvider = ({ children }) => {
     const [giderKategorileri, setGiderKategorileri] = useState(() => currentUser ? GIDER_KATEGORILERI_VARSAYILAN : getLocalData('guest_giderKategorileri', GIDER_KATEGORILERI_VARSAYILAN));
     const [gelirKategorileri, setGelirKategorileri] = useState(() => currentUser ? GELIR_KATEGORILERI_VARSAYILAN : getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
     const [krediKartlari, setKrediKartlari] = useState(() => currentUser ? [] : getLocalData('guest_krediKartlari', []));
-
+    const [hedefler, setHedefler] = useState(() => currentUser ? [] : getLocalData('guest_hedefler', []));
     const [bekleyenOdemeler, setBekleyenOdemeler] = useState([]);
     const [kategoriRenkleri, setKategoriRenkleri] = useState({});
     const [seciliAy, setSeciliAy] = useState(new Date().getMonth() + 1);
@@ -124,6 +124,7 @@ export const FinansProvider = ({ children }) => {
                 onSnapshot(collection(db, 'users', uid, 'butceler'), s => setButceler(s.docs.map(d => ({ id: d.id, ...d.data() })))),
                 onSnapshot(collection(db, 'users', uid, 'sabitOdemeler'), s => setSabitOdemeler(s.docs.map(d => ({ id: d.id, ...d.data() })))),
                 onSnapshot(collection(db, 'users', uid, 'krediKartlari'), s => setKrediKartlari(s.docs.map(d => ({ id: d.id, ...d.data() })))),
+                onSnapshot(collection(db, 'users', uid, 'hedefler'), s => setHedefler(s.docs.map(d => ({ id: d.id, ...d.data() })))),
                 onSnapshot(doc(db, 'users', uid), async (docSnapshot) => {
                     if (docSnapshot.exists()) {
                         const data = docSnapshot.data();
@@ -138,7 +139,7 @@ export const FinansProvider = ({ children }) => {
             return () => unsubscribers.forEach(unsub => unsub());
         } else {
             setGelirler(getLocalData('guest_gelirler', [])); setGiderler(getLocalData('guest_giderler', [])); setTransferler(getLocalData('guest_transferler', []));
-            setButceler(getLocalData('guest_butceler', [])); setSabitOdemeler(getLocalData('guest_sabitOdemeler', [])); setKrediKartlari(getLocalData('guest_krediKartlari', [])); setHesaplar(getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR));
+            setButceler(getLocalData('guest_butceler', [])); setSabitOdemeler(getLocalData('guest_sabitOdemeler', [])); setKrediKartlari(getLocalData('guest_krediKartlari', [])); setHedefler(getLocalData('guest_hedefler', [])); setHesaplar(getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR)); setHesaplar(getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR));
             setGiderKategorileri(getLocalData('guest_giderKategorileri', GIDER_KATEGORILERI_VARSAYILAN)); setGelirKategorileri(getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
         }
     }, [currentUser]);
@@ -410,6 +411,74 @@ export const FinansProvider = ({ children }) => {
     const handleKrediKartiEkle = (yeniKart) => addOrUpdateDocument('krediKartlari', yeniKart).then(() => toast.success("Kredi kartı eklendi!"));
     const handleKrediKartiSil = (id) => deleteDocument('krediKartlari', id).then(() => toast.error("Kredi kartı silindi."));
     const handleKrediKartiGuncelle = (id, guncelKart) => addOrUpdateDocument('krediKartlari', guncelKart, id).then(() => toast.success("Kredi kartı güncellendi!"));
+    const handleHedefEkle = (yeniHedef) => {
+    const hedefVerisi = {
+        ...yeniHedef,
+        mevcutTutar: 0, // Hedef oluşturulduğunda birikim 0'dır
+        olusturmaTarihi: new Date().toISOString()
+    };
+    // Mevcut addOrUpdateDocument fonksiyonumuzu kullanıyoruz
+    addOrUpdateDocument('hedefler', hedefVerisi).then(() => {
+        toast.success(`'${yeniHedef.ad}' hedefi başarıyla oluşturuldu!`);
+    });
+};
+
+const handleHedefGuncelle = (id, guncelVeri) => {
+        addOrUpdateDocument('hedefler', guncelVeri, id).then(() => {
+            toast.success("Hedef bilgileri güncellendi!");
+        });
+    };
+
+const handleHedefSil = (id) => {
+    // Not: Bu işlem, hedefe yapılmış birikim GİDERLERİNİ silmez.
+    // Bu, genel bakiye tutarlılığını korumak için önemlidir.
+    deleteDocument('hedefler', id).then(() => {
+        toast.error("Hedef silindi.");
+    });
+};
+
+// Hedefe para aktarmayı sağlayan en önemli fonksiyon
+const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
+    const toastId = toast.loading("Birikim hedefinize aktarılıyor...");
+
+    try {
+        const hedef = hedefler.find(h => h.id === hedefId);
+        if (!hedef) {
+            throw new Error("Aktarım yapılacak hedef bulunamadı.");
+        }
+        if (!kaynakHesapId) {
+             throw new Error("Kaynak hesap seçilmedi.");
+        }
+         if (!tutar || tutar <= 0) {
+             throw new Error("Geçerli bir tutar girilmedi.");
+        }
+
+        // 1. Hedefin kendi içindeki birikim tutarını güncelle
+        const yeniMevcutTutar = (hedef.mevcutTutar || 0) + tutar;
+        const hedefGuncellemePromise = addOrUpdateDocument('hedefler', { mevcutTutar: yeniMevcutTutar }, hedefId);
+
+        // 2. Bu işlemi bir "gider" olarak kaydet ki seçilen hesabın bakiyesi düşsün.
+        // Bu sayede sistemin genel bakiye tutarlılığı bozulmaz.
+        const giderVerisi = {
+            aciklama: `'${hedef.ad}' hedefi için birikim`,
+            tutar: tutar,
+            kategori: 'Hedef Birikimi', // Bu özel bir kategori adıdır.
+            tarih: new Date().toISOString().split('T')[0],
+            hesapId: kaynakHesapId,
+            hedefId: hedefId // Giderin hangi hedefe ait olduğunu belirtmek için
+        };
+        const giderEklemePromise = addIslem(ISLEM_TURLERI.GIDER, giderVerisi);
+        
+        // İki işlemi de aynı anda çalıştır
+        await Promise.all([hedefGuncellemePromise, giderEklemePromise]);
+
+        toast.success(`${formatCurrency(tutar)} hedefinize eklendi!`, { id: toastId });
+
+    } catch (error) {
+        console.error("Hedefe para eklenirken hata:", error);
+        toast.error(error.message || "İşlem sırasında bir hata oluştu.", { id: toastId });
+    }
+};
     const handleVeriIndir = () => {
         if (!gelirler && !giderler && !transferler) { return toast.error("İndirilecek veri bulunmuyor."); }
         const toastId = toast.loading("Veriler hazırlanıyor...");
@@ -597,6 +666,7 @@ export const FinansProvider = ({ children }) => {
     const contextValue = {
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
         krediKartlari,
+        hedefler,
         tumHesaplar,
         addIslem, updateIslem, openDeleteModal, handleCloseModal, handleConfirmDelete, handleTopluSil,
         bekleyenOdemeler,
@@ -608,7 +678,11 @@ export const FinansProvider = ({ children }) => {
         handleSabitOdemeEkle, handleSabitOdemeSil, handleSabitOdemeGuncelle,
         handleKrediKartiEkle, // YENİ
         handleKrediKartiSil, // YENİ
-        handleKrediKartiGuncelle, // YENİ
+        handleKrediKartiGuncelle, 
+        handleHedefEkle,
+        handleHedefGuncelle,
+        handleHedefSil,
+        handleHedefeParaEkle,
         handleVeriIndir,
         tarihAraligi,        
         setTarihAraligi,

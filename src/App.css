@@ -3714,3 +3714,288 @@ div.akilli-bildirim-cubugu {
     color: var(--danger-color);
     font-weight: 700;
 }
+/* ==========================================================================
+   HEDEFLER İÇİN TEMEL VE ÇALIŞAN STİLLER (KARTLAR VE MODAL)
+   ========================================================================== */
+
+/* Bu genel kapsayıcı, kuralların çakışmasını engeller */
+.hedefler-sayfasi-container .hedefler-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.hedefler-sayfasi-container .hedef-karti {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hedefler-sayfasi-container .hedef-karti:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.hedefler-sayfasi-container .hedef-karti-ust {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.hedefler-sayfasi-container .hedef-adi {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.hedefler-sayfasi-container .hedef-aksiyon-butonlari {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hedefler-sayfasi-container .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 1rem;
+    padding: 0.25rem;
+}
+
+.hedefler-sayfasi-container .icon-btn:hover {
+    color: #333;
+}
+
+.hedefler-sayfasi-container .hedef-karti-icerik {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.hedefler-sayfasi-container .hedef-tutar-bilgisi {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.hedefler-sayfasi-container .hedef-tutar-bilgisi .mevcut {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a73e8;
+}
+
+.hedefler-sayfasi-container .hedef-tutar-bilgisi .hedef {
+    font-size: 1rem;
+    color: #777;
+}
+
+.hedefler-sayfasi-container .hedef-karti-alt-bilgi {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.hedefler-sayfasi-container .progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.hedefler-sayfasi-container .progress-bar-dolu {
+    height: 100%;
+    background-image: linear-gradient(90deg, #42a5f5, #1e88e5);
+    border-radius: 10px;
+}
+
+.hedefler-sayfasi-container .hedef-karti-aksiyonlar {
+    margin-top: auto;
+    padding-top: 1rem;
+    align-self: flex-end;
+}
+
+.hedefler-sayfasi-container .hedef-karti.tamamlandi {
+    border-color: #34c759;
+    background-color: #f6fff8;
+}
+
+.hedefler-sayfasi-container .hedef-tamamlandi-mesaji {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1rem;
+    gap: 0.75rem;
+    color: #2e7d32;
+}
+
+.hedefler-sayfasi-container .hedef-tamamlandi-mesaji svg {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.hedefler-sayfasi-container .hedef-tamamlandi-mesaji h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Modal Stilleri (Bunlar genellikle sorun çıkarmaz) */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); display: flex;
+    align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-content {
+    background: white; padding: 2rem; border-radius: 12px;
+    width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.5rem;
+}
+.modal-header h2 { margin: 0; font-size: 1.5rem; }
+.modal-close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; }
+.modal-form .form-grup { margin-bottom: 1.25rem; }
+.modal-form label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555; }
+.modal-form input, .modal-form select {
+    width: 100%; padding: 0.75rem; border: 1px solid #ccc;
+    border-radius: 8px; font-size: 1rem;
+}
+.modal-form input:focus, .modal-form select:focus {
+    outline: none; border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+.form-hata {
+    color: #d32f2f; background-color: #ffebee; border: 1px solid #d32f2f;
+    border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem;
+}
+.form-aksiyonlar {
+    display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;
+}
+/* ==========================================================================
+   HEDEFLER SAYFASI İYİLEŞTİRMELERİ (ÖZET PANOSU VE AKILLI KART)
+   ========================================================================== */
+
+/* --- Özet Panosu --- */
+.hedefler-ozet-panosu {
+    margin: 2.5rem 0;
+}
+
+.ozet-panosu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.ozet-karti {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+}
+
+.ozet-karti-ikon {
+    font-size: 2.5rem;
+    color: #1a73e8;
+    background-color: #e8f0fe;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ozet-karti:nth-child(2) .ozet-karti-ikon {
+    color: #e67e22; background-color: #fdf3e7;
+}
+.ozet-karti:nth-child(3) .ozet-karti-ikon {
+    color: #27ae60; background-color: #e9f7ef;
+}
+
+.ozet-karti-icerik {
+    display: flex;
+    flex-direction: column;
+}
+
+.ozet-karti-deger {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.2;
+}
+
+.ozet-karti-baslik {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+.ozet-karti-aciklama {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+}
+
+/* --- Hedef Kartı İyileştirmeleri --- */
+.hedef-karti-alt-bilgi .hedef-kalan-bilgi {
+    font-weight: 500;
+    color: #e67e22; /* Kalan tutarı vurgulamak için farklı bir renk */
+}
+/* ==========================================================================
+   HEDEFLER SAYFASI FİNAL GÖRSEL DOKUNUŞLARI (v3 - MARGIN SIFIRLAMA)
+   ========================================================================== */
+
+/* 1. Başlık Alanını Ortalama */
+.hedefler-sayfasi-container .sayfa-baslik {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hedefler-sayfasi-container .sayfa-baslik p {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* YENİ EKLENEN KURAL: Başlığın kendi üst boşluğunu sıfırlıyoruz */
+.hedefler-sayfasi-container .sayfa-baslik h1 {
+    margin-top: 0;
+}
+
+/* 2. Üstteki Boşluğu Azaltma */
+.main-content .container {
+    padding-top: 0 !important;
+}
+.hedefler-sayfasi-container {
+    padding-top: 0.5rem; /* Bu değeri şimdi doğru şekilde ayarlayabilirsiniz */
+}
+
+
+/* 3. "Yeni Hedef Oluştur" Buton Rengini Düzeltme */
+.hedefler-sayfasi-container .sayfa-baslik .primary-btn {
+    background-color: #1a73e8; 
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.hedefler-sayfasi-container .sayfa-baslik .primary-btn:hover {
+    background-color: #155cb0;
+}

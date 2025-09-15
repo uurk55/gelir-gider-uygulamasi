@@ -3,7 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
-import './index.css';
+import './App.css';
 import { BrowserRouter } from 'react-router-dom';
 import { FinansProvider } from './context/FinansContext.jsx';
 import { AuthProvider } from './context/AuthContext.jsx'; // YENİ IMPORT

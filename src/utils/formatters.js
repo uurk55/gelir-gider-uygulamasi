@@ -1,14 +1,31 @@
 // src/utils/formatters.js
 
-// Bu fonksiyon, aldığı sayıyı "₺1.234,56" formatına çevirir.
 export const formatCurrency = (amount) => {
-  // Eğer gelen değer bir sayı değilse, 0 olarak kabul et. Bu, NaN hatalarını önler.
-  if (typeof amount !== 'number') {
-    amount = 0;
-  }
-  
-  return new Intl.NumberFormat('tr-TR', { 
-    style: 'currency', 
-    currency: 'TRY' 
-  }).format(amount);
+    if (typeof amount !== 'number') {
+        amount = 0;
+    }
+    return amount.toLocaleString('tr-TR', {
+        style: 'currency',
+        currency: 'TRY',
+    });
+};
+
+export const formatDate = (dateString) => {
+    if (!dateString) {
+        return '';
+    }
+    try {
+        const [year, month, day] = dateString.split('-');
+        const date = new Date(Date.UTC(year, month - 1, day));
+        
+        return new Intl.DateTimeFormat('tr-TR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        }).format(date);
+
+    } catch (error) {
+        console.error("Tarih formatlama hatası:", error);
+        return dateString;
+    }
 };
