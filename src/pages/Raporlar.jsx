@@ -1,182 +1,157 @@
-// src/pages/Raporlar.jsx (YENİ TARİH SEÇİCİLİ NİHAİ VERSİYON)
+// src/pages/Raporlar.jsx (SADELEŞTİRİLMİŞ NİHAİ KOD)
 
-import { useState, useRef, useEffect } from 'react';
-import { Line } from 'react-chartjs-2';
+import { useState } from 'react';
 import { useFinans } from '../context/FinansContext';
-import { formatCurrency } from '../utils/formatters';
-import { FaDownload } from 'react-icons/fa';
-import { DateRangePicker } from 'react-date-range';
+import { Line } from 'react-chartjs-2';
+import { FaCalendarAlt, FaDownload } from 'react-icons/fa';
+import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
+import { motion, AnimatePresence } from 'framer-motion';
 import { tr } from 'date-fns/locale';
-import { endOfDay, startOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, addDays, startOfYear, endOfYear } from 'date-fns';
+// ARTIK GEREKLİ DEĞİL: import TarihSecici from '../components/TarihSecici'; 
+import KategoriAnaliziRaporu from '../components/Raporlar/KategoriAnaliziRaporu';
+import NakitAkisiRaporu from '../components/Raporlar/NakitAkisiRaporu';
+import EnBuyukHarcamalarRaporu from '../components/Raporlar/EnBuyukHarcamalarRaporu';
 
-const predefinedRanges = [
-    { label: 'Bugün', range: () => ({ startDate: startOfDay(new Date()), endDate: endOfDay(new Date()) }) },
-    { label: 'Dün', range: () => ({ startDate: startOfDay(addDays(new Date(), -1)), endDate: endOfDay(addDays(new Date(), -1)) }) },
-    { label: 'Bu Hafta', range: () => ({ startDate: startOfWeek(new Date(), { locale: tr }), endDate: endOfWeek(new Date(), { locale: tr }) }) },
-    { label: 'Bu Ay', range: () => ({ startDate: startOfMonth(new Date()), endDate: endOfMonth(new Date()) }) },
-    { label: 'Bu Yıl', range: () => ({ startDate: startOfYear(new Date()), endDate: endOfYear(new Date()) }) },
-    { label: 'Önceki Ay', range: () => ({ startDate: startOfMonth(addDays(startOfMonth(new Date()), -1)), endDate: endOfMonth(addDays(startOfMonth(new Date()), -1)) }) }
-];
+const RAPOR_SEKMELERI = {
+    GENEL_TREND: 'Genel Trend',
+    KATEGORI_ANALIZI: 'Kategori Analizi',
+    NAKIT_AKISI: 'Nakit Akışı',
+    EN_BUYUK_HARCAMALAR: 'En Büyük Harcamalar'
+};
 
 function Raporlar() {
-  const { 
-      trendVerisi, yillikRaporVerisi, handleVeriIndir,
-      tarihAraligi, setTarihAraligi, // Context'ten bunları çekiyoruz
-      seciliYil // Yıllık özet için hala buna ihtiyacımız var
-  } = useFinans();
+    const [aktifSekme, setAktifSekme] = useState(RAPOR_SEKMELERI.GENEL_TREND);
+    const {
+        trendVerisi, yillikRaporVerisi, seciliYil, handleVeriIndir,
+        tarihAraligi, setTarihAraligi
+    } = useFinans();
+    const [isDateRangeModalOpen, setIsDateRangeModalOpen] = useState(false);
 
-  useEffect(() => {
-    // Raporlar sayfası her açıldığında, tarih aralığını bu yıla ayarla
-    const bugun = new Date();
-    setTarihAraligi([{
-        startDate: startOfYear(bugun),
-        endDate: endOfYear(bugun),
-        key: 'selection'
-    }]);
-  }, [setTarihAraligi]);
-
-  if (!trendVerisi || !yillikRaporVerisi) {
-      return <div>Yükleniyor...</div>;
-  }
-
-  const trendGrafikVerisi = {
-    labels: trendVerisi.labels,
-    datasets: [
-      {
-        label: 'Toplam Gelir',
-        data: trendVerisi.gelirler,
-        borderColor: 'rgba(39, 174, 96, 1)',
-        backgroundColor: 'rgba(39, 174, 96, 0.2)',
-        fill: true,
-        tension: 0.4,
-      },
-      {
-        label: 'Toplam Gider',
-        data: trendVerisi.giderler,
-        borderColor: 'rgba(192, 57, 43, 1)',
-        backgroundColor: 'rgba(192, 57, 43, 0.2)',
-        fill: true,
-        tension: 0.4,
-      },
-    ],
-  };
-
-  const trendGrafikOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: { position: 'top' },
-      title: {
-        display: true,
-        text: 'Son 6 Aylık Finansal Trend',
-        font: { size: 18, family: 'Roboto', weight: '600' },
-        color: 'var(--primary-text)',
-        padding: { bottom: 20 }
-      },
-      tooltip: {
-         callbacks: {
-            label: function(context) {
-                return `${context.dataset.label}: ${formatCurrency(context.parsed.y)}`;
+    const lineChartData = {
+        labels: trendVerisi.labels,
+        datasets: [
+            {
+                label: 'Toplam Gelir', data: trendVerisi.gelirler,
+                borderColor: 'rgb(75, 192, 192)', backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: true, tension: 0.4
+            },
+            {
+                label: 'Toplam Gider', data: trendVerisi.giderler,
+                borderColor: 'rgb(255, 99, 132)', backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                fill: true, tension: 0.4
             }
-         }
-      }
-    },
-    scales: {
-      y: { 
-          beginAtZero: true,
-          ticks: {
-             callback: function(value) {
-                if (value >= 1000) {
-                    return `${value / 1000}k ₺`;
-                }
-                return formatCurrency(value);
-             }
-          }
-      },
-    }
-  };
+        ]
+    };
 
-  return (
-    <div className="raporlar-sayfasi">
-        <div className="card">
-            <DateRangePicker
-                onChange={item => setTarihAraligi([item.selection])}
-                showSelectionPreview={true}
-                moveRangeOnFirstSelection={false}
-                months={2}
-                ranges={tarihAraligi}
-                direction="horizontal"
-                locale={tr}
-                className="sabit-takvim-ust"
-                staticRanges={predefinedRanges.map(range => ({ ...range, isSelected() { return false; } }))}
-                inputRanges={[]}
-            />
-        </div>
+    const renderAktifRapor = () => {
+        switch (aktifSekme) {
+            case RAPOR_SEKMELERI.KATEGORI_ANALIZI:
+                return <KategoriAnaliziRaporu />;
+            case RAPOR_SEKMELERI.NAKIT_AKISI:
+                return <NakitAkisiRaporu />;
+            case RAPOR_SEKMELERI.EN_BUYUK_HARCAMALAR:
+                return <EnBuyukHarcamalarRaporu />;
+            case RAPOR_SEKMELERI.GENEL_TREND:
+            default:
+                return (
+                    <>
+                        <div className="card">
+                            <div className="card-header"><h2>Son 6 Aylık Finansal Trend</h2></div>
+                            <div style={{padding: '1rem'}}><Line data={lineChartData} /></div>
+                        </div>
+                        <div className="card">
+                            <div className="card-header"><h2>{seciliYil} Yılı Özeti</h2></div>
+                            <div className="tablo-container">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Ay</th><th>Toplam Gelir</th><th>Toplam Gider</th><th>Aylık Durum</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {yillikRaporVerisi.aylar.map(ayData => (
+                                            <tr key={ayData.ay}>
+                                                <td>{ayData.ay}</td>
+                                                <td className="gelir-renk">₺{ayData.gelir.toFixed(2)}</td>
+                                                <td className="gider-renk">₺{ayData.gider.toFixed(2)}</td>
+                                                <td className={ayData.bakiye >= 0 ? 'gelir-renk' : 'gider-renk'}>
+                                                    ₺{ayData.bakiye.toFixed(2)}
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                    <tfoot>
+                                        <tr className="toplam-satiri">
+                                            <td>Yıllık Toplam</td>
+                                            <td>₺{yillikRaporVerisi.toplamGelir.toFixed(2)}</td>
+                                            <td>₺{yillikRaporVerisi.toplamGider.toFixed(2)}</td>
+                                            <td>₺{yillikRaporVerisi.toplamBakiye.toFixed(2)}</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </>
+                );
+        }
+    };
 
-        <div className="card">
-            <div className="card-header">
-               <h2>Rapor Araçları</h2>
+    return (
+        <div className="raporlar-sayfasi-container">
+            <div className="raporlar-header">
+                <h1>Raporlar</h1>
+                <div className="rapor-kontrolleri">
+                    {/* TarihSecici bileşeni buradan kaldırıldı */}
+                    <button onClick={() => setIsDateRangeModalOpen(true)} className="secondary-btn">
+                        <FaCalendarAlt /> Tarih Aralığı Seç
+                    </button>
+                    <button onClick={handleVeriIndir} className="primary-btn">
+                        <FaDownload /> CSV İndir
+                    </button>
+                </div>
             </div>
-            <p style={{margin: '0 0 1rem 0', color: 'var(--secondary-text)'}}>Tüm işlem verilerinizi CSV formatında bilgisayarınıza indirebilirsiniz.</p>
-            <button onClick={handleVeriIndir} className="primary-btn">
-              <FaDownload />
-              Tüm Verileri İndir (CSV)
-            </button>
-        </div>
 
-        <div className="card">
-            <div style={{ height: '400px', position: 'relative' }}>
-              <Line options={trendGrafikOptions} data={trendGrafikVerisi} />
+            <div className="sekme-kontrol rapor-sekmeleri">
+                {Object.values(RAPOR_SEKMELERI).map(sekme => (
+                    <button 
+                        key={sekme}
+                        className={`sekme-btn ${aktifSekme === sekme ? 'aktif' : ''}`}
+                        onClick={() => setAktifSekme(sekme)}
+                    >
+                        {sekme}
+                    </button>
+                ))}
             </div>
-        </div>
 
-      {yillikRaporVerisi.aylar.length > 0 ? (
-        <div className="card">
-          <div className="card-header">
-            <h2>{seciliYil} Yılı Özeti</h2>
-          </div>
-          <table className="yillik-rapor-tablosu">
-            <thead>
-              <tr>
-                <th>Ay</th>
-                <th style={{textAlign: 'right'}}>Toplam Gelir</th>
-                <th style={{textAlign: 'right'}}>Toplam Gider</th>
-                <th style={{textAlign: 'right'}}>Aylık Durum</th>
-              </tr>
-            </thead>
-            <tbody>
-              {yillikRaporVerisi.aylar.map(ayData => (
-                <tr key={ayData.ay}>
-                  <td>{ayData.ay}</td>
-                  <td className="gelir-renk">{formatCurrency(ayData.gelir)}</td>
-                  <td className="gider-renk">{formatCurrency(ayData.gider)}</td>
-                  <td className={ayData.bakiye >= 0 ? 'gelir-renk' : 'gider-renk'}>
-                    {formatCurrency(ayData.bakiye)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-            <tfoot>
-              <tr>
-                <td><strong>Yıllık Toplam</strong></td>
-                <td><strong>{formatCurrency(yillikRaporVerisi.toplamGelir)}</strong></td>
-                <td><strong>{formatCurrency(yillikRaporVerisi.toplamGider)}</strong></td>
-                <td className={yillikRaporVerisi.toplamBakiye >= 0 ? 'gelir-renk' : 'gider-renk'}>
-                    <strong>{formatCurrency(yillikRaporVerisi.toplamBakiye)}</strong>
-                </td>
-              </tr>
-            </tfoot>
-          </table>
+            <div className="rapor-icerik">
+                <AnimatePresence mode="wait">
+                    <motion.div
+                        key={aktifSekme}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.2 }}
+                    >
+                        {renderAktifRapor()}
+                    </motion.div>
+                </AnimatePresence>
+            </div>
+
+
+            <AnimatePresence>
+                {isDateRangeModalOpen && (
+                    <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                        <motion.div className="modal-content date-range-modal" initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -50, opacity: 0 }}>
+                            <DateRange editableDateInputs={true} onChange={item => setTarihAraligi([item.selection])} moveRangeOnFirstSelection={false} ranges={tarihAraligi} locale={tr}/>
+                            <button onClick={() => setIsDateRangeModalOpen(false)} className="primary-btn">Tamam</button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
-      ) : (
-        <div className="card" style={{textAlign: 'center', color: 'var(--secondary-text)'}}>
-          <p>{seciliYil} yılında gösterilecek veri bulunmuyor.</p>
-        </div>
-      )}
-    </div>
-  );
+    );
 }
 
 export default Raporlar;

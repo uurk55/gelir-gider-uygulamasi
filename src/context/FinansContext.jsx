@@ -663,6 +663,79 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
     const trendVerisi = useMemo(() => { const labels = []; const gelirlerData = []; const giderlerData = []; const bugun = new Date(); for (let i = 5; i >= 0; i--) { const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1); const yil = tarih.getFullYear(); const ay = tarih.getMonth() + 1; labels.push(tarih.toLocaleString('tr-TR', { month: 'long' })); const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); gelirlerData.push(aylikGelir); giderlerData.push(aylikGider); } return { labels, gelirler: gelirlerData, giderler: giderlerData }; }, [gelirler, giderler]);
     const yillikRaporVerisi = useMemo(() => { const aylar = []; let yillikToplamGelir = 0; let yillikToplamGider = 0; for (let i = 1; i <= 12; i++) { const aylikGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); const aylikGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); if (aylikGelirler.length > 0 || aylikGiderler.length > 0) { const ayGelir = aylikGelirler.reduce((t, g) => t + g.tutar, 0); const ayGider = aylikGiderler.reduce((t, g) => t + g.tutar, 0); yillikToplamGelir += ayGelir; yillikToplamGider += ayGider; aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: ayGelir, gider: ayGider, bakiye: ayGelir - ayGider }); } } return { aylar, toplamGelir: yillikToplamGelir, toplamGider: yillikToplamGider, toplamBakiye: yillikToplamGelir - yillikToplamGider }; }, [gelirler, giderler, seciliYil]);
 
+    // YENİ FİKİR 1: Kategori Karşılaştırma Raporu için Veri
+const kategoriHarcamaOzeti = useMemo(() => {
+    // Tarih aralığına göre filtrelenmiş giderleri kullanıyoruz
+    const filtrelenmisGiderler = giderler.filter(gider => {
+        const giderTarihi = new Date(gider.tarih);
+        const baslangic = new Date(tarihAraligi[0].startDate);
+        const bitis = new Date(tarihAraligi[0].endDate);
+        baslangic.setHours(0, 0, 0, 0);
+        bitis.setHours(23, 59, 59, 999);
+        return giderTarihi >= baslangic && giderTarihi <= bitis;
+    });
+
+    const ozet = filtrelenmisGiderler.reduce((acc, gider) => {
+        const { kategori, tutar } = gider;
+        if (!acc[kategori]) {
+            acc[kategori] = 0;
+        }
+        acc[kategori] += tutar;
+        return acc;
+    }, {});
+
+    // Veriyi büyükten küçüğe sıralayarak daha anlamlı hale getiriyoruz
+    return Object.entries(ozet)
+        .sort(([, a], [, b]) => b - a)
+        .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
+
+}, [giderler, tarihAraligi]);
+
+
+// YENİ FİKİR 2: Nakit Akışı Raporu için Veri
+const nakitAkisiVerisi = useMemo(() => {
+    const labels = [];
+    const netAkimData = [];
+    const bugun = new Date();
+
+    // Son 6 ay için hesaplama yapıyoruz
+    for (let i = 5; i >= 0; i--) {
+        const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1);
+        const yil = tarih.getFullYear();
+        const ay = tarih.getMonth() + 1;
+        labels.push(tarih.toLocaleString('tr-TR', { month: 'long' }));
+
+        const aylikGelir = gelirler
+            .filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay)
+            .reduce((t, g) => t + g.tutar, 0);
+            
+        const aylikGider = giderler
+            .filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay)
+            .reduce((t, g) => t + g.tutar, 0);
+        
+        netAkimData.push(aylikGelir - aylikGider);
+    }
+    
+    return { labels, netAkim: netAkimData };
+}, [gelirler, giderler]);
+
+
+// YENİ FİKİR 3: En Büyük Harcamalar Raporu için Veri
+const enBuyukHarcamalar = useMemo(() => {
+    // Tarih aralığına göre filtrelenmiş giderleri kullanıyoruz
+    return giderler.filter(gider => {
+        const giderTarihi = new Date(gider.tarih);
+        const baslangic = new Date(tarihAraligi[0].startDate);
+        const bitis = new Date(tarihAraligi[0].endDate);
+        baslangic.setHours(0, 0, 0, 0);
+        bitis.setHours(23, 59, 59, 999);
+        return giderTarihi >= baslangic && giderTarihi <= bitis;
+    })
+    .sort((a, b) => b.tutar - a.tutar) // Büyükten küçüğe sırala
+    .slice(0, 10); // İlk 10 tanesini al
+
+}, [giderler, tarihAraligi]);
+
     const contextValue = {
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
         krediKartlari,
@@ -695,6 +768,9 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         mevcutYillar, 
         trendVerisi, 
         yillikRaporVerisi,
+        kategoriHarcamaOzeti,
+        nakitAkisiVerisi,
+        enBuyukHarcamalar,
         yaklasanOdemeler, krediKartiOzetleri, genelHesapBakiyeleri, aylikHesapGiderleri,
         transferGuestDataToFirestore
     };
