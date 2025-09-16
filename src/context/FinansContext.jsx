@@ -629,6 +629,8 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
     return aktifHedefler[0];
 
 }, [hedefler]);
+
+    
     // --- 5. DİĞER TÜM HESAPLAMALAR ---
     const tumHesaplar = useMemo(() => {
         const formatlanmisKrediKartlari = krediKartlari.map(kart => ({ ...kart, ad: `${kart.ad} (KK)`, tip: 'krediKarti' }));
@@ -636,7 +638,139 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         return [...formatlanmisNakitHesaplar, ...formatlanmisKrediKartlari];
     }, [hesaplar, krediKartlari]);
     const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
-    const butceDurumlari = useMemo(() => { const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1); const oncekiAyGiderleri = giderler.filter(g => { const giderTarihi = new Date(g.tarih); return giderTarihi.getFullYear() === oncekiAyTarih.getFullYear() && giderTarihi.getMonth() === oncekiAyTarih.getMonth(); }); return butceler.map(butce => { const harcanan = filtrelenmisGiderler.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); const oncekiAyHarcanan = oncekiAyGiderleri.filter(gider => gider.kategori.trim() === butce.kategori.trim()).reduce((toplam, gider) => toplam + gider.tutar, 0); let degisimYuzdesi = 0; if (oncekiAyHarcanan > 0) { degisimYuzdesi = ((harcanan - oncekiAyHarcanan) / oncekiAyHarcanan) * 100; } else if (harcanan > 0) { degisimYuzdesi = 100; } const kalan = butce.limit - harcanan; const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0; let durum = 'normal'; if (yuzdeRaw >= 100) { durum = 'asildi'; } else if (yuzdeRaw >= 90) { durum = 'uyari'; } return { ...butce, harcanan, kalan, yuzde: Math.min(yuzdeRaw, 100), yuzdeRaw, degisimYuzdesi, durum }; }); }, [butceler, filtrelenmisGiderler, giderler, seciliAy, seciliYil]);
+    const butceDurumlari = useMemo(() => {
+    // Önceki aya ait harcamaları hesaplamak için gerekli tarih bilgileri
+    const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1);
+    const oncekiAyGiderleri = giderler.filter(g => {
+        const giderTarihi = new Date(g.tarih);
+        return giderTarihi.getFullYear() === oncekiAyTarih.getFullYear() && giderTarihi.getMonth() === oncekiAyTarih.getMonth();
+    });
+
+    // --- YENİ TAHMİN MANTIĞI İÇİN GEREKLİ BİLGİLER ---
+    const bugun = new Date();
+    // Ayın son gününü alarak ayın kaç gün çektiğini buluyoruz (28, 29, 30 veya 31)
+    const ayinSonGunu = new Date(seciliYil, seciliAy, 0).getDate(); 
+    // Ayın bugünkü gününü alıyoruz
+    const bugununGunu = bugun.getDate();
+
+    return butceler.map(butce => {
+        // Mevcut ay için o kategorideki harcama
+        const harcanan = filtrelenmisGiderler
+            .filter(gider => gider.kategori.trim() === butce.kategori.trim())
+            .reduce((toplam, gider) => toplam + gider.tutar, 0);
+
+        // Önceki ay için harcama
+        const oncekiAyHarcanan = oncekiAyGiderleri
+            .filter(gider => gider.kategori.trim() === butce.kategori.trim())
+            .reduce((toplam, gider) => toplam + gider.tutar, 0);
+
+        // --- YENİ TAHMİN HESAPLAMASI ---
+        let tahminiHarcama = 0;
+        // Sadece içinde bulunduğumuz ay için ve harcama varsa tahmin yapalım
+        if (harcanan > 0 && seciliYil === bugun.getFullYear() && seciliAy === bugun.getMonth() + 1) {
+            // Oran-orantı: (bugüne kadarki harcama / bugünün günü) * ayın toplam günü
+            tahminiHarcama = (harcanan / bugununGunu) * ayinSonGunu;
+        }
+        const tahminiAsim = tahminiHarcama > butce.limit ? tahminiHarcama - butce.limit : 0;
+        // --- YENİ HESAPLAMANIN SONU ---
+
+        // Diğer hesaplamalar aynı kalıyor
+        let degisimYuzdesi = 0;
+        if (oncekiAyHarcanan > 0) {
+            degisimYuzdesi = ((harcanan - oncekiAyHarcanan) / oncekiAyHarcanan) * 100;
+        } else if (harcanan > 0) {
+            degisimYuzdesi = 100;
+        }
+        const kalan = butce.limit - harcanan;
+        const yuzdeRaw = butce.limit > 0 ? (harcanan / butce.limit) * 100 : 0;
+        let durum = 'normal';
+        if (yuzdeRaw >= 100) { durum = 'asildi'; } 
+        else if (yuzdeRaw >= 90) { durum = 'uyari'; }
+        
+        // Yeni tahmin verilerini de objeye ekleyerek döndürüyoruz
+        return { 
+            ...butce, harcanan, kalan, yuzde: Math.min(yuzdeRaw, 100), 
+            yuzdeRaw, degisimYuzdesi, durum,
+            tahminiHarcama, // YENİ
+            tahminiAsim,   // YENİ
+        };
+    });
+}, [butceler, filtrelenmisGiderler, giderler, seciliAy, seciliYil]);
+const finansalSaglikPuani = useMemo(() => {
+    // --- Metrik 1: Tasarruf Oranı ---
+    const sonUcAyGelir = gelirler
+        .filter(g => new Date(g.tarih) > new Date(new Date().setMonth(new Date().getMonth() - 3)))
+        .reduce((acc, g) => acc + g.tutar, 0);
+    const sonUcAyGider = giderler
+        .filter(g => new Date(g.tarih) > new Date(new Date().setMonth(new Date().getMonth() - 3)))
+        .reduce((acc, g) => acc + g.tutar, 0);
+
+    const ortalamaAylikGelir = sonUcAyGelir / 3;
+    const ortalamaAylikGider = sonUcAyGider / 3;
+
+    let tasarrufOraniPuani = 0;
+    let tasarrufOraniYuzde = 0;
+    if (ortalamaAylikGelir > 0) {
+        tasarrufOraniYuzde = (ortalamaAylikGelir - ortalamaAylikGider) / ortalamaAylikGelir;
+        tasarrufOraniPuani = Math.max(0, Math.min(1, tasarrufOraniYuzde / 0.2)) * 40;
+    }
+
+    // --- Metrik 2: Bütçe Kontrolü ---
+    let butceKontrolPuani = 0;
+    let basariliButceOrani = 0;
+    if (butceDurumlari && butceDurumlari.length > 0) {
+        const basariliButceSayisi = butceDurumlari.filter(b => b.yuzdeRaw <= 100).length;
+        basariliButceOrani = basariliButceSayisi / butceDurumlari.length;
+        butceKontrolPuani = basariliButceOrani * 30;
+    } else {
+        butceKontrolPuani = 15;
+    }
+
+    // --- Metrik 3: Acil Durum Fonu ---
+    let acilDurumFonuPuani = 0;
+    let fonKarsilamaAyi = 0;
+    if (ortalamaAylikGider > 0) {
+        fonKarsilamaAyi = toplamBakiye / ortalamaAylikGider;
+        const fonYeterliligi = fonKarsilamaAyi / 3;
+        acilDurumFonuPuani = Math.min(1, fonYeterliligi) * 30;
+    } else if (toplamBakiye > 0) {
+        acilDurumFonuPuani = 30;
+    }
+
+    // --- Nihai Puan ve Durum Hesaplaması (TANIMLAMALAR) ---
+    const toplamPuan = Math.round(tasarrufOraniPuani + butceKontrolPuani + acilDurumFonuPuani) || 0;
+    
+    let genelDurum = 'Geliştirilmeli'; // TANIMLAMA BURADA
+    if (toplamPuan > 80) genelDurum = 'Mükemmel';
+    else if (toplamPuan > 60) genelDurum = 'İyi';
+
+    // --- Nihai Return Objesi ---
+    return {
+        puan: toplamPuan,
+        durum: genelDurum, // ARTIK GÜVENLE KULLANILABİLİR
+        metrikler: {
+            tasarrufOrani: {
+                puan: Math.round(tasarrufOraniPuani) || 0,
+                maksimumPuan: 40,
+                durum: tasarrufOraniPuani > 32 ? 'Mükemmel' : (tasarrufOraniPuani > 20 ? 'İyi' : 'Geliştirilmeli'),
+                aciklama: `Son 3 ayda gelirinizin ortalama %${(tasarrufOraniYuzde * 100).toFixed(0)} kadarını birikime ayırdınız.`
+            },
+            butceKontrolu: {
+                puan: Math.round(butceKontrolPuani) || 0,
+                maksimumPuan: 30,
+                durum: butceKontrolPuani > 24 ? 'Mükemmel' : (butceKontrolPuani > 15 ? 'İyi' : 'Geliştirilmeli'),
+                aciklama: `Bütçelerinizin %${(basariliButceOrani * 100).toFixed(0)}'ine sadık kaldınız.`
+            },
+            acilDurumFonu: {
+                puan: Math.round(acilDurumFonuPuani) || 0,
+                maksimumPuan: 30,
+                durum: acilDurumFonuPuani > 24 ? 'Mükemmel' : (acilDurumFonuPuani > 15 ? 'İyi' : 'Geliştirilmeli'),
+                aciklama: `Mevcut birikiminiz, yaklaşık ${fonKarsilamaAyi.toFixed(1)} aylık giderinizi karşılıyor.`
+            }
+        }
+    };
+}, [gelirler, giderler, butceDurumlari, toplamBakiye]);
+
     const yaklasanOdemeler = useMemo(() => { 
         const bugun = new Date(); 
         const bugununGunu = bugun.getDate(); 
@@ -851,6 +985,7 @@ const enBuyukHarcamalar = useMemo(() => {
         isModalOpen, itemToDelete,
         karsilastirmaliAylikOzet,
         onecelikliHedef,
+        finansalSaglikPuani,
         filtrelenmisGelirler, filtrelenmisGiderler, toplamGelir, toplamGider,
         toplamBakiye, kategoriOzeti, grafikVerisi, gelirGrafikVerisi, butceDurumlari, birlesikIslemler,
         mevcutYillar, 

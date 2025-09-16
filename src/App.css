@@ -5054,3 +5054,308 @@ input:checked + .slider:before {
 .hedef-ozet-karti .detay-link:hover {
     text-decoration: underline;
 }
+/* ==========================================================================
+   BÜTÇE KARTI ORİJİNAL STİLLERİ
+   ========================================================================== */
+
+.butce-listesi {
+    list-style: none;
+    padding: 1rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Her bütçe arası boşluk */
+}
+.butce-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.butce-item-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #888;
+}
+.kalan-tutar.negatif {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* --- Progress Bar Stilleri --- */
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.progress-bar-dolu {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease-out;
+    background-color: #28a745; /* Varsayılan: Yeşil (normal) */
+}
+.progress-bar-dolu.uyari {
+    background-color: #ffc107; /* Sarı */
+}
+.progress-bar-dolu.asildi {
+    background-color: #dc3545; /* Kırmızı */
+}
+.yuzde-gosterge.uyari { color: #ffc107; font-weight: 600; }
+.yuzde-gosterge.asildi { color: #dc3545; font-weight: 600; }
+/* ==========================================================================
+   BÜTÇE KARTI - EKSİK TAHMİN UYARISI STİLLERİ
+   ========================================================================== */
+
+/* 
+   Her bir bütçe satırının (.butce-item) içindeki tahmin kutusunun
+   görünümünü düzenler.
+*/
+.tahmin-uyari-kutusu {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* İkon ve metin arası boşluk */
+    background-color: #fffbeb; /* Açık sarı, dikkat çekici ama yormayan arka plan */
+    border: 1px solid #fde68a; /* Sarı kenarlık */
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 0.75rem; /* Üstündeki bölümle arasına boşluk koyar */
+}
+
+.tahmin-uyari-kutusu .uyari-ikonu {
+    color: #f59e0b; /* Koyu sarı ikon rengi */
+    font-size: 1.1rem;
+    flex-shrink: 0; /* İkonun sıkışmasını engeller */
+}
+
+.tahmin-uyari-kutusu .uyari-metni {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #b45309; /* Okunaklı, koyu sarı/kahverengi metin rengi */
+    line-height: 1.4; /* Satır yüksekliği */
+}
+/* ==========================================================================
+   GENEL BAKIŞ - NİHAİ TASARIM (vSON)
+   ========================================================================== */
+
+/* --- Kart Başlıklarını Mavi ve Kalın Yapma --- */
+.card .card-header h2,
+.card .mini-kart-baslik h3 {
+    color: var(--primary-color, #1a73e8);
+    font-weight: 700 !important;
+}
+
+/* --- Aylık Özet Kartı Özel Yapısı --- */
+.aylik-ozet-kutusu {
+    /* Bu, içindeki kalemleri yan yana dizer */
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+}
+.ozet-kalem {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+.ozet-baslik {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6c757d; /* Varsayılan başlık rengi */
+    margin-bottom: 0.25rem;
+}
+.ozet-tutar {
+    font-size: 1.75rem; /* Ana tutarı büyütüyoruz */
+    font-weight: 600;
+}
+
+/* --- Trend Göstergesi Yeni Stili (GÜÇLENDİRİLMİŞ) --- */
+.aylik-ozet-karti-container .trend-gostergesi {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem !important;  /* Küçülmeyi garantilemek için !important */
+    font-weight: 500;
+    margin-top: 0.7rem; /* Üstündeki ana tutar ile arasına boşluk ekler */
+}
+.aylik-ozet-karti-container .trend-gostergesi.bos {
+    height: 1.35em; 
+    margin-top: 0.5rem;
+}
+
+/* --- RENK SINIFLARI (EN GÜÇLÜ HALİ) --- */
+.gelir-renk { color: #28a745 !important; }
+.gider-renk { color: #dc3545 !important; }
+.pozitif { color: #28a745; }
+.negatif { color: #dc3545; }
+.aylik-degisim.pozitif { color: #28a745; }
+.aylik-degisim.negatif { color: #dc3545; }
+/* ==========================================================================
+   FİNANSAL SAĞLIK KARTI STİLLERİ
+   ========================================================================== */
+
+.finansal-saglik-karti .saglik-karti-icerik {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem 0;
+}
+
+.finansal-saglik-karti .puan-daire {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    line-height: 1;
+}
+
+.finansal-saglik-karti .puan-sayisi {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.finansal-saglik-karti .puan-maksimum {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-left: 0.25rem;
+}
+
+.finansal-saglik-karti .durum-etiketi {
+    padding: 0.3rem 1rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+/* Durum etiketleri için renkler */
+.finansal-saglik-karti .durum-etiketi.pozitif {
+    background-color: #28a745; /* Yeşil */
+}
+.finansal-saglik-karti .durum-etiketi.uyari {
+    background-color: #ffc107; /* Sarı */
+    color: #333; /* Sarı arka planda koyu metin daha okunaklı */
+}
+.finansal-saglik-karti .durum-etiketi.negatif {
+    background-color: #dc3545; /* Kırmızı */
+}
+/* ==========================================================================
+   FİNANSAL SAĞLIK KARTI - TIKLANABİLİR HALE GETİRME
+   ========================================================================== */
+
+/* 
+   Kartı butona çevirdiğimiz için, butonun varsayılan stillerini sıfırlayıp
+   kart gibi görünmesini sağlıyoruz.
+*/
+.finansal-saglik-karti {
+    /* Mevcut .card stillerini miras alır, ek olarak şunları ekliyoruz: */
+    width: 100%; /* Bulunduğu sütunu tamamen kaplaması için */
+    border: 1px solid var(--border-color);
+    text-align: left; /* Butonların varsayılan ortalamasını iptal et */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.finansal-saglik-karti:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+}
+
+.finansal-saglik-karti .detay-ipucu {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+/* ='========================================================================
+   FİNANSAL SAĞLIK MODALI STİLLERİ (TEMİZLENMİŞ VE NİHAİ)
+   ========================================================================== */
+
+.saglik-modal {
+    max-width: 600px;
+    padding: 0;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.saglik-modal .modal-header {
+    padding: 1.5rem 2rem;
+}
+
+.saglik-modal-ozet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 2rem 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 0.5rem;
+}
+
+/* 1. PUANIN BOYUTUNU GERİ GETİRMEK İÇİN */
+.saglik-modal-ozet .ozet-puan {
+    font-size: 4rem; /* Sadece font boyutunu ekliyoruz */
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-top: -2rem;
+    line-height: 1;
+}
+
+/* 2. DURUM METNİNİ RENKLENDİRMEK İÇİN */
+.saglik-modal-ozet .ozet-durum {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+/* Sadece "Mükemmel", "İyi" gibi kelimeleri renklendiriyoruz */
+.ozet-durum .pozitif { color: #28a745; }
+.ozet-durum .uyari { color: #f59e0b; }
+.ozet-durum .negatif { color: #dc3545; }
+
+.metrik-detay-listesi {
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto; /* Dikey kaydırma */
+}
+
+.metrik-detay-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.metrik-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.metrik-ikon { font-size: 1.5rem; color: var(--primary-color); }
+.metrik-baslik-puan { flex-grow: 1; }
+.metrik-baslik-puan h4 { margin: 0; font-size: 1.1rem; }
+.metrik-durum { font-size: 0.85rem; font-weight: 600; }
+.metrik-puan { font-weight: 600; white-space: nowrap; }
+.metrik-puan small { font-weight: 400; color: var(--text-secondary); }
+
+.metrik-progress-bar-container {
+    width: 100%; height: 6px; background-color: var(--background-primary);
+    border-radius: 6px; overflow: hidden;
+}
+.metrik-progress-bar-dolu { height: 100%; border-radius: 6px; }
+.metrik-progress-bar-dolu.pozitif { background-color: #28a745; }
+.metrik-progress-bar-dolu.uyari { background-color: #ffc107; }
+.metrik-progress-bar-dolu.negatif { background-color: #dc3545; }
+
+.metrik-aciklama {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}

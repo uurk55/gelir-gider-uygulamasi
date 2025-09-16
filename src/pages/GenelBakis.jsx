@@ -14,6 +14,7 @@ import GelirKaynaklariKarti from '../components/GenelBakis/GelirKaynaklariKarti'
 import ButceDurumlariKarti from '../components/GenelBakis/ButceDurumlariKarti';
 import KrediKartiOzetKarti from '../components/GenelBakis/KrediKartiOzetKarti';
 import HedefOzetKarti from '../components/GenelBakis/HedefOzetKarti'; // YENİ IMPORT
+import FinansalSaglikKarti from '../components/GenelBakis/FinansalSaglikKarti'; // YENİ IMPORT
 import { FaPiggyBank, FaBell, FaRegHandPeace, FaExclamationCircle } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatters';
 import CountUp from 'react-countup'; // YENİ: Kütüphaneyi import ediyoruz
@@ -172,11 +173,11 @@ function GenelBakis() {
 
                 {/* 2.2 YAN SÜTUN (SAĞ) */}
                 <aside className="yan-sutun">
+                    {/* YENİ: Finansal Sağlık Kartını en üste ekliyoruz */}
+                    <FinansalSaglikKarti />
+
                     <GenelVarlikKarti bakiye={toplamBakiye} />
-                    
-                    {/* YENİ: Hedef Özet Kartını buraya ekliyoruz */}
                     <HedefOzetKarti /> 
-                    
                     <YaklasanOdemelerKarti odemeler={yaklasanOdemeler} />
                     <KrediKartiOzetKarti />
                     <HesapGiderleriKarti />
