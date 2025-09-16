@@ -1,5 +1,76 @@
 /* App.css */
 
+/* ==========================================================================
+   TEMA SİSTEMİ - CSS DEĞİŞKENLERİ
+   ========================================================================== */
+
+/* Varsayılan (Açık Mod) Renkler */
+:root {
+  --background-primary: #f8f9fa;   /* Ana sayfa arka planı */
+  --background-secondary: #ffffff;  /* Kartların arka planı */
+  --text-primary: #212529;         /* Ana metin rengi */
+  --text-secondary: #6c757d;       /* İkincil, daha soluk metinler */
+  --border-color: #e9ecef;         /* Kenarlıklar ve ayırıcılar */
+  
+  --primary-color: #1a73e8;        /* Ana vurgu rengi (mavi) */
+  --primary-color-hover: #155cb0;  /* Mavi buton hover rengi */
+  
+  --danger-color: #dc2626;         /* Tehlike/Silme rengi (kırmızı) */
+  --danger-color-hover: #b91c1c;   /* Kırmızı buton hover rengi */
+
+  --success-color: #28a745;        /* Başarı/Gelir rengi (yeşil) */
+  --warning-color: #ffc107;        /* Uyarı rengi (sarı) */
+  
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Koyu Mod'a geçildiğinde bu renkler devreye girecek */
+html.koyu {
+  --background-primary: #121212;
+  --background-secondary: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #333333;
+
+  --primary-color: #42a5f5;
+  --primary-color-hover: #64b5f6;
+
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+/* --- UYGULAMA GENELİNDE BU DEĞİŞKENLERİ KULLANMAK İÇİN BAZI TEMEL STİLLER --- */
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.primary-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+.primary-btn:hover {
+  background-color: var(--primary-color-hover);
+}
+.danger-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+.danger-btn:hover {
+    background-color: var(--danger-color-hover);
+}
+
+/* Diğer genel stillerinizi de bu değişkenleri kullanacak şekilde güncelleyebilirsiniz.
+   Örn: h1, input, select vb. */
+
 /* === YENİ TASARIM İÇİN TEMEL AYARLAR === */
 :root {
   /* Renk Paleti */
@@ -4561,4 +4632,322 @@ tfoot .toplam-satiri td {
     color: #333;
     min-width: 100px;
     text-align: right;
+}
+/* ==========================================================================
+   AYARLAR SAYFASI NİHAİ TASARIM (Sol Menü + Tema Desteği)
+   ========================================================================== */
+
+/* --- Ana Layout --- */
+.ayarlar-sayfasi h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ayarlar-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr; /* Sol menü sabit genişlikte */
+    gap: 2.5rem;
+    align-items: start;
+}
+
+/* --- Sol Menü --- */
+.ayarlar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ayar-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    color: var(--text-secondary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ayar-menu-item svg {
+    font-size: 1.25rem;
+}
+
+.ayar-menu-item:hover {
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+}
+
+.ayar-menu-item.aktif {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* --- Sağ İçerik Alanı --- */
+.ayarlar-icerik {
+    background-color: var(--background-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+}
+
+.ayar-icerik-bolumu {
+    padding: 2rem;
+}
+
+.ayar-icerik-bolumu h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ayar-formu {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 500px; /* Formun çok genişlemesini engeller */
+}
+.ayar-formu .form-grup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.ayar-formu button {
+    align-self: flex-start;
+}
+
+/* --- Görünüm Ayarları Stilleri --- */
+.tema-secenekleri {
+    display: flex;
+    gap: 0.75rem;
+}
+.tema-secenekleri button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.tema-secenekleri button.aktif {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* --- Tehlikeli Bölge --- */
+.ayar-bolumu.tehlikeli-bolge {
+    background-color: rgba(220, 38, 38, 0.05);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+.tehlikeli-bolge h4 {
+    color: var(--danger-color);
+    margin-top: 0;
+}
+
+/* --- Mobil Uyumluluk --- */
+@media (max-width: 768px) {
+    .ayarlar-layout {
+        grid-template-columns: 1fr; /* Menüyü içeriğin üstüne al */
+    }
+}
+/* ==========================================================================
+   AYARLAR SAYFASI TASARIMI (Sadeleştirilmiş - Tema Yok)
+   ========================================================================== */
+
+/* --- Ana Layout --- */
+.ayarlar-sayfasi h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.ayarlar-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    gap: 2.5rem;
+    align-items: start;
+}
+
+/* --- Sol Menü --- */
+.ayarlar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ayar-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    color: #6c757d; /* İkincil metin rengi */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ayar-menu-item svg {
+    font-size: 1.25rem;
+}
+
+.ayar-menu-item:hover {
+    background-color: #f8f9fa; /* Hafif hover arka planı */
+    color: #212529; /* Ana metin rengi */
+}
+
+.ayar-menu-item.aktif {
+    background-color: #1a73e8; /* Ana mavi renk */
+    color: white;
+}
+
+/* --- Sağ İçerik Alanı --- */
+.ayarlar-icerik {
+    background-color: #ffffff; /* Beyaz kart arka planı */
+    border-radius: 12px;
+    border: 1px solid #e9ecef; /* İnce kenarlık */
+}
+
+.ayar-icerik-bolumu {
+    padding: 2rem;
+}
+
+.ayar-icerik-bolumu h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.ayar-formu {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 500px;
+}
+.ayar-formu .form-grup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.ayar-formu button {
+    align-self: flex-start;
+}
+
+/* --- Tehlikeli Bölge --- */
+.ayar-bolumu.tehlikeli-bolge {
+    background-color: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+.tehlikeli-bolge h4 {
+    color: #b91c1c;
+    margin-top: 0;
+}
+
+/* --- Mobil Uyumluluk --- */
+@media (max-width: 768px) {
+    .ayarlar-layout {
+        grid-template-columns: 1fr;
+    }
+}
+/* ==========================================================================
+   AYARLAR SAYFASI - BİLDİRİMLER SEKİMESİ STİLLERİ
+   ========================================================================== */
+
+/* Ayar içeriğindeki açıklama metni için stil */
+.ayar-aciklama {
+    font-size: 0.95rem;
+    color: #6c757d; /* İkincil metin rengi */
+    margin-top: -1rem; /* Başlıkla arasını biraz kapatır */
+    margin-bottom: 2rem;
+    max-width: 500px;
+}
+
+/* --- Switch (Açma/Kapama) Anahtarı Stilleri --- */
+.switch-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef; /* Ayarlar arasına ince bir çizgi */
+}
+/* Son elemanın altındaki çizgiyi kaldır */
+.ayar-formu .switch-container:last-child {
+    border-bottom: none;
+}
+
+.switch-label { 
+    font-weight: 500;
+    padding-right: 1rem; /* Metnin butona yapışmasını engeller */
+}
+
+.switch { 
+    position: relative; 
+    display: inline-block; 
+    width: 50px; 
+    height: 28px; 
+    flex-shrink: 0; /* Küçülmesini engeller */
+}
+
+.switch input { 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+}
+
+.slider { 
+    position: absolute; 
+    cursor: pointer; 
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background-color: #ccc; 
+    transition: .4s; 
+}
+
+.slider:before { 
+    position: absolute; 
+    content: ""; 
+    height: 20px; 
+    width: 20px; 
+    left: 4px; 
+    bottom: 4px; 
+    background-color: white; 
+    transition: .4s; 
+}
+
+input:checked + .slider { 
+    background-color: #28a745; /* Açık olduğunda yeşil renk */
+}
+
+input:focus + .slider { 
+    box-shadow: 0 0 1px #28a745; 
+}
+
+input:checked + .slider:before { 
+    transform: translateX(22px); 
+}
+
+.slider.round { 
+    border-radius: 34px; 
+}
+
+.slider.round:before { 
+    border-radius: 50%; 
 }

@@ -67,6 +67,13 @@ export const FinansProvider = ({ children }) => {
     const [gelirKategorileri, setGelirKategorileri] = useState(() => currentUser ? GELIR_KATEGORILERI_VARSAYILAN : getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
     const [krediKartlari, setKrediKartlari] = useState(() => currentUser ? [] : getLocalData('guest_krediKartlari', []));
     const [hedefler, setHedefler] = useState(() => currentUser ? [] : getLocalData('guest_hedefler', []));
+    const [ayarlar, setAyarlar] = useState({
+    bildirimler: {
+        yaklasanOdemeler: false,
+        butceAsimi: false,
+        haftalikOzet: false,
+    }
+});
     const [bekleyenOdemeler, setBekleyenOdemeler] = useState([]);
     const [kategoriRenkleri, setKategoriRenkleri] = useState({});
     const [seciliAy, setSeciliAy] = useState(new Date().getMonth() + 1);
@@ -131,16 +138,31 @@ export const FinansProvider = ({ children }) => {
                         setHesaplar(data.hesaplar || VARSAYILAN_HESAPLAR);
                         setGiderKategorileri(data.giderKategorileri || GIDER_KATEGORILERI_VARSAYILAN);
                         setGelirKategorileri(data.gelirKategorileri || GELIR_KATEGORILERI_VARSAYILAN);
+                     if (data.ayarlar && data.ayarlar.bildirimler) {
+            setAyarlar({
+                bildirimler: {
+                    ...ayarlar.bildirimler, // Varsayılanları koru
+                    ...data.ayarlar.bildirimler // Üzerine yaz
+                }
+            });
+        }
                     } else {
-                        await setDoc(doc(db, 'users', uid), { hesaplar: VARSAYILAN_HESAPLAR, giderKategorileri: GIDER_KATEGORILERI_VARSAYILAN, gelirKategorileri: GELIR_KATEGORILERI_VARSAYILAN });
-                    }
-                })
+        await setDoc(doc(db, 'users', uid), { 
+            hesaplar: VARSAYILAN_HESAPLAR, 
+            giderKategorileri: GIDER_KATEGORILERI_VARSAYILAN, 
+            gelirKategorileri: GELIR_KATEGORILERI_VARSAYILAN,
+            // YENİ: Yeni kullanıcı için varsayılan ayarlar
+            ayarlar: { bildirimler: { yaklasanOdemeler: false, butceAsimi: false, haftalikOzet: false } }
+        });
+    }
+})
             ];
             return () => unsubscribers.forEach(unsub => unsub());
         } else {
             setGelirler(getLocalData('guest_gelirler', [])); setGiderler(getLocalData('guest_giderler', [])); setTransferler(getLocalData('guest_transferler', []));
             setButceler(getLocalData('guest_butceler', [])); setSabitOdemeler(getLocalData('guest_sabitOdemeler', [])); setKrediKartlari(getLocalData('guest_krediKartlari', [])); setHedefler(getLocalData('guest_hedefler', [])); setHesaplar(getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR)); setHesaplar(getLocalData('guest_hesaplar', VARSAYILAN_HESAPLAR));
             setGiderKategorileri(getLocalData('guest_giderKategorileri', GIDER_KATEGORILERI_VARSAYILAN)); setGelirKategorileri(getLocalData('guest_gelirKategorileri', GELIR_KATEGORILERI_VARSAYILAN));
+
         }
     }, [currentUser]);
     
@@ -479,6 +501,31 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         toast.error(error.message || "İşlem sırasında bir hata oluştu.", { id: toastId });
     }
 };
+    const updateBildirimAyarlari = async (yeniBildirimAyar) => {
+    if (!currentUser) return; // Sadece giriş yapmış kullanıcılar için
+    
+    try {
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        // setDoc'ta { merge: true } kullanmak, 'ayarlar' objesinin diğer alanlarını
+        // (gelecekte eklersek) silmeden sadece 'bildirimler' alanını günceller.
+        await setDoc(userDocRef, {
+            ayarlar: {
+                bildirimler: yeniBildirimAyar
+            }
+        }, { merge: true });
+
+        // Arayüzün anında güncellenmesi için local state'i de güncelle
+        setAyarlar(prev => ({
+            ...prev,
+            bildirimler: yeniBildirimAyar
+        }));
+
+        toast.success('Bildirim ayarları güncellendi!');
+    } catch (error) {
+        console.error("Bildirim ayarları güncellenirken hata:", error);
+        toast.error('Ayarlar güncellenirken bir hata oluştu.');
+    }
+};
     const handleVeriIndir = () => {
         if (!gelirler && !giderler && !transferler) { return toast.error("İndirilecek veri bulunmuyor."); }
         const toastId = toast.loading("Veriler hazırlanıyor...");
@@ -740,6 +787,7 @@ const enBuyukHarcamalar = useMemo(() => {
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
         krediKartlari,
         hedefler,
+        ayarlar,
         tumHesaplar,
         addIslem, updateIslem, openDeleteModal, handleCloseModal, handleConfirmDelete, handleTopluSil,
         bekleyenOdemeler,
@@ -756,6 +804,7 @@ const enBuyukHarcamalar = useMemo(() => {
         handleHedefGuncelle,
         handleHedefSil,
         handleHedefeParaEkle,
+        updateBildirimAyarlari,
         handleVeriIndir,
         tarihAraligi,        
         setTarihAraligi,

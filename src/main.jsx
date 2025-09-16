@@ -3,20 +3,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
-import './App.css';
 import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext.jsx';
 import { FinansProvider } from './context/FinansContext.jsx';
-import { AuthProvider } from './context/AuthContext.jsx'; // YENİ IMPORT
+import './App.css';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
+ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider> {/* YENİ SARMALAYICI (EN DIŞTA) */}
-        <FinansProvider>
-          <App />
-        </FinansProvider>
-      </AuthProvider>
+        <AuthProvider>
+          <FinansProvider>
+            <App />
+          </FinansProvider>
+        </AuthProvider>
     </BrowserRouter>
-  </React.StrictMode>
-);
+  </React.StrictMode>,
+)

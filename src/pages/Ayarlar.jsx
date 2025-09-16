@@ -1,179 +1,172 @@
-// src/pages/Ayarlar.jsx (DOĞRU VE NİHAİ VERSİYON)
+// src/pages/Ayarlar.jsx (BİLDİRİMLER SEKİMESİ EKLENDİ)
 
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { updatePassword } from 'firebase/auth';
+import { useFinans } from '../context/FinansContext'; // YENİ: FinansContext'i import ediyoruz
 import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
+import { FaUserCircle, FaLock, FaDatabase, FaBell } from 'react-icons/fa'; // YENİ: FaBell ikonu eklendi
 
-// Profil Bilgileri Formu
-function ProfilBilgileriFormu() {
+// --- Küçük, yeniden kullanılabilir bileşen (Switch) ---
+const SwitchInput = ({ label, ...props }) => (
+    <div className="switch-container">
+        <label className="switch-label">{label}</label>
+        <label className="switch">
+            <input type="checkbox" {...props} />
+            <span className="slider round"></span>
+        </label>
+    </div>
+);
+const ProfilBilgileri = () => {
     const { currentUser, updateProfileName } = useAuth();
-    const [displayName, setDisplayName] = useState(currentUser?.displayName || '');
-    const [loading, setLoading] = useState(false);
+    const [gorunenAd, setGorunenAd] = useState(currentUser?.displayName || '');
 
-    const handleSubmit = async (e) => {
+    const handleProfilGuncelle = (e) => {
         e.preventDefault();
-        if (displayName === (currentUser?.displayName || '')) {
-            return;
-        }
-        setLoading(true);
-        try {
-            await updateProfileName(displayName);
-        } catch (error) {
-            console.error("Profil güncelleme hatası:", error);
-            toast.error("Profil adı güncellenemedi.");
-        } finally {
-            setLoading(false);
+        if (currentUser.displayName !== gorunenAd) {
+            updateProfileName(gorunenAd).catch(err => toast.error(err.message));
         }
     };
-
+    
     return (
-        <div className="bolum">
-            <h3>Profil Bilgileri</h3>
-            <form onSubmit={handleSubmit} className="form-modern">
-                <div>
-                    <label htmlFor="email">E-posta Adresi</label>
-                    <input
-                        id="email"
-                        type="email"
-                        value={currentUser?.email || ''}
-                        disabled 
-                        style={{ backgroundColor: '#f1f2f6', cursor: 'not-allowed' }}
-                    />
+        <div className="ayar-icerik-bolumu">
+            <h2>Profil Bilgileri</h2>
+            <form onSubmit={handleProfilGuncelle} className="ayar-formu">
+                <div className="form-grup">
+                    <label>E-posta Adresi</label>
+                    <input type="email" value={currentUser?.email || ''} disabled />
                 </div>
-                <div>
-                    <label htmlFor="displayName">Görünen Ad</label>
-                    <input
-                        id="displayName"
-                        type="text"
-                        value={displayName}
-                        onChange={(e) => setDisplayName(e.target.value)}
-                        placeholder="Adınız veya takma adınız"
-                    />
+                <div className="form-grup">
+                    <label htmlFor="gorunenAd">Görünen Ad</label>
+                    <input id="gorunenAd" type="text" value={gorunenAd} onChange={(e) => setGorunenAd(e.target.value)} />
                 </div>
-                <button type="submit" className="primary-btn" disabled={loading}>
-                    {loading ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
-                </button>
+                <button type="submit" className="primary-btn">Değişiklikleri Kaydet</button>
             </form>
         </div>
     );
-}
+};
+const BildirimAyarlari = () => {
+    // FinansContext'ten ayarları ve güncelleme fonksiyonunu çekiyoruz
+    const { ayarlar, updateBildirimAyarlari } = useFinans();
 
-// Şifre Değiştirme Formu
-function SifreDegistirFormu() {
-    const { currentUser } = useAuth();
-    const [yeniSifre, setYeniSifre] = useState('');
-    const [sifreTekrar, setSifreTekrar] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (yeniSifre.length < 6) {
-            return toast.error("Yeni şifre en az 6 karakter olmalıdır.");
-        }
-        if (yeniSifre !== sifreTekrar) {
-            return toast.error("Şifreler uyuşmuyor.");
-        }
-        setLoading(true);
-        try {
-            await updatePassword(currentUser, yeniSifre);
-            toast.success("Şifreniz başarıyla güncellendi!");
-            setYeniSifre('');
-            setSifreTekrar('');
-        } catch (error) {
-            console.error("Şifre güncelleme hatası:", error);
-            toast.error("Şifre güncellenemedi. Lütfen çıkış yapıp tekrar giriş yaptıktan sonra deneyin.");
-        } finally {
-            setLoading(false);
-        }
+    const handleBildirimDegisikligi = (ayarAdi, yeniDeger) => {
+        const yeniAyarlar = {
+            ...ayarlar.bildirimler,
+            [ayarAdi]: yeniDeger,
+        };
+        updateBildirimAyarlari(yeniAyarlar);
     };
 
     return (
-        <div className="bolum">
-            <h3>Şifre Değiştir</h3>
-            <form onSubmit={handleSubmit} className="form-modern">
-                <div>
-                    <label htmlFor="yeni-sifre">Yeni Şifre</label>
-                    <input
-                        id="yeni-sifre"
-                        type="password"
-                        value={yeniSifre}
-                        onChange={(e) => setYeniSifre(e.target.value)}
-                        placeholder="Yeni şifrenizi girin"
-                        required
-                    />
-                </div>
-                <div>
-                    <label htmlFor="sifre-tekrar">Yeni Şifre (Tekrar)</label>
-                    <input
-                        id="sifre-tekrar"
-                        type="password"
-                        value={sifreTekrar}
-                        onChange={(e) => setSifreTekrar(e.target.value)}
-                        placeholder="Yeni şifrenizi tekrar girin"
-                        required
-                    />
-                </div>
-                <button type="submit" className="primary-btn" disabled={loading}>
-                    {loading ? "Güncelleniyor..." : "Şifreyi Güncelle"}
-                </button>
-            </form>
-        </div>
-    );
-}
-
-// Tehlikeli Bölge
-function TehlikeliBolge() {
-    const { deleteAccount } = useAuth();
-    const navigate = useNavigate();
-    const [loading, setLoading] = useState(false);
-
-    const handleHesapSil = async () => {
-        const eminMisin = window.confirm("Emin misiniz? Bu işlem geri alınamaz. Hesabınız ve tüm finansal verileriniz kalıcı olarak silinecektir.");
-        if (eminMisin) {
-            setLoading(true);
-            try {
-                await deleteAccount();
-                navigate('/login'); 
-            } catch (error) {
-                console.error("Hesap silme hatası:", error);
-                // AuthContext'teki hata mesajı zaten gösterilecek, burada tekrar göstermeye gerek yok.
-                setLoading(false);
-            }
-        }
-    };
-
-    return (
-        <div className="bolum danger-zone">
-            <h3>Tehlikeli Bölge</h3>
-            <div className="danger-zone-item">
-                <div>
-                    <h4>Hesabı Kalıcı Olarak Sil</h4>
-                    <p>Bu işlem geri alınamaz. Tüm verileriniz silinecektir.</p>
-                </div>
-                <button onClick={handleHesapSil} className="danger-btn" disabled={loading}>
-                    {loading ? "Siliniyor..." : "Hesabımı Sil"}
-                </button>
+        <div className="ayar-icerik-bolumu">
+            <h2>Bildirim Ayarları</h2>
+            <p className="ayar-aciklama">Hangi durumlarda e-posta ile bildirim almak istediğinizi seçin.</p>
+            <div className="ayar-formu">
+                <SwitchInput 
+                    label="Yaklaşan ödemeler için hatırlatıcı gönder"
+                    checked={ayarlar.bildirimler.yaklasanOdemeler}
+                    onChange={(e) => handleBildirimDegisikligi('yaklasanOdemeler', e.target.checked)}
+                />
+                <SwitchInput 
+                    label="Bütçe limitine yaklaşıldığında uyar (%90)"
+                    checked={ayarlar.bildirimler.butceAsimi}
+                    onChange={(e) => handleBildirimDegisikligi('butceAsimi', e.target.checked)}
+                />
+                <SwitchInput 
+                    label="Haftalık harcama özetini e-posta ile gönder"
+                    checked={ayarlar.bildirimler.haftalikOzet}
+                    onChange={(e) => handleBildirimDegisikligi('haftalikOzet', e.target.checked)}
+                />
             </div>
         </div>
     );
-}
+};
 
-// Ana Ayarlar Bileşeni
-function Ayarlar() {
-  return (
-    <div className="card">
-      <div className="card-header">
-        <h2>Hesap Ayarları</h2>
-      </div>
-      <div className="yonetim-sayfasi-layout" style={{ gridTemplateColumns: '1fr', gap: '2rem' }}>
-        <ProfilBilgileriFormu />
-        <SifreDegistirFormu />
-        <TehlikeliBolge />
-      </div>
+const SifreDegistir = () => (
+    <div className="ayar-icerik-bolumu">
+        <h2>Şifre Değiştir</h2>
+        <form className="ayar-formu">
+            <div className="form-grup">
+                <label htmlFor="yeniSifre">Yeni Şifre</label>
+                <input id="yeniSifre" type="password" placeholder="Yeni şifrenizi girin" />
+            </div>
+            <div className="form-grup">
+                <label htmlFor="yeniSifreTekrar">Yeni Şifre (Tekrar)</label>
+                <input id="yeniSifreTekrar" type="password" placeholder="Yeni şifrenizi tekrar girin" />
+            </div>
+            <button type="submit" className="primary-btn">Şifreyi Güncelle</button>
+        </form>
     </div>
-  );
+);
+
+const VeriGuvenlik = () => {
+    const { deleteAccount } = useAuth();
+    const handleHesapSil = () => {
+        if(window.confirm("Hesabınızı kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")) {
+            deleteAccount().catch(err => toast.error(err.message));
+        }
+    };
+    return (
+        <div className="ayar-icerik-bolumu">
+            <h2>Veri & Güvenlik</h2>
+            <div className="ayar-bolumu tehlikeli-bolge">
+                <h4>Hesabı Kalıcı Olarak Sil</h4>
+                <p>Bu işlem geri alınamaz. Hesabınızı sildiğinizde, tüm verileriniz kalıcı olarak yok edilir.</p>
+                <button onClick={handleHesapSil} className="danger-btn">Hesabımı Sil</button>
+            </div>
+        </div>
+    );
+};
+
+// --- Ana Ayarlar Sayfası ---
+const AYAR_SEKMELERI = {
+    PROFIL: 'Profil Bilgileri',
+    BILDIRIMLER: 'Bildirimler', // YENİ SEKME
+    SIFRE: 'Şifre Değiştir',
+    VERI: 'Veri & Güvenlik'
+};
+
+const sekmeIkonlari = {
+    [AYAR_SEKMELERI.PROFIL]: <FaUserCircle />,
+    [AYAR_SEKMELERI.BILDIRIMLER]: <FaBell />, // YENİ İKON
+    [AYAR_SEKMELERI.SIFRE]: <FaLock />,
+    [AYAR_SEKMELERI.VERI]: <FaDatabase />
+};
+
+function Ayarlar() {
+    const [aktifSekme, setAktifSekme] = useState(AYAR_SEKMELERI.PROFIL);
+
+    const renderAktifSekme = () => {
+        switch(aktifSekme) {
+            case AYAR_SEKMELERI.BILDIRIMLER: return <BildirimAyarlari />; // YENİ CASE
+            case AYAR_SEKMELERI.SIFRE: return <SifreDegistir />;
+            case AYAR_SEKMELERI.VERI: return <VeriGuvenlik />;
+            case AYAR_SEKMELERI.PROFIL:
+            default: return <ProfilBilgileri />;
+        }
+    };
+
+    return (
+        <div className="sayfa-container ayarlar-sayfasi">
+            <h1>Hesap Ayarları</h1>
+            <div className="ayarlar-layout">
+                <nav className="ayarlar-menu">
+                    {Object.values(AYAR_SEKMELERI).map(sekme => (
+                        <button 
+                            key={sekme}
+                            className={`ayar-menu-item ${aktifSekme === sekme ? 'aktif' : ''}`}
+                            onClick={() => setAktifSekme(sekme)}
+                        >
+                            {sekmeIkonlari[sekme]}
+                            <span>{sekme}</span>
+                        </button>
+                    ))}
+                </nav>
+                <main className="ayarlar-icerik">
+                    {renderAktifSekme()}
+                </main>
+            </div>
+        </div>
+    );
 }
 
 export default Ayarlar;
