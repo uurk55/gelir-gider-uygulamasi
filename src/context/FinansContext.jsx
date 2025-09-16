@@ -578,24 +578,61 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
     
     const filtrelenmisGelirler = useMemo(() => gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [gelirler, seciliAy, seciliYil]);
     const filtrelenmisGiderler = useMemo(() => giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [giderler, seciliAy, seciliYil]);
+
+    // --- 2. TEMEL TOPLAMLAR ---
     const toplamGelir = useMemo(() => filtrelenmisGelirler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGelirler]);
     const toplamGider = useMemo(() => filtrelenmisGiderler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGiderler]);
+
+    // --- 3. GENEL BAKİYE HESAPLAMALARI ---
     const genelHesapBakiyeleri = useMemo(() => { return hesaplar.reduce((acc, hesap) => { const toplamGiren = gelirler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.aliciHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); const toplamCikan = giderler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.gonderenHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); acc[hesap.id] = toplamGiren - toplamCikan; return acc; }, {}); }, [hesaplar, gelirler, giderler, transferler]);
     const toplamBakiye = useMemo(() => Object.values(genelHesapBakiyeleri).reduce((t, b) => t + b, 0), [genelHesapBakiyeleri]);
+    
+    // --- 4. KARŞILAŞTIRMALI VERİ (Artık tüm bağımlılıkları hazır) ---
+    const karsilastirmaliAylikOzet = useMemo(() => {
+        const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1);
+        const oncekiAy = oncekiAyTarih.getMonth() + 1;
+        const oncekiAyYil = oncekiAyTarih.getFullYear();
+
+        const toplamOncekiAyGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === oncekiAyYil && new Date(g.tarih).getMonth() + 1 === oncekiAy).reduce((t, g) => t + g.tutar, 0);
+        const toplamOncekiAyGider = giderler.filter(g => new Date(g.tarih).getFullYear() === oncekiAyYil && new Date(g.tarih).getMonth() + 1 === oncekiAy).reduce((t, g) => t + g.tutar, 0);
+
+        let gelirDegisimYuzdesi = 0;
+        if (toplamOncekiAyGelir > 0) gelirDegisimYuzdesi = ((toplamGelir - toplamOncekiAyGelir) / toplamOncekiAyGelir) * 100;
+        else if (toplamGelir > 0) gelirDegisimYuzdesi = 100;
+
+        let giderDegisimYuzdesi = 0;
+        if (toplamOncekiAyGider > 0) giderDegisimYuzdesi = ((toplamGider - toplamOncekiAyGider) / toplamOncekiAyGider) * 100;
+        else if (toplamGider > 0) giderDegisimYuzdesi = 100;
+        
+        const aylikBakiyeDegisimi = toplamGelir - toplamGider;
+        
+        return { gelirDegisimYuzdesi, giderDegisimYuzdesi, aylikBakiyeDegisimi };
+
+    }, [gelirler, giderler, seciliAy, seciliYil, toplamGelir, toplamGider]); // `toplamBakiye` bağımlılığını kaldırdık
+    const onecelikliHedef = useMemo(() => {
+    // Henüz tamamlanmamış hedefleri filtrele
+    const aktifHedefler = hedefler.filter(h => h.mevcutTutar < h.hedefTutar);
+    
+    if (aktifHedefler.length === 0) {
+        return null; // Gösterilecek aktif hedef yoksa null döndür
+    }
+
+    // Bitiş tarihi olan hedefleri ayır ve en yakın tarihli olanı bul
+    const tarihliHedefler = aktifHedefler.filter(h => h.hedefTarih);
+    if (tarihliHedefler.length > 0) {
+        tarihliHedefler.sort((a, b) => new Date(a.hedefTarih) - new Date(b.hedefTarih));
+        return tarihliHedefler[0];
+    }
+
+    // Eğer hiç bitiş tarihli hedef yoksa, en son oluşturulan hedefi göster
+    aktifHedefler.sort((a, b) => new Date(b.olusturmaTarihi) - new Date(a.olusturmaTarihi));
+    return aktifHedefler[0];
+
+}, [hedefler]);
+    // --- 5. DİĞER TÜM HESAPLAMALAR ---
     const tumHesaplar = useMemo(() => {
-        // Her kredi kartı objesine, normal hesaplarla uyumlu olması için 'ad' ve 'id' anahtarları olduğundan emin olalım.
-        // Ayrıca, bir "tip" ekleyerek onları ayırt edebiliriz.
-        const formatlanmisKrediKartlari = krediKartlari.map(kart => ({
-            ...kart,
-            ad: `${kart.ad} (KK)`, // Arayüzde "Garanti Bonus (KK)" gibi görünmesi için
-            tip: 'krediKarti'
-        }));
-
-        const formatlanmisNakitHesaplar = hesaplar.map(hesap => ({
-            ...hesap,
-            tip: 'varlik'
-        }));
-
+        const formatlanmisKrediKartlari = krediKartlari.map(kart => ({ ...kart, ad: `${kart.ad} (KK)`, tip: 'krediKarti' }));
+        const formatlanmisNakitHesaplar = hesaplar.map(hesap => ({ ...hesap, tip: 'varlik' }));
         return [...formatlanmisNakitHesaplar, ...formatlanmisKrediKartlari];
     }, [hesaplar, krediKartlari]);
     const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
@@ -812,6 +849,8 @@ const enBuyukHarcamalar = useMemo(() => {
         birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikFiltreTip, setBirlesikFiltreTip,
         birlesikSiralamaKriteri, setBirlesikSiralamaKriteri, birlesikFiltreHesap, setBirlesikFiltreHesap,
         isModalOpen, itemToDelete,
+        karsilastirmaliAylikOzet,
+        onecelikliHedef,
         filtrelenmisGelirler, filtrelenmisGiderler, toplamGelir, toplamGider,
         toplamBakiye, kategoriOzeti, grafikVerisi, gelirGrafikVerisi, butceDurumlari, birlesikIslemler,
         mevcutYillar, 

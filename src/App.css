@@ -4951,3 +4951,106 @@ input:checked + .slider:before {
 .slider.round:before { 
     border-radius: 50%; 
 }
+/* ==========================================================================
+   AKILLI KART GÖRSEL İYİLEŞTİRMELERİ
+   ========================================================================== */
+
+/* --- Genel Varlık Kartı - Aylık Değişim --- */
+.mini-kart-aciklama {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.aylik-degisim {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* --- Aylık Özet Kartı - Trend Göstergesi --- */
+.ozet-baslik-ve-trend {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.trend-gostergesi {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* --- Genel Renk Sınıfları --- */
+.pozitif {
+    color: #28a745; /* Yeşil */
+}
+.negatif {
+    color: #dc3545; /* Kırmızı */
+}
+/* ==========================================================================
+   HEDEF ÖZET KARTI STİLLERİ
+   ========================================================================== */
+
+.hedef-ozet-karti .hedef-ozet-icerik {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.hedef-ozet-karti .hedef-adi {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.hedef-ozet-karti .hedef-tutar-bilgisi {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.hedef-ozet-karti .hedef-tutar-bilgisi .mevcut {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.hedef-ozet-karti .hedef-tutar-bilgisi .hedef {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.hedef-ozet-karti .progress-bar-container {
+    height: 8px;
+    background-color: var(--background-primary);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.hedef-ozet-karti .progress-bar-dolu {
+    height: 100%;
+    background-color: var(--success-color, #28a745); /* Yeşil renk */
+    border-radius: 8px;
+}
+
+.hedef-ozet-karti .hedef-ozet-alt-bilgi {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.hedef-ozet-karti .detay-link {
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+.hedef-ozet-karti .detay-link:hover {
+    text-decoration: underline;
+}

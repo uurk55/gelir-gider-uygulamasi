@@ -13,6 +13,7 @@ import HesapGiderleriKarti from '../components/GenelBakis/HesapGiderleriKarti';
 import GelirKaynaklariKarti from '../components/GenelBakis/GelirKaynaklariKarti';
 import ButceDurumlariKarti from '../components/GenelBakis/ButceDurumlariKarti';
 import KrediKartiOzetKarti from '../components/GenelBakis/KrediKartiOzetKarti';
+import HedefOzetKarti from '../components/GenelBakis/HedefOzetKarti'; // YENİ IMPORT
 import { FaPiggyBank, FaBell, FaRegHandPeace, FaExclamationCircle } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatters';
 import CountUp from 'react-countup'; // YENİ: Kütüphaneyi import ediyoruz
@@ -76,23 +77,27 @@ function YaklasanOdemelerEmptyState() {
     );
 }
 
-// DEĞİŞEN BİLEŞEN: GenelVarlikKarti
 function GenelVarlikKarti({ bakiye }) {
+    // YENİ: Akıllı özet verisini context'ten çekiyoruz
+    const { karsilastirmaliAylikOzet } = useFinans();
+    const { aylikBakiyeDegisimi } = karsilastirmaliAylikOzet;
+
     return (
         <div className="card">
             <div className="mini-kart-baslik"><FaPiggyBank /><h3>Genel Varlık Durumu</h3></div>
             <div className="mini-kart-icerik">
                 <span className="genel-bakiye-tutar">
-                    {/* YENİ: Normal rakam yerine CountUp bileşenini kullanıyoruz */}
-                    <CountUp
-                        end={bakiye}
-                        duration={1.5} // Animasyon süresi (saniye)
-                        separator="."
-                        decimal=","
-                        prefix="₺"
-                    />
+                    <CountUp end={bakiye} duration={1.5} separator="." decimal="," prefix="₺" />
                 </span>
-                <span className="mini-kart-aciklama">Tüm hesaplarınızın toplamı</span>
+                {/* YENİ: Aylık değişim bilgisini gösteren bölüm */}
+                <div className="mini-kart-aciklama">
+                    <span>Tüm hesaplarınızın toplamı</span>
+                    {aylikBakiyeDegisimi !== 0 && (
+                        <span className={`aylik-degisim ${aylikBakiyeDegisimi > 0 ? 'pozitif' : 'negatif'}`}>
+                            Bu ay: {formatCurrency(aylikBakiyeDegisimi)}
+                        </span>
+                    )}
+                </div>
             </div>
         </div>
     );
@@ -168,6 +173,10 @@ function GenelBakis() {
                 {/* 2.2 YAN SÜTUN (SAĞ) */}
                 <aside className="yan-sutun">
                     <GenelVarlikKarti bakiye={toplamBakiye} />
+                    
+                    {/* YENİ: Hedef Özet Kartını buraya ekliyoruz */}
+                    <HedefOzetKarti /> 
+                    
                     <YaklasanOdemelerKarti odemeler={yaklasanOdemeler} />
                     <KrediKartiOzetKarti />
                     <HesapGiderleriKarti />
