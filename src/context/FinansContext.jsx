@@ -1,4 +1,4 @@
-// src/context/FinansContext.jsx (AKILLI ÖDEME NİHAİ DÜZELTME - TAM VE TEMİZ KOD)
+// src/context/FinansContext.jsx (Arama Özelliği Eklendi)
 
 import Papa from 'papaparse';
 import { useState, useEffect, createContext, useContext, useMemo } from 'react';
@@ -54,6 +54,7 @@ const generateStablePastelColor = (str) => {
     return `hsl(${hue}, 70%, 85%)`;
 };
 
+
 export const FinansProvider = ({ children }) => {
     const { currentUser } = useAuth();
 
@@ -84,11 +85,12 @@ export const FinansProvider = ({ children }) => {
     const [birlesikFiltreTip, setBirlesikFiltreTip] = useState(ISLEM_TURLERI.TUMU);
     const [birlesikSiralamaKriteri, setBirlesikSiralamaKriteri] = useState(SIRALAMA_KRITERLERI.TARIH_YENI);
     const [birlesikFiltreHesap, setBirlesikFiltreHesap] = useState('Tümü');
+    const [aramaMetni, setAramaMetni] = useState('');
 
     const [tarihAraligi, setTarihAraligi] = useState([
         {
-            startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1), // Bu ayın ilk günü
-            endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), // Bu ayın son günü
+            startDate: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+            endDate: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
             key: 'selection'
         }
     ]);
@@ -119,7 +121,6 @@ export const FinansProvider = ({ children }) => {
         localStorage.removeItem('guest_hesaplar'); localStorage.removeItem('guest_giderKategorileri'); localStorage.removeItem('guest_gelirKategorileri');
         toast.success("Misafir verileriniz hesabınıza başarıyla aktarıldı!", { id: toastId });
     };
-
     useEffect(() => {
         if (currentUser) {
             transferGuestDataToFirestore(currentUser.uid);
@@ -575,7 +576,51 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         try { await batch.commit(); toast.error(`${silinecekIdBilgileri.length} işlem başarıyla silindi.`);
         } catch (error) { console.error("Toplu silme hatası:", error); toast.error("İşlemler silinirken bir hata oluştu."); }
     };
+
+    // DEĞİŞİKLİK: `birlesikIslemler` hesaplaması güncellendi
+    const birlesikIslemler = useMemo(() => {
+        const { startDate, endDate } = tarihAraligi[0];
+        const baslangic = new Date(startDate);
+        baslangic.setHours(0, 0, 0, 0);
+        const bitis = new Date(endDate);
+        bitis.setHours(23, 59, 59, 999);
+        
+        const temelListe = [
+            ...gelirler.map(g => ({ ...g, tip: ISLEM_TURLERI.GELIR })),
+            ...giderler.map(g => ({ ...g, tip: ISLEM_TURLERI.GIDER })),
+            ...transferler.map(t => ({ ...t, tip: ISLEM_TURLERI.TRANSFER }))
+        ];
+
+        // YENİ: Arama metnini küçük harfe çevirerek daha esnek bir arama sağlıyoruz
+        const aramaTerimi = aramaMetni.toLowerCase();
+
+        const filtrelenmisListe = temelListe.filter(islem => {
+            const islemTarihi = new Date(islem.tarih);
+            
+            const tarihSart = islemTarihi >= baslangic && islemTarihi <= bitis;
+            const tipSart = birlesikFiltreTip === 'Tümü' || islem.tip === birlesikFiltreTip;
+            const kategoriSart = islem.tip === 'Transfer' || birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori;
+            const hesapSart = birlesikFiltreHesap === 'Tümü' || islem.hesapId === birlesikFiltreHesap || islem.gonderenHesapId === birlesikFiltreHesap || islem.aliciHesapId === birlesikFiltreHesap;
+
+            // YENİ: Arama filtresi
+            const aramaSart = aramaTerimi === '' || (islem.aciklama && islem.aciklama.toLowerCase().includes(aramaTerimi));
+
+            return tarihSart && tipSart && kategoriSart && hesapSart && aramaSart;
+        });
+
+        return filtrelenmisListe.sort((a, b) => {
+            switch (birlesikSiralamaKriteri) {
+                case 'tarih-eski': return new Date(a.tarih) - new Date(b.tarih);
+                case 'tutar-artan': return a.tutar - b.tutar;
+                case 'tutar-azalan': return b.tutar - a.tutar;
+                default: return new Date(b.tarih) - new Date(a.tarih);
+            }
+        });
+    // YENİ: Bağımlılık dizisine `aramaMetni` eklendi
+    }, [gelirler, giderler, transferler, tarihAraligi, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri, birlesikFiltreHesap, aramaMetni]);
+
     
+    // ... (diğer useMemo hesaplamaları aynı kalıyor) ...
     const filtrelenmisGelirler = useMemo(() => gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [gelirler, seciliAy, seciliYil]);
     const filtrelenmisGiderler = useMemo(() => giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [giderler, seciliAy, seciliYil]);
 
@@ -839,44 +884,7 @@ const finansalSaglikPuani = useMemo(() => {
     const kategoriOzeti = useMemo(() => filtrelenmisGiderler.reduce((acc, gider) => { const { kategori, tutar } = gider; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}), [filtrelenmisGiderler]);
     const grafikVerisi = useMemo(() => { const labels = Object.keys(kategoriOzeti); if (labels.length === 0) { return { labels: ['Veri Yok'], datasets: [{ label: 'Harcama Miktarı', data: [1], backgroundColor: ['#E0E0E0'], borderColor: '#ffffff', borderWidth: 2 }], }; } const data = Object.values(kategoriOzeti); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#CCCCCC'); return { labels, datasets: [{ label: 'Harcama Miktarı', data, backgroundColor, borderColor: '#ffffff', borderWidth: 2 }], }; }, [kategoriOzeti, kategoriRenkleri]);
     const gelirGrafikVerisi = useMemo(() => { const gelirKaynaklari = filtrelenmisGelirler.reduce((acc, gelir) => { const { kategori, tutar } = gelir; if (!acc[kategori]) acc[kategori] = 0; acc[kategori] += tutar; return acc; }, {}); const labels = Object.keys(gelirKaynaklari); if (labels.length === 0) { return { labels: ['Veri Yok'], datasets: [{ label: 'Gelir Kaynağı', data: [], backgroundColor: [] }], }; } const data = Object.values(gelirKaynaklari); const backgroundColor = labels.map(label => kategoriRenkleri[label] || '#2ecc71'); return { labels, datasets: [{ label: 'Gelir Kaynağı', data, backgroundColor, borderRadius: 4 }], }; }, [filtrelenmisGelirler, kategoriRenkleri]);
-    const birlesikIslemler = useMemo(() => {
-        // Tarih aralığının başlangıç ve bitişini al
-        const { startDate, endDate } = tarihAraligi[0];
-        // Sadece gün bazında karşılaştırma için saat/dakika bilgilerini sıfırla
-        const baslangic = new Date(startDate);
-        baslangic.setHours(0, 0, 0, 0);
-        const bitis = new Date(endDate);
-        bitis.setHours(23, 59, 59, 999);
-        
-        const temelListe = [
-            ...gelirler.map(g => ({ ...g, tip: ISLEM_TURLERI.GELIR })),
-            ...giderler.map(g => ({ ...g, tip: ISLEM_TURLERI.GIDER })),
-            ...transferler.map(t => ({ ...t, tip: ISLEM_TURLERI.TRANSFER }))
-        ];
-
-        const filtrelenmisListe = temelListe.filter(islem => {
-            const islemTarihi = new Date(islem.tarih);
-            
-            // YENİ TARİH FİLTRESİ
-            const tarihSart = islemTarihi >= baslangic && islemTarihi <= bitis;
-
-            const tipSart = birlesikFiltreTip === 'Tümü' || islem.tip === birlesikFiltreTip;
-            const kategoriSart = islem.tip === 'Transfer' || birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori;
-            const hesapSart = birlesikFiltreHesap === 'Tümü' || islem.hesapId === birlesikFiltreHesap || islem.gonderenHesapId === birlesikFiltreHesap || islem.aliciHesapId === birlesikFiltreHesap;
-
-            return tarihSart && tipSart && kategoriSart && hesapSart;
-        });
-
-        // Sıralama mantığı aynı kalıyor
-        return filtrelenmisListe.sort((a, b) => {
-            switch (birlesikSiralamaKriteri) {
-                case 'tarih-eski': return new Date(a.tarih) - new Date(b.tarih);
-                case 'tutar-artan': return a.tutar - b.tutar;
-                case 'tutar-azalan': return b.tutar - a.tutar;
-                default: return new Date(b.tarih) - new Date(a.tarih);
-            }
-        });
-    }, [gelirler, giderler, transferler, tarihAraligi, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri, birlesikFiltreHesap]);
+    
     const mevcutYillar = useMemo(() => { const yillar = new Set([...gelirler, ...giderler].map(islem => new Date(islem.tarih).getFullYear())); if (yillar.size === 0) { yillar.add(new Date().getFullYear()); } return Array.from(yillar).sort((a, b) => b - a); }, [gelirler, giderler]);
     const trendVerisi = useMemo(() => { const labels = []; const gelirlerData = []; const giderlerData = []; const bugun = new Date(); for (let i = 5; i >= 0; i--) { const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1); const yil = tarih.getFullYear(); const ay = tarih.getMonth() + 1; labels.push(tarih.toLocaleString('tr-TR', { month: 'long' })); const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); gelirlerData.push(aylikGelir); giderlerData.push(aylikGider); } return { labels, gelirler: gelirlerData, giderler: giderlerData }; }, [gelirler, giderler]);
     const yillikRaporVerisi = useMemo(() => { const aylar = []; let yillikToplamGelir = 0; let yillikToplamGider = 0; for (let i = 1; i <= 12; i++) { const aylikGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); const aylikGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); if (aylikGelirler.length > 0 || aylikGiderler.length > 0) { const ayGelir = aylikGelirler.reduce((t, g) => t + g.tutar, 0); const ayGider = aylikGiderler.reduce((t, g) => t + g.tutar, 0); yillikToplamGelir += ayGelir; yillikToplamGider += ayGider; aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: ayGelir, gider: ayGider, bakiye: ayGelir - ayGider }); } } return { aylar, toplamGelir: yillikToplamGelir, toplamGider: yillikToplamGider, toplamBakiye: yillikToplamGelir - yillikToplamGider }; }, [gelirler, giderler, seciliYil]);
@@ -954,6 +962,7 @@ const enBuyukHarcamalar = useMemo(() => {
 
 }, [giderler, tarihAraligi]);
 
+    // DEĞİŞİKLİK: `contextValue` güncellendi
     const contextValue = {
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
         krediKartlari,
@@ -968,8 +977,8 @@ const enBuyukHarcamalar = useMemo(() => {
         handleKategoriEkle, handleKategoriSil, handleKategoriSirala, handleKategoriGuncelle,
         handleButceEkle, handleButceSil, handleButceGuncelle,
         handleSabitOdemeEkle, handleSabitOdemeSil, handleSabitOdemeGuncelle,
-        handleKrediKartiEkle, // YENİ
-        handleKrediKartiSil, // YENİ
+        handleKrediKartiEkle, 
+        handleKrediKartiSil, 
         handleKrediKartiGuncelle, 
         handleHedefEkle,
         handleHedefGuncelle,
@@ -982,6 +991,8 @@ const enBuyukHarcamalar = useMemo(() => {
         seciliAy, setSeciliAy, seciliYil, setSeciliYil,
         birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikFiltreTip, setBirlesikFiltreTip,
         birlesikSiralamaKriteri, setBirlesikSiralamaKriteri, birlesikFiltreHesap, setBirlesikFiltreHesap,
+        // YENİ: Arama state'leri context'e eklendi
+        aramaMetni, setAramaMetni,
         isModalOpen, itemToDelete,
         karsilastirmaliAylikOzet,
         onecelikliHedef,

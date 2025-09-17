@@ -2355,17 +2355,37 @@ body {
     gap: 1.5rem; /* Sütunlar ve satırlar arasına boşluk koy */
 }
 
-/* Filtreleri Temizle butonu */
-.filtre-temizle-btn {
-    background: none;
-    color: var(--primary-brand);
-    font-weight: 500;
-    padding: 0;
-    margin-top: 1.5rem;
-    float: right; /* Butonu sağa yaslar */
+/* ==========================================================================
+   İŞLEMLER SAYFASI - FİLTRELERİ TEMİZLE BUTONU STİLİ
+   ========================================================================== */
+
+/* Açılır filtre kutusunun iç yapısını butonun konumlanması için düzenliyoruz */
+.acilir-filtre-kutusu {
+    display: flex;
+    flex-direction: column; /* İçerikleri alt alta dizer */
+    gap: 1.5rem; /* Filtre grubu ile buton arasına boşluk koyar */
 }
+
+/* "Filtreleri Temizle" butonunun yeni stili */
+.filtre-temizle-btn {
+    align-self: flex-end; /* Butonu kutunun sağına yaslar */
+    background-color: transparent;
+    color: var(--secondary-text);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin-top: 0; /* Eski margin'i sıfırla */
+    float: none;   /* Eski float'ı sıfırla */
+}
+
 .filtre-temizle-btn:hover {
-    text-decoration: underline;
+    background-color: #f8f9fa; /* Hafif bir arkaplan rengi */
+    color: var(--primary-text);
+    border-color: #ced4da;
+    text-decoration: none; /* Alt çizgiyi kaldır */
 }
 
 /* Aylık özet kutusunun stilini güncelleyelim */
@@ -5358,4 +5378,103 @@ input:checked + .slider:before {
     font-size: 0.9rem;
     color: var(--text-secondary);
     margin: 0;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - GENİŞ TAKVİM MODALI (NİHAİ DÜZELTME)
+   ========================================================================== */
+
+/* Bu kural, takvim modalının genişliğini diğer tüm kuralları
+  ezerek uygular ve doğru görünmesini sağlar.
+*/
+.modal-content.date-range-modal {
+    max-width: 860px !important; /* Genişliği zorla uygula */
+    padding: 1rem !important;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sol taraftaki "Bugün", "Dün" gibi yazıların rengini düzeltir */
+.date-range-modal .rdrStaticRangeLabel {
+    color: #333 !important;
+}
+
+/* Sol menüde seçili olan elemanın arka planını daha belirgin yapar */
+.date-range-modal .rdrStaticRange:hover .rdrStaticRangeLabel,
+.date-range-modal .rdrStaticRangeSelected .rdrStaticRangeLabel {
+    background-color: #f1f2f6 !important;
+}
+
+/* Modal içindeki buton grubunun stilleri (generic modal stillerini ezer) */
+.date-range-modal .modal-actions {
+    display: flex; /* Butonları yan yana getirir */
+    justify-content: flex-end; /* Butonları sağa yaslar */
+    gap: 1rem; /* Butonlar arasına boşluk bırakır */
+    width: 100%;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Genel modal buton stillerini burada da kullanalım */
+.date-range-modal .modal-actions .primary-btn,
+.date-range-modal .modal-actions .cancel-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.date-range-modal .modal-actions .primary-btn {
+    background-color: #1a73e8;
+    color: white;
+}
+.date-range-modal .modal-actions .primary-btn:hover {
+    background-color: #155cb0;
+}
+
+.date-range-modal .modal-actions .cancel-btn {
+    background-color: #dfe4ea;
+    color: #2f3542;
+}
+.date-range-modal .modal-actions .cancel-btn:hover {
+    background-color: #ced6e0;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - ARAMA KUTUSU STİLİ
+   ========================================================================== */
+
+/* Arama kutusunu ve ikonunu bir arada tutan kapsayıcı */
+.arama-kutusu {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Arama input'unun stili */
+.arama-kutusu input {
+    width: 220px; /* Genişliği ayarlayabilirsiniz */
+    padding: 0.6rem 1rem 0.6rem 2.5rem; /* Sol padding, ikon için yer açar */
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: #f8f9fa;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Input'a tıklandığında */
+.arama-kutusu input:focus {
+    background-color: #fff;
+    border-color: var(--primary-brand);
+    box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.1);
+    outline: none;
+}
+
+/* Arama ikonu (input'un içine yerleştirilir) */
+.arama-kutusu .arama-ikonu {
+    position: absolute;
+    left: 1rem;
+    color: var(--secondary-text);
+    pointer-events: none; /* İkonun tıklanmasını engeller */
 }
