@@ -6,8 +6,8 @@ import KrediKartlariYonetimi from '../components/Ozellestir/KrediKartlariYonetim
 import KategorilerYonetimi from '../components/Ozellestir/KategorilerYonetimi';
 
 const TABS = {
-    HESAPLAR: 'Nakit & Banka',
-    KREDI_KARTLARI: 'Kredi Kartları',
+    HESAPLAR: 'Hesaplar',
+    KREDI_KARTLARI: 'Kartlar',
     KATEGORILER: 'Kategoriler'
 };
 

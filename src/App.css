@@ -5478,3 +5478,47 @@ input:checked + .slider:before {
     color: var(--secondary-text);
     pointer-events: none; /* İkonun tıklanmasını engeller */
 }
+/* ==========================================================================
+   ÖZELLEŞTİR SAYFASI - KARTLAR SEKME STİLLERİ
+   ========================================================================== */
+
+.ozellestir-liste-item .liste-item-ikon {
+    margin-right: 1rem;
+    color: var(--secondary-text);
+    font-size: 1.2rem;
+}
+
+.ozellestir-liste-item .kk-item-bilgi {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* Kart adının mümkün olduğunca yer kaplamasını sağlar */
+}
+
+.ozellestir-liste-item .kk-item-detay {
+    display: flex;
+    gap: 1.5rem; /* "Kesim" ve "Son Ödeme" arası boşluk */
+    color: var(--secondary-text);
+    margin: 0 1.5rem; /* Kenarlarla arasına boşluk koyar */
+}
+
+/* Satır içindeki Kesim/Ödeme günü inputlarını bir arada tutan grup */
+.kk-input-grubu {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0 1rem;
+}
+
+.kk-input-grubu input {
+    width: 80px; /* Inputların genişliğini sabitler */
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.liste-bos-mesaji {
+    padding: 2rem;
+    text-align: center;
+    color: var(--secondary-text);
+    font-style: italic;
+}

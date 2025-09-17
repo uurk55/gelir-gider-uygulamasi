@@ -1,86 +1,129 @@
-// src/components/Ozellestir/KrediKartlariYonetimi.jsx
-// Bu bileşen, satır içi ekleme/düzenleme için henüz tam olarak hazır değil,
-// çünkü birden fazla input alanı içeriyor. Şimdilik eski yapıyı koruyup
-// görsel tutarlılığı sağlayacak şekilde basitleştiriyoruz.
-// Bir sonraki adımda bunu da "satır içi" yapabiliriz.
+// src/components/Ozellestir/KrediKartlariYonetimi.jsx (Satır İçi Ekleme/Düzenleme Mantığıyla Yeniden Yazıldı)
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useFinans } from '../../context/FinansContext';
-import { FaTrash, FaEdit } from 'react-icons/fa';
+import { FaTrash, FaEdit, FaSave, FaTimes, FaPlus, FaCreditCard } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
-function KrediKartlariYonetimi() {
-    const { krediKartlari, handleKrediKartiEkle, handleKrediKartiSil, handleKrediKartiGuncelle } = useFinans();
-    const [kartAdi, setKartAdi] = useState('');
-    const [kesimGunu, setKesimGunu] = useState('');
-    const [sonOdemeGunu, setSonOdemeGunu] = useState('');
-    const [editingKart, setEditingKart] = useState(null);
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const yeniKart = { ad: kartAdi, kesimGunu, sonOdemeGunu };
-        if (editingKart) {
-            handleKrediKartiGuncelle(editingKart.id, yeniKart);
-        } else {
-            handleKrediKartiEkle(yeniKart);
+// Her bir kart satırını yöneten alt bileşen
+function KartSatiri({ kart }) {
+    const { handleKrediKartiSil, handleKrediKartiGuncelle } = useFinans();
+    const [isEditing, setIsEditing] = useState(false);
+    
+    const [editState, setEditState] = useState({ 
+        ad: kart.ad, 
+        kesimGunu: kart.kesimGunu,
+        sonOdemeGunu: kart.sonOdemeGunu
+    });
+
+    useEffect(() => {
+        setEditState({ ad: kart.ad, kesimGunu: kart.kesimGunu, sonOdemeGunu: kart.sonOdemeGunu });
+    }, [kart, isEditing]);
+
+    const onGuncelle = () => {
+        if (!editState.ad.trim() || !editState.kesimGunu || !editState.sonOdemeGunu) {
+            return toast.error("Tüm alanlar doldurulmalıdır.");
         }
-        resetForm();
-    };
-    
-    const resetForm = () => {
-        setKartAdi('');
-        setKesimGunu('');
-        setSonOdemeGunu('');
-        setEditingKart(null);
-    };
-    
-    const onDuzenle = (kart) => {
-        setEditingKart(kart);
-        setKartAdi(kart.ad);
-        setKesimGunu(kart.kesimGunu);
-        setSonOdemeGunu(kart.sonOdemeGunu);
+        handleKrediKartiGuncelle(kart.id, {
+            ad: editState.ad.trim(),
+            kesimGunu: editState.kesimGunu,
+            sonOdemeGunu: editState.sonOdemeGunu
+        });
+        setIsEditing(false);
     };
 
     return (
-        <div className="yonetim-bolumu-grid">
-            <div className="form-alani">
-                <h2>{editingKart ? 'Kredi Kartını Düzenle' : 'Yeni Kredi Kartı Ekle'}</h2>
-                <form onSubmit={handleSubmit}>
-                    <div className="form-grup">
-                        <label>Kart Adı</label>
-                        <input type="text" value={kartAdi} onChange={(e) => setKartAdi(e.target.value)} placeholder="Örn: Garanti Bonus" required />
+        <div className="ozellestir-liste-item">
+            {isEditing ? (
+                <>
+                    <FaCreditCard className="liste-item-ikon" />
+                    <input 
+                        type="text" 
+                        value={editState.ad} 
+                        onChange={(e) => setEditState({...editState, ad: e.target.value})} 
+                        className="liste-item-input"
+                    />
+                    <div className="kk-input-grubu">
+                        <input type="number" value={editState.kesimGunu} onChange={(e) => setEditState({...editState, kesimGunu: e.target.value})} placeholder="Kesim" />
+                        <input type="number" value={editState.sonOdemeGunu} onChange={(e) => setEditState({...editState, sonOdemeGunu: e.target.value})} placeholder="Ödeme" />
                     </div>
-                    <div className="form-grup">
-                        <label>Hesap Kesim Günü (1-31)</label>
-                        <input type="number" value={kesimGunu} onChange={(e) => setKesimGunu(e.target.value)} placeholder="Örn: 27" required min="1" max="31" />
+                    <div className="liste-item-aksiyonlar">
+                        <button onClick={onGuncelle} className="icon-btn"><FaSave /></button>
+                        <button onClick={() => setIsEditing(false)} className="icon-btn"><FaTimes /></button>
                     </div>
-                    <div className="form-grup">
-                        <label>Son Ödeme Günü (1-31)</label>
-                        <input type="number" value={sonOdemeGunu} onChange={(e) => setSonOdemeGunu(e.target.value)} placeholder="Örn: 9" required min="1" max="31" />
+                </>
+            ) : (
+                <>
+                    <div className="kk-item-bilgi">
+                        <FaCreditCard className="liste-item-ikon" />
+                        <span>{kart.ad}</span>
                     </div>
-                    <div className="form-aksiyonlar">
-                         {editingKart && <button type="button" onClick={resetForm} className="secondary-btn">İptal</button>}
-                        <button type="submit" className="primary-btn">{editingKart ? 'Güncelle' : 'Ekle'}</button>
+                    <div className="kk-item-detay">
+                        <small>Kesim: {kart.kesimGunu}. gün</small>
+                        <small>Son Ödeme: {kart.sonOdemeGunu}. gün</small>
                     </div>
-                </form>
-            </div>
-            <div className="liste-alani">
-                 <h2>Mevcut Kredi Kartları</h2>
-                <div className="ozellestir-liste">
-                    {krediKartlari.map(kart => (
-                        <div key={kart.id} className="ozellestir-liste-item kk-item">
-                            <div className="kk-item-bilgi">
-                                <span>{kart.ad}</span>
-                                <small>Kesim: {kart.kesimGunu}</small>
-                                <small>Son Ödeme: {kart.sonOdemeGunu}</small>
-                            </div>
-                            <div className="liste-item-aksiyonlar">
-                                <button onClick={() => onDuzenle(kart)} className="icon-btn"><FaEdit /></button>
-                                <button onClick={() => handleKrediKartiSil(kart.id)} className="icon-btn danger"><FaTrash /></button>
-                            </div>
+                    <div className="liste-item-aksiyonlar">
+                        <button onClick={() => setIsEditing(true)} className="icon-btn"><FaEdit /></button>
+                        <button onClick={() => handleKrediKartiSil(kart.id)} className="icon-btn danger"><FaTrash /></button>
+                    </div>
+                </>
+            )}
+        </div>
+    );
+}
+
+// Ana Bileşen
+function KrediKartlariYonetimi() {
+    const { krediKartlari, handleKrediKartiEkle } = useFinans();
+    const [isAdding, setIsAdding] = useState(false);
+    const [yeniKart, setYeniKart] = useState({ ad: '', kesimGunu: '', sonOdemeGunu: '' });
+
+    const onEkle = () => {
+        if (!yeniKart.ad.trim() || !yeniKart.kesimGunu || !yeniKart.sonOdemeGunu) {
+            return toast.error("Lütfen tüm alanları doldurun.");
+        }
+        handleKrediKartiEkle(yeniKart);
+        setYeniKart({ ad: '', kesimGunu: '', sonOdemeGunu: '' });
+        setIsAdding(false);
+    };
+
+    return (
+        <div className="yonetim-bolumu">
+            <h2>Kayıtlı Kartlar</h2>
+            <div className="ozellestir-liste">
+                {krediKartlari.length === 0 && !isAdding && (
+                    <p className="liste-bos-mesaji">Henüz bir kredi kartı eklemediniz.</p>
+                )}
+                {krediKartlari.map(kart => <KartSatiri key={kart.id} kart={kart} />)}
+                
+                {isAdding && (
+                    <div className="ozellestir-liste-item ekleme-formu">
+                         <FaCreditCard className="liste-item-ikon" />
+                        <input
+                            type="text"
+                            value={yeniKart.ad}
+                            onChange={(e) => setYeniKart({...yeniKart, ad: e.target.value})}
+                            placeholder="Yeni Kart Adı"
+                            className="liste-item-input"
+                            autoFocus
+                        />
+                        <div className="kk-input-grubu">
+                            <input type="number" value={yeniKart.kesimGunu} onChange={(e) => setYeniKart({...yeniKart, kesimGunu: e.target.value})} placeholder="Kesim Günü" />
+                            <input type="number" value={yeniKart.sonOdemeGunu} onChange={(e) => setYeniKart({...yeniKart, sonOdemeGunu: e.target.value})} placeholder="Ödeme Günü" />
                         </div>
-                    ))}
-                </div>
+                        <div className="liste-item-aksiyonlar">
+                            <button onClick={onEkle} className="icon-btn"><FaSave /></button>
+                            <button onClick={() => setIsAdding(false)} className="icon-btn"><FaTimes /></button>
+                        </div>
+                    </div>
+                )}
             </div>
+            {!isAdding && (
+                <button onClick={() => setIsAdding(true)} className="ekle-btn">
+                    <FaPlus /> Yeni Kart Ekle
+                </button>
+            )}
         </div>
     );
 }

@@ -1,8 +1,10 @@
-// src/components/Ozellestir/HesaplarYonetimi.jsx
+// src/components/Ozellestir/HesaplarYonetimi.jsx (İkonlar Eklendi)
 
 import { useState } from 'react';
 import { useFinans } from '../../context/FinansContext';
-import { FaPlus, FaSave, FaTimes, FaTrash, FaEdit } from 'react-icons/fa';
+// YENİ: İkonlar için getAccountIcon fonksiyonu ve FaWallet ikonu import edildi
+import { FaPlus, FaSave, FaTimes, FaTrash, FaEdit, FaWallet } from 'react-icons/fa';
+import { getAccountIcon } from '../../utils/iconMap';
 
 function HesapSatiri({ hesap }) {
     const { handleHesapSil, handleHesapGuncelle } = useFinans();
@@ -20,6 +22,8 @@ function HesapSatiri({ hesap }) {
         <div className="ozellestir-liste-item">
             {isEditing ? (
                 <>
+                    {/* YENİ: Düzenleme modunda da ikon gösteriliyor */}
+                    <div className="liste-item-ikon">{getAccountIcon(hesap.ad)}</div>
                     <input 
                         type="text" 
                         value={hesapAdi} 
@@ -33,7 +37,11 @@ function HesapSatiri({ hesap }) {
                 </>
             ) : (
                 <>
-                    <span>{hesap.ad}</span>
+                    {/* YENİ: Sol tarafa ikon ve yazı grubunu içeren bir div eklendi */}
+                    <div className="kk-item-bilgi">
+                        <div className="liste-item-ikon">{getAccountIcon(hesap.ad)}</div>
+                        <span>{hesap.ad}</span>
+                    </div>
                     <div className="liste-item-aksiyonlar">
                         <button onClick={() => setIsEditing(true)} className="icon-btn"><FaEdit /></button>
                         <button onClick={() => handleHesapSil(hesap.id)} className="icon-btn danger"><FaTrash /></button>
@@ -65,6 +73,8 @@ function HesaplarYonetimi() {
                 
                 {isAdding && (
                     <div className="ozellestir-liste-item ekleme-formu">
+                        {/* YENİ: Ekleme satırına da varsayılan bir ikon eklendi */}
+                        <div className="liste-item-ikon"><FaWallet /></div>
                         <input
                             type="text"
                             value={yeniHesapAdi}
