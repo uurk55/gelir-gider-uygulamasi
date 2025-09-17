@@ -5687,3 +5687,82 @@ input:checked + .slider:before {
     color: var(--primary-brand);
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
+/* ==========================================================================
+   BÜTÇELER SAYFASI - BASİT VE SAĞLAM TASARIM
+   ========================================================================== */
+
+.butce-listesi-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.butce-karti {
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Kart içindeki elemanlar arası boşluk */
+}
+
+.butce-karti-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.butce-karti-header .kategori-adi {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.butce-karti-body .butce-karti-rakamlar {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+.butce-karti-body .harcanan {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.butce-karti-body .limit {
+    font-size: 1rem;
+    color: var(--secondary-text);
+}
+
+.butce-karti-footer {
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.kalan-tutar.pozitif { color: #28a745; }
+.kalan-tutar.negatif { color: #dc3545; }
+
+
+/* İlerleme Çubuğu ve Renkleri */
+.butce-karti.uyari .progress-bar-dolu { background-color: #ffc107; }
+.butce-karti.asildi .progress-bar-dolu { background-color: #dc3545; }
+
+/* Düzenleme ve Ekleme Formu Stilleri */
+.limit-input {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem;
+    text-align: right;
+    max-width: 120px;
+    font-size: 1rem;
+}
+.butce-karti.ekleme-formu {
+    border-style: dashed;
+}
+.butce-duzenleme-formu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+.butce-duzenleme-formu select {
+    flex-grow: 1;
+}
