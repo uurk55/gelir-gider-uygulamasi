@@ -5522,3 +5522,168 @@ input:checked + .slider:before {
     color: var(--secondary-text);
     font-style: italic;
 }
+/* ==========================================================================
+   RAPORLAR SAYFASI - OTOMATİK ANALİZ KUTUSU STİLİ
+   ========================================================================== */
+
+.analiz-kutusu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 1rem 1rem 1rem; /* Kartın kenarlarından biraz içeride durması için */
+    border-radius: 8px;
+    border: 1px solid;
+}
+
+.analiz-kutusu .analiz-ikon {
+    font-size: 1.5rem;
+    flex-shrink: 0; /* İkonun küçülmesini engeller */
+}
+
+.analiz-kutusu .analiz-mesaj {
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Duruma göre renkler */
+.analiz-kutusu.pozitif {
+    background-color: #f0fdf4; /* Açık yeşil */
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.analiz-kutusu.negatif {
+    background-color: #fef2f2; /* Açık kırmızı */
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.analiz-kutusu.notr {
+    background-color: #f8fafc; /* Açık gri */
+    border-color: #e2e8f0;
+    color: #334155;
+}
+/* ==========================================================================
+   SABİT ÖDEMELER - NİHAİ VE BİRLEŞTİRİLMİŞ STİLLER
+   ========================================================================== */
+
+/* Özet Panosunu Ortalamak için Sarmalayıcı */
+.ozet-panosu-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+/* Özet Panosu Grid'i */
+.ozet-panosu-grid-sabit-odeme {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 950px;
+}
+
+.ozet-karti-sabit-odeme {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    background-color: var(--background-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-ikon {
+    font-size: 2rem;
+    color: var(--primary-brand);
+    background-color: #eef2f7;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-icerik {
+    display: flex;
+    flex-direction: column;
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-deger {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-text);
+    line-height: 1.2;
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-baslik {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--secondary-text);
+}
+
+/* Satır İçi Ekleme ve Düzenleme Formu */
+.ozellestir-liste-item.sabit-odeme-formu {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    border-color: var(--primary-brand);
+}
+
+.sabit-odeme-form-icerik {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+}
+
+.sabit-odeme-form-icerik .form-grup {
+    display: flex;
+    flex-direction: column;
+}
+
+.sabit-odeme-form-icerik .form-grup label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--secondary-text);
+}
+
+.sabit-odeme-formu .liste-item-aksiyonlar {
+    align-self: flex-end;
+}
+
+/* Ödeme Tipi Seçici */
+.odeme-tipi-secici {
+    display: flex;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 0.25rem;
+}
+
+.form-grup.odeme-tipi-grup {
+    grid-column: 1 / -1;
+}
+
+.odeme-tipi-secici button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--secondary-text);
+    font-weight: 600;
+    padding: 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.odeme-tipi-secici button.aktif {
+    background-color: var(--background-card);
+    color: var(--primary-brand);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}

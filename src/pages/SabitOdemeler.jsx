@@ -1,15 +1,25 @@
-// src/pages/SabitOdemeler.jsx (NİHAİ VE TAM VERSİYON)
+// src/pages/SabitOdemeler.jsx (Tüm Geliştirmeleri İçeren Nihai Versiyon)
 
 import { useState, useEffect } from 'react';
-import { FaTrash, FaPen, FaSave, FaExclamationCircle } from 'react-icons/fa';
+import { FaTrash, FaPen, FaSave, FaExclamationCircle, FaPiggyBank, FaCalendarCheck, FaFileInvoiceDollar, FaPlus, FaTimes } from 'react-icons/fa';
 import toast from 'react-hot-toast';
 import { useFinans } from '../context/FinansContext';
-import { useAuth } from '../context/AuthContext'; // YENİ: AuthContext'i import ediyoruz
 import { formatCurrency } from '../utils/formatters';
+import { motion, AnimatePresence } from 'framer-motion';
 
-// Her bir liste elemanını yönetecek alt bileşen
+// Özet Kartı Alt Bileşeni
+const OzetKarti = ({ ikon, baslik, deger }) => (
+    <div className="ozet-karti-sabit-odeme">
+        <div className="ozet-karti-ikon">{ikon}</div>
+        <div className="ozet-karti-icerik">
+            <span className="ozet-karti-deger">{deger}</span>
+            <span className="ozet-karti-baslik">{baslik}</span>
+        </div>
+    </div>
+);
+
+// Liste Elemanı Alt Bileşeni
 const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
-    // handleBekleyenOdemeyiAtla fonksiyonunu da context'ten çekiyoruz
     const { 
         handleSabitOdemeSil, 
         handleSabitOdemeGuncelle, 
@@ -17,20 +27,34 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
         hesaplar, 
         handleBekleyenOdemeleriIsle,
         handleBekleyenOdemeyiAtla,
-        bekleyenOdemeler // YENİ: Tam listeyi çekiyoruz
+        bekleyenOdemeler
     } = useFinans();
-    const { currentUser } = useAuth();
     const [isEditing, setIsEditing] = useState(false);
     const [editState, setEditState] = useState({ ...odeme });
 
-    const handleSave = () => { /* ... (içerik aynı) ... */ };
-    useEffect(() => { /* ... (içerik aynı) ... */ }, [isEditing, odeme]);
+    const handleSave = () => {
+        if (!editState.aciklama || !editState.tutar || !editState.hesapId || !editState.odemeGunu) {
+            return toast.error("Lütfen tüm alanları doldurun.");
+        }
+        handleSabitOdemeGuncelle(odeme.id, {
+            ...odeme,
+            aciklama: editState.aciklama,
+            tutar: parseFloat(editState.tutar),
+            kategori: editState.kategori,
+            hesapId: parseInt(editState.hesapId),
+            odemeGunu: parseInt(editState.odemeGunu),
+            taksitSayisi: odeme.taksitSayisi ? parseInt(editState.taksitSayisi) : null
+        });
+        setIsEditing(false);
+    };
+
+    useEffect(() => {
+        setEditState({ ...odeme });
+    }, [isEditing, odeme]);
     
     const odemeHesabi = hesaplar.find(h => h.id === odeme.hesapId)?.ad || 'Belirtilmemiş';
 
     const handleTekilIsle = () => {
-        // HATA DÜZELTMESİ: Ham 'odeme' objesi yerine, 'bekleyenOdemeler' listesinden
-        // 'islenecekTarih' içeren doğru objeyi bulup gönderiyoruz.
         const bekleyenOdeme = bekleyenOdemeler.find(b => b.id === odeme.id);
         if (bekleyenOdeme) {
             handleBekleyenOdemeleriIsle([bekleyenOdeme]);
@@ -42,7 +66,6 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
     };
 
     if (isBekleyen) {
-        // ... (return bloğu aynı, sadece handleBuAyAtla'yı handleAtla olarak değiştir)
         return (
              <li className="yonetim-listesi-item sabit-odeme-item bekleyen-odeme">
                 <FaExclamationCircle className="bekleyen-odeme-ikon" title="Bu ödemenin vadesi geçmiş ve gider olarak işlenmeyi bekliyor." />
@@ -66,23 +89,43 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
 
     if (isEditing) {
         return (
-            <li className="yonetim-listesi-item sabit-odeme-item is-editing">
-                 <div className="sabit-odeme-orta">
-                     <input type="text" value={editState.aciklama} onChange={e => setEditState({...editState, aciklama: e.target.value})} placeholder="Açıklama" />
-                     <div className="islem-etiketler">
-                        <select value={editState.kategori} onChange={e => setEditState({...editState, kategori: e.target.value})}>
-                             {giderKategorileri.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
+            <li className="ozellestir-liste-item ekleme-formu sabit-odeme-formu is-editing">
+                <div className="sabit-odeme-form-icerik">
+                    <div className="form-grup">
+                        <label>Açıklama</label>
+                        <input name="aciklama" value={editState.aciklama} onChange={(e) => setEditState(p => ({...p, aciklama: e.target.value}))} type="text" />
+                    </div>
+                     <div className="form-grup">
+                        <label>Aylık Tutar</label>
+                        <input name="tutar" value={editState.tutar} onChange={(e) => setEditState(p => ({...p, tutar: e.target.value}))} type="number" />
+                    </div>
+                    <div className="form-grup">
+                        <label>Kategori</label>
+                        <select name="kategori" value={editState.kategori} onChange={(e) => setEditState(p => ({...p, kategori: e.target.value}))}>
+                            {giderKategorileri.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
                         </select>
-                        <select value={editState.hesapId} onChange={e => setEditState({...editState, hesapId: e.target.value})}>
-                             {hesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}
+                    </div>
+                    <div className="form-grup">
+                        <label>Hesap</label>
+                        <select name="hesapId" value={editState.hesapId} onChange={(e) => setEditState(p => ({...p, hesapId: parseInt(e.target.value)}))}>
+                            {hesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}
                         </select>
-                        <input type="number" value={editState.odemeGunu} onChange={e => setEditState({...editState, odemeGunu: e.target.value})} placeholder="Gün" style={{width: '70px'}}/>
-                     </div>
-                 </div>
-                 <div className="sabit-odeme-sag">
-                    <input type="number" value={editState.tutar} onChange={e => setEditState({...editState, tutar: e.target.value})} placeholder="Tutar" style={{width: '100px'}} />
-                    <button onClick={handleSave} className="icon-btn duzenle-btn"><FaSave /></button>
-                 </div>
+                    </div>
+                    <div className="form-grup">
+                        <label>Ödeme Günü</label>
+                        <input name="odemeGunu" value={editState.odemeGunu} onChange={(e) => setEditState(p => ({...p, odemeGunu: e.target.value}))} type="number" />
+                    </div>
+                    {odeme.taksitSayisi != null && (
+                        <div className="form-grup">
+                            <label>Taksit Sayısı</label>
+                            <input name="taksitSayisi" value={editState.taksitSayisi} onChange={(e) => setEditState(p => ({...p, taksitSayisi: e.target.value}))} type="number" />
+                        </div>
+                    )}
+                </div>
+                <div className="liste-item-aksiyonlar">
+                    <button onClick={handleSave} className="icon-btn"><FaSave /></button>
+                    <button onClick={() => setIsEditing(false)} className="icon-btn"><FaTimes /></button>
+                </div>
             </li>
         );
     }
@@ -110,101 +153,134 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
     );
 };
 
-function SabitOdemeler() {
-  const { sabitOdemeler, handleSabitOdemeEkle, giderKategorileri, bekleyenOdemeler, hesaplar } = useFinans();
-  const getBugununTarihi = () => new Date().toISOString().split('T')[0];
-  
-  const [aciklama, setAciklama] = useState('');
-  const [tutar, setTutar] = useState('');
-  const [kategori, setKategori] = useState(giderKategorileri[0]);
-  const [hesapId, setHesapId] = useState(hesaplar[0]?.id || '');
-  const [odemeGunu, setOdemeGunu] = useState(1);
-  const [baslangicTarihi, setBaslangicTarihi] = useState(getBugununTarihi());
-  const [taksitSayisi, setTaksitSayisi] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!aciklama || !tutar || !hesapId) {
-        return toast.error("Lütfen Açıklama, Tutar ve Hesap alanlarını doldurun.");
+function SabitOdemeler() {
+  const { sabitOdemeler, handleSabitOdemeEkle, giderKategorileri, bekleyenOdemeler, hesaplar, sabitOdemelerOzeti } = useFinans();
+  const [isAdding, setIsAdding] = useState(false);
+  const [odemeTipi, setOdemeTipi] = useState('abonelik');
+  const [yeniOdeme, setYeniOdeme] = useState({
+      aciklama: '',
+      tutar: '',
+      kategori: giderKategorileri[0] || '',
+      hesapId: hesaplar[0]?.id || '',
+      odemeGunu: '',
+      baslangicTarihi: new Date().toISOString().split('T')[0],
+      taksitSayisi: ''
+  });
+
+  const handleInputChange = (e) => {
+      const { name, value } = e.target;
+      setYeniOdeme(prev => ({ ...prev, [name]: value }));
+  };
+  const onEkle = () => {
+    if (!yeniOdeme.aciklama || !yeniOdeme.tutar || !yeniOdeme.hesapId || !yeniOdeme.odemeGunu) {
+        return toast.error("Lütfen Açıklama, Tutar, Hesap ve Ödeme Günü alanlarını doldurun.");
+    }
+    if (odemeTipi === 'taksit' && (!yeniOdeme.taksitSayisi || yeniOdeme.taksitSayisi <= 0)) {
+        return toast.error("Taksitli ödeme için geçerli bir taksit sayısı girin.");
     }
     handleSabitOdemeEkle({
-      aciklama,
-      tutar: parseFloat(tutar),
-      kategori,
-      hesapId: parseInt(hesapId),
-      odemeGunu: parseInt(odemeGunu),
-      baslangicTarihi,
-      taksitSayisi: taksitSayisi > 0 ? parseInt(taksitSayisi) : null,
+      ...yeniOdeme, tutar: parseFloat(yeniOdeme.tutar),
+      hesapId: parseInt(yeniOdeme.hesapId), odemeGunu: parseInt(yeniOdeme.odemeGunu),
+      taksitSayisi: odemeTipi === 'taksit' ? parseInt(yeniOdeme.taksitSayisi) : null,
     });
-    setAciklama(''); setTutar(''); setKategori(giderKategorileri[0]);
-    setHesapId(hesaplar[0]?.id || ''); setOdemeGunu(1); 
-    setBaslangicTarihi(getBugununTarihi()); setTaksitSayisi('');
+    setYeniOdeme({
+        aciklama: '', tutar: '', kategori: giderKategorileri[0] || '',
+        hesapId: hesaplar[0]?.id || '', odemeGunu: '',
+        baslangicTarihi: new Date().toISOString().split('T')[0], taksitSayisi: ''
+    });
+    setOdemeTipi('abonelik');
+    setIsAdding(false);
   };
 
-  if (!sabitOdemeler || !giderKategorileri || !bekleyenOdemeler || !hesaplar) {
+  if (!sabitOdemeler || !giderKategorileri || !bekleyenOdemeler || !hesaplar || !sabitOdemelerOzeti) {
       return <div>Yükleniyor...</div>
   }
   
   const bekleyenOdemeIdleri = new Set(bekleyenOdemeler.map(odeme => odeme.id));
+  const { enYakinOdeme } = sabitOdemelerOzeti;
 
   return (
-    <div className="card">
-      <div className="card-header">
-        <h2>Sabit Ödemeleri Yönet</h2>
-      </div>
-      <div className="yonetim-sayfasi-layout">
-        <div className="bolum">
-          <h3>Yeni Sabit Ödeme Ekle</h3>
-          <form onSubmit={handleSubmit} className="form-modern form-grid">
-            <div className="form-item-full">
-              <label htmlFor="odeme-aciklama">Açıklama</label>
-              <input id="odeme-aciklama" type="text" placeholder="Örn: Ev Kredisi, Netflix" value={aciklama} onChange={(e) => setAciklama(e.target.value)} />
+    <>
+        <div className="ozet-panosu-container">
+            <div className="ozet-panosu-grid-sabit-odeme">
+                <OzetKarti ikon={<FaFileInvoiceDollar />} deger={formatCurrency(sabitOdemelerOzeti.toplamAylikTaahhut)} baslik="Aylık Toplam Taahhüt"/>
+                <OzetKarti ikon={<FaCalendarCheck />} deger={enYakinOdeme ? `${enYakinOdeme.aciklama} (${enYakinOdeme.kalanGun} gün)` : "-"} baslik="En Yakın Ödeme"/>
+                <OzetKarti ikon={<FaPiggyBank />} deger={`${sabitOdemelerOzeti.aktifOdemeSayisi} adet`} baslik="Aktif Ödeme"/>
             </div>
-            <div className="form-item-half">
-              <label htmlFor="odeme-kategori">Kategori</label>
-              <select id="odeme-kategori" value={kategori} onChange={(e) => setKategori(e.target.value)}>
-                {giderKategorileri.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
-              </select>
-            </div>
-             <div className="form-item-half">
-              <label htmlFor="odeme-hesap">Hangi Hesaptan Ödenecek?</label>
-              <select id="odeme-hesap" value={hesapId} onChange={(e) => setHesapId(e.target.value)}>
-                {hesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}
-              </select>
-            </div>
-            <div className="form-item-half">
-              <label htmlFor="odeme-tutar">Aylık Tutar (₺)</label>
-              <input id="odeme-tutar" type="number" placeholder="Örn: 150" value={tutar} onChange={(e) => setTutar(e.target.value)} />
-            </div>
-            <div className="form-item-half">
-              <label htmlFor="odeme-baslangic">İlk Ödeme Tarihi</label>
-              <input id="odeme-baslangic" type="date" value={baslangicTarihi} onChange={(e) => setBaslangicTarihi(e.target.value)} />
-            </div>
-            <div className="form-item-half">
-              <label htmlFor="odeme-gunu">Ödeme Günü (1-31)</label>
-              <input id="odeme-gunu" type="number" min="1" max="31" value={odemeGunu} onChange={(e) => setOdemeGunu(e.target.value)} />
-            </div>
-            <div className="form-item-full">
-              <label htmlFor="odeme-taksit">Toplam Taksit Sayısı (Abonelik için boş)</label>
-              <input id="odeme-taksit" type="number" min="1" placeholder="Örn: 12, 24, 36" value={taksitSayisi} onChange={(e) => setTaksitSayisi(e.target.value)} />
-            </div>
-            <div className="form-item-full">
-              <button type="submit" className="primary-btn" style={{width: '100%'}}>Ekle</button>
-            </div>
-          </form>
         </div>
-        <div className="bolum">
-          <h3>Kayıtlı Sabit Ödemeler</h3>
-          {sabitOdemeler.length === 0 ? <p style={{marginTop: '1rem', color: 'var(--secondary-text)'}}>Kayıtlı sabit ödeme bulunmuyor.</p> : (
-            <ul className="yonetim-listesi">
-              {sabitOdemeler.map(odeme => (
-                <SabitOdemeListItem key={odeme.id} odeme={odeme} isBekleyen={bekleyenOdemeIdleri.has(odeme.id)} />
-              ))}
-            </ul>
-          )}
+        
+        <div className="card">
+            <div className="card-header">
+                <h2>Kayıtlı Sabit Ödemeler</h2>
+            </div>
+            <div className="ozellestir-icerik" style={{paddingTop: 0}}>
+                <div className="ozellestir-liste">
+                    {sabitOdemeler.length === 0 && !isAdding && (
+                        <p className="liste-bos-mesaji">Henüz bir sabit ödeme eklemediniz.</p>
+                    )}
+                    {sabitOdemeler.map(odeme => (
+                        <SabitOdemeListItem key={odeme.id} odeme={odeme} isBekleyen={bekleyenOdemeIdleri.has(odeme.id)} />
+                    ))}
+                    
+                    {isAdding && (
+                        <li className="ozellestir-liste-item ekleme-formu sabit-odeme-formu">
+                            <div className="sabit-odeme-form-icerik">
+                                <div className="form-grup odeme-tipi-grup">
+                                    <label>Ödeme Tipi</label>
+                                    <div className="odeme-tipi-secici">
+                                        <button type="button" onClick={() => setOdemeTipi('abonelik')} className={odemeTipi === 'abonelik' ? 'aktif' : ''}>Abonelik</button>
+                                        <button type="button" onClick={() => setOdemeTipi('taksit')} className={odemeTipi === 'taksit' ? 'aktif' : ''}>Taksit</button>
+                                    </div>
+                                </div>
+                                <div className="form-grup">
+                                    <label>Açıklama</label>
+                                    <input name="aciklama" value={yeniOdeme.aciklama} onChange={handleInputChange} type="text" placeholder="Örn: Netflix"/>
+                                </div>
+                                <div className="form-grup">
+                                    <label>Aylık Tutar</label>
+                                    <input name="tutar" value={yeniOdeme.tutar} onChange={handleInputChange} type="number" placeholder="₺0,00"/>
+                                </div>
+                                <div className="form-grup">
+                                    <label>Kategori</label>
+                                    <select name="kategori" value={yeniOdeme.kategori} onChange={handleInputChange}>
+                                        {giderKategorileri.map(kat => (<option key={kat} value={kat}>{kat}</option>))}
+                                    </select>
+                                </div>
+                                <div className="form-grup">
+                                    <label>Hesap</label>
+                                    <select name="hesapId" value={yeniOdeme.hesapId} onChange={handleInputChange}>
+                                        {hesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}
+                                    </select>
+                                </div>
+                                <div className="form-grup">
+                                    <label>Ödeme Günü</label>
+                                    <input name="odemeGunu" value={yeniOdeme.odemeGunu} onChange={handleInputChange} type="number" placeholder="1-31"/>
+                                </div>
+                                <AnimatePresence>
+                                {odemeTipi === 'taksit' && (
+                                    <motion.div className="form-grup" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                                        <label>Taksit Sayısı</label>
+                                        <input name="taksitSayisi" value={yeniOdeme.taksitSayisi} onChange={handleInputChange} type="number" placeholder="Örn: 12"/>
+                                    </motion.div>
+                                )}
+                                </AnimatePresence>
+                            </div>
+                             <div className="liste-item-aksiyonlar">
+                                <button onClick={onEkle} className="icon-btn"><FaSave /></button>
+                                <button onClick={() => setIsAdding(false)} className="icon-btn"><FaTimes /></button>
+                            </div>
+                        </li>
+                    )}
+                </div>
+                {!isAdding && (
+                    <button onClick={() => setIsAdding(true)} className="ekle-btn">
+                        <FaPlus /> Yeni Sabit Ödeme Ekle
+                    </button>
+                )}
+            </div>
         </div>
-      </div>
-    </div>
+    </>
   );
 }
 

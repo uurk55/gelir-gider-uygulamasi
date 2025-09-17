@@ -18,6 +18,8 @@ import {
     writeBatch
 } from 'firebase/firestore';
 
+import { formatCurrency } from '../utils/formatters';
+
 const FinansContext = createContext();
 export const useFinans = () => useContext(FinansContext);
 
@@ -823,8 +825,22 @@ const finansalSaglikPuani = useMemo(() => {
             let kalanGun = odeme.odemeGunu - bugununGunu; 
             if (kalanGun < 0) kalanGun += new Date(bugun.getFullYear(), bugun.getMonth() + 1, 0).getDate(); 
             return { ...odeme, kalanGun, tutar: odeme.tutar || 0 }; 
-        }).sort((a, b) => a.kalanGun - b.kalanGun).slice(0, 3); 
+        }).sort((a, b) => a.kalanGun - b.kalanGun); // DEĞİŞİKLİK: slice(0, 3) kaldırıldı, tüm liste lazım
     }, [sabitOdemeler]);
+
+    // YENİ: Sabit Ödemeler sayfası için özet verisi
+    const sabitOdemelerOzeti = useMemo(() => {
+        const toplamAylikTaahhut = sabitOdemeler.reduce((acc, odeme) => acc + (odeme.tutar || 0), 0);
+        const aktifOdemeSayisi = sabitOdemeler.length;
+        const enYakinOdeme = yaklasanOdemeler.length > 0 ? yaklasanOdemeler[0] : null;
+
+        return {
+            toplamAylikTaahhut,
+            aktifOdemeSayisi,
+            enYakinOdeme
+        };
+    }, [sabitOdemeler, yaklasanOdemeler]);
+
     const krediKartiOzetleri = useMemo(() => {
         if (krediKartlari.length === 0) return [];
 
@@ -944,7 +960,46 @@ const nakitAkisiVerisi = useMemo(() => {
     
     return { labels, netAkim: netAkimData };
 }, [gelirler, giderler]);
+const trendAnalizi = useMemo(() => {
+        const { gelirler, giderler } = trendVerisi;
+        if (gelirler.length < 2) return null; // Analiz için en az 2 ay veri olmalı
 
+        const sonAyGelir = gelirler[gelirler.length - 1];
+        const oncekiAyGelir = gelirler[gelirler.length - 2];
+        const sonAyGider = giderler[giderler.length - 1];
+        const oncekiAyGider = giderler[giderler.length - 2];
+
+        const gelirTrendi = sonAyGelir - oncekiAyGelir;
+        const giderTrendi = sonAyGider - oncekiAyGider;
+
+        if (gelirTrendi > 0 && giderTrendi < 0) {
+            return { mesaj: "Mükemmel! Gelirleriniz artarken giderleriniz azalıyor.", durum: "pozitif" };
+        }
+        if ((sonAyGelir > sonAyGider) && (oncekiAyGelir > oncekiAyGider)) {
+            return { mesaj: "Harika gidiyorsunuz! Son iki aydır gelirleriniz giderlerinizden daha fazla.", durum: "pozitif" };
+        }
+        if (sonAyGider > sonAyGelir) {
+            return { mesaj: "Dikkat! Bu ay giderleriniz gelirlerinizi aştı. Harcamaları gözden geçirmek iyi olabilir.", durum: "negatif" };
+        }
+        return { mesaj: "Finansal durumunuz dengede. Bu şekilde devam edin!", durum: "notr" };
+    }, [trendVerisi]);
+
+    // YENİ: "Nakit Akışı" raporu için özet
+    const nakitAkisiOzeti = useMemo(() => {
+        const { netAkim, labels } = nakitAkisiVerisi;
+        if (netAkim.length === 0) return null;
+
+        const toplamNetAkim = netAkim.reduce((acc, val) => acc + val, 0);
+        const enYuksekAkim = Math.max(...netAkim);
+        const enIyiAy = labels[netAkim.indexOf(enYuksekAkim)];
+
+        let mesaj = `Son 6 ayda toplam ${formatCurrency(toplamNetAkim)} net nakit akışı ${toplamNetAkim >= 0 ? 'sağladınız' : 'oluştu'}.`;
+        if (enYuksekAkim > 0) {
+            mesaj += ` En iyi performans gösterdiğiniz ay ${enIyiAy} (${formatCurrency(enYuksekAkim)}) oldu.`;
+        }
+        return { mesaj, durum: toplamNetAkim >= 0 ? "pozitif" : "negatif" };
+    }, [nakitAkisiVerisi]);
+    
 
 // YENİ FİKİR 3: En Büyük Harcamalar Raporu için Veri
 const enBuyukHarcamalar = useMemo(() => {
@@ -964,6 +1019,7 @@ const enBuyukHarcamalar = useMemo(() => {
 
     // DEĞİŞİKLİK: `contextValue` güncellendi
     const contextValue = {
+        // ... (mevcut tüm değerler) ...
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
         krediKartlari,
         hedefler,
@@ -991,7 +1047,6 @@ const enBuyukHarcamalar = useMemo(() => {
         seciliAy, setSeciliAy, seciliYil, setSeciliYil,
         birlesikFiltreKategori, setBirlesikFiltreKategori, birlesikFiltreTip, setBirlesikFiltreTip,
         birlesikSiralamaKriteri, setBirlesikSiralamaKriteri, birlesikFiltreHesap, setBirlesikFiltreHesap,
-        // YENİ: Arama state'leri context'e eklendi
         aramaMetni, setAramaMetni,
         isModalOpen, itemToDelete,
         karsilastirmaliAylikOzet,
@@ -1006,7 +1061,11 @@ const enBuyukHarcamalar = useMemo(() => {
         nakitAkisiVerisi,
         enBuyukHarcamalar,
         yaklasanOdemeler, krediKartiOzetleri, genelHesapBakiyeleri, aylikHesapGiderleri,
-        transferGuestDataToFirestore
+        transferGuestDataToFirestore,
+        // YENİ: Rapor analizleri context'e eklendi
+        trendAnalizi,
+        nakitAkisiOzeti,
+        sabitOdemelerOzeti
     };
 
     return <FinansContext.Provider value={contextValue}>{children}</FinansContext.Provider>;

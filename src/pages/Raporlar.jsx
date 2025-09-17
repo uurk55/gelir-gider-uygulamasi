@@ -1,15 +1,15 @@
-// src/pages/Raporlar.jsx (SADELEŞTİRİLMİŞ NİHAİ KOD)
+// src/pages/Raporlar.jsx (Otomatik Analiz Metinleri Eklendi)
 
 import { useState } from 'react';
 import { useFinans } from '../context/FinansContext';
 import { Line } from 'react-chartjs-2';
-import { FaCalendarAlt, FaDownload } from 'react-icons/fa';
+// YENİ: Analiz kutusu için ikonlar eklendi
+import { FaCalendarAlt, FaDownload, FaLightbulb, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { DateRange } from 'react-date-range';
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tr } from 'date-fns/locale';
-// ARTIK GEREKLİ DEĞİL: import TarihSecici from '../components/TarihSecici'; 
 import KategoriAnaliziRaporu from '../components/Raporlar/KategoriAnaliziRaporu';
 import NakitAkisiRaporu from '../components/Raporlar/NakitAkisiRaporu';
 import EnBuyukHarcamalarRaporu from '../components/Raporlar/EnBuyukHarcamalarRaporu';
@@ -21,11 +21,33 @@ const RAPOR_SEKMELERI = {
     EN_BUYUK_HARCAMALAR: 'En Büyük Harcamalar'
 };
 
+// YENİ: Tekrar kullanılabilir analiz kutusu bileşeni
+const AnalizKutusu = ({ analiz }) => {
+    if (!analiz) return null;
+
+    const ikonlar = {
+        pozitif: <FaCheckCircle />,
+        negatif: <FaExclamationTriangle />,
+        notr: <FaLightbulb />
+    };
+
+    return (
+        <div className={`analiz-kutusu ${analiz.durum}`}>
+            <div className="analiz-ikon">{ikonlar[analiz.durum]}</div>
+            <p className="analiz-mesaj">{analiz.mesaj}</p>
+        </div>
+    );
+};
+
+
 function Raporlar() {
     const [aktifSekme, setAktifSekme] = useState(RAPOR_SEKMELERI.GENEL_TREND);
+    // DEĞİŞİKLİK: Yeni analiz verileri context'ten çekildi
     const {
         trendVerisi, yillikRaporVerisi, seciliYil, handleVeriIndir,
-        tarihAraligi, setTarihAraligi
+        tarihAraligi, setTarihAraligi,
+        trendAnalizi, // YENİ
+        nakitAkisiOzeti // YENİ
     } = useFinans();
     const [isDateRangeModalOpen, setIsDateRangeModalOpen] = useState(false);
 
@@ -50,7 +72,13 @@ function Raporlar() {
             case RAPOR_SEKMELERI.KATEGORI_ANALIZI:
                 return <KategoriAnaliziRaporu />;
             case RAPOR_SEKMELERI.NAKIT_AKISI:
-                return <NakitAkisiRaporu />;
+                // DEĞİŞİKLİK: NakitAkisiRaporu artık AnalizKutusu'nu da içeriyor
+                return (
+                    <>
+                        <NakitAkisiRaporu />
+                        <AnalizKutusu analiz={nakitAkisiOzeti} />
+                    </>
+                );
             case RAPOR_SEKMELERI.EN_BUYUK_HARCAMALAR:
                 return <EnBuyukHarcamalarRaporu />;
             case RAPOR_SEKMELERI.GENEL_TREND:
@@ -60,6 +88,8 @@ function Raporlar() {
                         <div className="card">
                             <div className="card-header"><h2>Son 6 Aylık Finansal Trend</h2></div>
                             <div style={{padding: '1rem'}}><Line data={lineChartData} /></div>
+                            {/* YENİ: Genel Trend grafiğinin altına analiz kutusu eklendi */}
+                            <AnalizKutusu analiz={trendAnalizi} />
                         </div>
                         <div className="card">
                             <div className="card-header"><h2>{seciliYil} Yılı Özeti</h2></div>
@@ -103,7 +133,6 @@ function Raporlar() {
             <div className="raporlar-header">
                 <h1>Raporlar</h1>
                 <div className="rapor-kontrolleri">
-                    {/* TarihSecici bileşeni buradan kaldırıldı */}
                     <button onClick={() => setIsDateRangeModalOpen(true)} className="secondary-btn">
                         <FaCalendarAlt /> Tarih Aralığı Seç
                     </button>
@@ -138,7 +167,6 @@ function Raporlar() {
                     </motion.div>
                 </AnimatePresence>
             </div>
-
 
             <AnimatePresence>
                 {isDateRangeModalOpen && (
