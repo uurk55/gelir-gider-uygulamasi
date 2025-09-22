@@ -4657,21 +4657,6 @@ tfoot .toplam-satiri td {
    AYARLAR SAYFASI NİHAİ TASARIM (Sol Menü + Tema Desteği)
    ========================================================================== */
 
-/* --- Ana Layout --- */
-.ayarlar-sayfasi h1 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.ayarlar-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr; /* Sol menü sabit genişlikte */
-    gap: 2.5rem;
-    align-items: start;
-}
-
 /* --- Sol Menü --- */
 .ayarlar-menu {
     display: flex;
@@ -4785,20 +4770,6 @@ tfoot .toplam-satiri td {
    AYARLAR SAYFASI TASARIMI (Sadeleştirilmiş - Tema Yok)
    ========================================================================== */
 
-/* --- Ana Layout --- */
-.ayarlar-sayfasi h1 {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e9ecef;
-}
-
-.ayarlar-layout {
-    display: grid;
-    grid-template-columns: 240px 1fr;
-    gap: 2.5rem;
-    align-items: start;
-}
 
 /* --- Sol Menü --- */
 .ayarlar-menu {
@@ -5765,4 +5736,184 @@ input:checked + .slider:before {
 }
 .butce-duzenleme-formu select {
     flex-grow: 1;
+}
+/* ==========================================================================
+   AYARLAR SAYFASI ÖZEL DÜZELTMELERİ (YENİ YÖNTEM)
+   ========================================================================== */
+
+/* Ayarlar Sayfası Üst Boşluk Düzeltmesi (Negatif Dış Boşluk Yöntemi) */
+.ayarlar-sayfasi {
+  margin-top: -2rem; /* Sayfayı yukarı doğru çeker */
+}
+/* Ayarlar Sayfası - Başlığı Grid Düzenine Dahil Etme */
+.ayarlar-layout h1 {
+  grid-column: 1 / -1; /* Başlığın tüm sütunları kaplamasını sağlar */
+}
+/* ============================================= */
+/* ========== AYARLAR SAYFASI STİLLERİ ========= */
+/* ============================================= */
+
+.ayarlar-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+  /* DEĞİŞİKLİK 1: Hizalamayı garantilemek için 'start' en iyi yöntemdir. */
+  align-items: start; /* Her iki sütunun da içeriğini kendi hücrelerinin en tepesine yasla. */
+  
+  /* DEĞİŞİKLİK 2: Üst boşluğu minimum ve kontrollü hale getir. */
+  padding-top: 1.5rem; /* 2rem'den daha minimal bir değere düşürdük. */
+}
+
+/* DEĞİŞİKLİK 3: Olası margin farklarını sıfırlayarak hizalamayı garantile. */
+.ayarlar-menu, .ayarlar-icerik {
+    margin-top: 0;
+}
+
+/* Sol Menü (Navigasyon) */
+.ayarlar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ayar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #4a5568;
+  text-align: left;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.ayar-menu-item:hover {
+  background-color: #f7fafc;
+  color: #2d3748;
+}
+
+.ayar-menu-item.aktif {
+  background-color: #4A90E2; /* Projenin ana mavi rengi */
+  color: white;
+}
+
+.ayar-menu-item svg {
+  font-size: 1.2rem;
+}
+
+/* Sağdaki İçerik Alanı */
+.ayarlar-icerik {
+  width: 100%;
+}
+
+/* Ayar Kartı Stili */
+.ayar-karti {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e2e8f0;
+}
+
+.ayar-karti-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ayar-karti-baslik {
+  font-size: 1.75rem; /* Yeni, daha vurgulu boyut */
+  margin: 0;
+  color: #1a202c;
+}
+
+.ayar-karti-aciklama {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.ayar-karti-govde {
+  padding: 1.5rem;
+}
+
+/* Form Elemanları İyileştirmeleri */
+.ayar-formu .form-grup {
+  margin-bottom: 1.5rem;
+}
+.ayar-formu .form-grup:last-of-type {
+  margin-bottom: 0;
+}
+
+.ayar-formu label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  display: block;
+}
+
+.ayar-formu input,
+.ayar-formu select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ayar-formu input:focus,
+.ayar-formu select:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.ayar-formu input:disabled {
+    background-color: #f7fafc;
+    color: #a0aec0;
+    cursor: not-allowed;
+}
+
+
+/* Tehlikeli Bölge Stili */
+.tehlikeli-bolge {
+  background-color: #fff5f5;
+  border: 1px solid #fc8181;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.tehlikeli-bolge .tehlike-baslik {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #c53030;
+}
+
+.tehlikeli-bolge .tehlike-baslik svg {
+    font-size: 1.2rem;
+}
+
+.tehlikeli-bolge h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tehlikeli-bolge p {
+  color: #9b2c2c;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.danger-btn {
+    background-color: #e53e3e;
+    color: white;
+    /* ... diğer buton stilleri ... */
+}
+.danger-btn:hover {
+    background-color: #c53030;
 }

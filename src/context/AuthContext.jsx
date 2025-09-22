@@ -1,4 +1,4 @@
-// src/context/AuthContext.jsx (DOĞRU VE NİHAİ VERSİYON)
+// src/context/AuthContext.jsx (GÜNCELLENMİŞ VE DOĞRU KOD)
 
 import React, { useContext, useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
@@ -8,7 +8,10 @@ import {
   signOut,
   onAuthStateChanged,
   deleteUser,
-  updateProfile
+  updateProfile,
+  updatePassword,
+  EmailAuthProvider,      // YENİ: Kimlik doğrulama için gerekli
+  reauthenticateWithCredential // YENİ: Kimlik doğrulama için gerekli
 } from 'firebase/auth';
 import { doc, writeBatch } from 'firebase/firestore';
 import { useFinans } from './FinansContext';
@@ -25,6 +28,7 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const finansContext = useFinans();
 
+  // signup, login, logout fonksiyonları aynı...
   async function signup(email, password) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     if (userCredential.user && finansContext) {
@@ -45,6 +49,32 @@ export function AuthProvider({ children }) {
     return signOut(auth);
   }
 
+  // YENİ VE DOĞRU FONKSİYON: Önce kimliği doğrular, sonra şifreyi değiştirir
+  async function reauthenticateAndChangePassword(currentPassword, newPassword) {
+    if (!currentUser) throw new Error("İşlem için giriş yapmış olmalısınız.");
+    
+    try {
+      const credential = EmailAuthProvider.credential(currentUser.email, currentPassword);
+      // 1. Adım: Kullanıcının kimliğini mevcut şifresiyle doğrula
+      await reauthenticateWithCredential(currentUser, credential);
+      // 2. Adım: Kimlik doğrulama başarılı olursa, yeni şifreyi ayarla
+      await updatePassword(currentUser, newPassword);
+      toast.success("Şifreniz başarıyla güncellendi.");
+
+    } catch (error) {
+      console.error("Yeniden kimlik doğrulama ve şifre güncelleme hatası:", error);
+      if (error.code === 'auth/wrong-password') {
+        toast.error("Mevcut şifreniz yanlış. Lütfen kontrol edin.");
+      } else if (error.code === 'auth/requires-recent-login') {
+         toast.error("Bu hassas bir işlemdir. Lütfen çıkış yapıp tekrar giriş yaptıktan sonra deneyin.");
+      } else {
+        toast.error("Şifre güncellenirken bir hata oluştu.");
+      }
+      throw error;
+    }
+  }
+  
+  // deleteAccount ve updateProfileName fonksiyonları aynı...
   async function deleteAccount() {
     if (!currentUser) throw new Error("Hesabı silmek için giriş yapmış olmalısınız.");
     try {
@@ -73,6 +103,7 @@ export function AuthProvider({ children }) {
     toast.success("Profil adınız güncellendi!");
   }
 
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, user => {
       setCurrentUser(user);
@@ -87,7 +118,8 @@ export function AuthProvider({ children }) {
     login,
     logout,
     deleteAccount,
-    updateProfileName
+    updateProfileName,
+    reauthenticateAndChangePassword // Eski fonksiyonu bununla değiştiriyoruz
   };
 
   return (

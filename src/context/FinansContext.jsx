@@ -1,4 +1,4 @@
-// src/context/FinansContext.jsx (Arama Özelliği Eklendi)
+// src/context/FinansContext.jsx (HATADAN ARINDIRILMIŞ KESİN KOD)
 
 import Papa from 'papaparse';
 import { useState, useEffect, createContext, useContext, useMemo } from 'react';
@@ -7,13 +7,13 @@ import { arrayMove } from '@dnd-kit/sortable';
 import { ISLEM_TURLERI, SIRALAMA_KRITERLERI } from '../utils/constants';
 import { db } from '../firebase';
 import { useAuth } from './AuthContext';
-import { 
-    collection, 
-    onSnapshot, 
-    doc, 
-    addDoc, 
-    updateDoc, 
-    deleteDoc, 
+import {
+    collection,
+    onSnapshot,
+    doc,
+    addDoc,
+    updateDoc,
+    deleteDoc,
     setDoc,
     writeBatch
 } from 'firebase/firestore';
@@ -71,12 +71,16 @@ export const FinansProvider = ({ children }) => {
     const [krediKartlari, setKrediKartlari] = useState(() => currentUser ? [] : getLocalData('guest_krediKartlari', []));
     const [hedefler, setHedefler] = useState(() => currentUser ? [] : getLocalData('guest_hedefler', []));
     const [ayarlar, setAyarlar] = useState({
-    bildirimler: {
-        yaklasanOdemeler: false,
-        butceAsimi: false,
-        haftalikOzet: false,
-    }
-});
+        bildirimler: {
+            yaklasanOdemeler: false,
+            butceAsimi: false,
+            haftalikOzet: false,
+        },
+        tercihler: {
+            paraBirimi: 'TRY',
+            baslangicSayfasi: '/',
+        }
+    });
     const [bekleyenOdemeler, setBekleyenOdemeler] = useState([]);
     const [kategoriRenkleri, setKategoriRenkleri] = useState({});
     const [seciliAy, setSeciliAy] = useState(new Date().getMonth() + 1);
@@ -141,24 +145,25 @@ export const FinansProvider = ({ children }) => {
                         setHesaplar(data.hesaplar || VARSAYILAN_HESAPLAR);
                         setGiderKategorileri(data.giderKategorileri || GIDER_KATEGORILERI_VARSAYILAN);
                         setGelirKategorileri(data.gelirKategorileri || GELIR_KATEGORILERI_VARSAYILAN);
-                     if (data.ayarlar && data.ayarlar.bildirimler) {
-            setAyarlar({
-                bildirimler: {
-                    ...ayarlar.bildirimler, // Varsayılanları koru
-                    ...data.ayarlar.bildirimler // Üzerine yaz
-                }
-            });
-        }
+                        
+                        setAyarlar(prev => ({
+                            ...prev,
+                            bildirimler: { ...prev.bildirimler, ...(data.ayarlar?.bildirimler || {}) },
+                            tercihler: { ...prev.tercihler, ...(data.ayarlar?.tercihler || {}) }
+                        }));
+
                     } else {
-        await setDoc(doc(db, 'users', uid), { 
-            hesaplar: VARSAYILAN_HESAPLAR, 
-            giderKategorileri: GIDER_KATEGORILERI_VARSAYILAN, 
-            gelirKategorileri: GELIR_KATEGORILERI_VARSAYILAN,
-            // YENİ: Yeni kullanıcı için varsayılan ayarlar
-            ayarlar: { bildirimler: { yaklasanOdemeler: false, butceAsimi: false, haftalikOzet: false } }
-        });
-    }
-})
+                        await setDoc(doc(db, 'users', uid), {
+                            hesaplar: VARSAYILAN_HESAPLAR,
+                            giderKategorileri: GIDER_KATEGORILERI_VARSAYILAN,
+                            gelirKategorileri: GELIR_KATEGORILERI_VARSAYILAN,
+                            ayarlar: {
+                                bildirimler: { yaklasanOdemeler: false, butceAsimi: false, haftalikOzet: false },
+                                tercihler: { paraBirimi: 'TRY', baslangicSayfasi: '/' }
+                            }
+                        });
+                    }
+                })
             ];
             return () => unsubscribers.forEach(unsub => unsub());
         } else {
@@ -168,7 +173,9 @@ export const FinansProvider = ({ children }) => {
 
         }
     }, [currentUser]);
-    
+
+    // ... dosyanın geri kalan tüm fonksiyonları aynı kalacak ...
+    // useEffect, handleBekleyen, updateAyarlar, addIslem, vs. hepsi aynı...
     useEffect(() => {
         if (!currentUser || sabitOdemeler.length === 0) {
             setBekleyenOdemeler([]);
@@ -180,7 +187,6 @@ export const FinansProvider = ({ children }) => {
         const buYil = bugun.getFullYear();
         const yeniBekleyenOdemeler = [];
         
-        // YENİ: Bu ay için atlanmış olanları localStorage'dan çek
         const buAyYil = `${buYil}-${buAy}`;
         const atlananlarKey = `atlananOdemeler_${currentUser.uid}_${buAyYil}`;
         const buAyAtlananlar = getLocalData(atlananlarKey, []);
@@ -199,10 +205,8 @@ export const FinansProvider = ({ children }) => {
                 new Date(gider.tarih).getFullYear() === buYil
             );
 
-            // YENİ: Bu ödeme, bu ay için atlanmış mı diye kontrol et
             const buAyAtlandi = buAyAtlananlar.includes(odeme.id);
 
-            // GÜNCELLENMİŞ KONTROL: Eğer eklenmemişse VE atlanmamışsa
             if (!zatenEklenmis && !buAyAtlandi) {
                 const odemeGunu = parseInt(odeme.odemeGunu, 10);
                 const islenecekTarih = new Date(buYil, buAy, odemeGunu).toISOString().split('T')[0];
@@ -251,20 +255,16 @@ export const FinansProvider = ({ children }) => {
     
     const handleBekleyenOdemeyiAtla = (atlananOdeme) => {
         if (!currentUser) return;
-
-        // 1. O anki ay ve yılı al (Örn: "2025-9")
+        
         const bugun = new Date();
         const buAyYil = `${bugun.getFullYear()}-${bugun.getMonth()}`;
-
-        // 2. localStorage'dan bu aya ait atlananlar listesini çek
+        
         const atlananlarKey = `atlananOdemeler_${currentUser.uid}_${buAyYil}`;
         const mevcutAtlananlar = getLocalData(atlananlarKey, []);
 
-        // 3. Yeni atlanan ödemenin ID'sini listeye ekle ve tekrar kaydet
         const yeniAtlananlar = [...mevcutAtlananlar, atlananOdeme.id];
         setLocalData(atlananlarKey, yeniAtlananlar);
 
-        // 4. Arayüzün anında güncellenmesi için "bekleyenler" state'inden çıkar
         setBekleyenOdemeler(prev => prev.filter(odeme => odeme.id !== atlananOdeme.id));
         
         toast.info(`'${atlananOdeme.aciklama}' ödemesi bu ay için kalıcı olarak atlandı.`);
@@ -439,10 +439,9 @@ export const FinansProvider = ({ children }) => {
     const handleHedefEkle = (yeniHedef) => {
     const hedefVerisi = {
         ...yeniHedef,
-        mevcutTutar: 0, // Hedef oluşturulduğunda birikim 0'dır
+        mevcutTutar: 0, 
         olusturmaTarihi: new Date().toISOString()
     };
-    // Mevcut addOrUpdateDocument fonksiyonumuzu kullanıyoruz
     addOrUpdateDocument('hedefler', hedefVerisi).then(() => {
         toast.success(`'${yeniHedef.ad}' hedefi başarıyla oluşturuldu!`);
     });
@@ -455,14 +454,11 @@ const handleHedefGuncelle = (id, guncelVeri) => {
     };
 
 const handleHedefSil = (id) => {
-    // Not: Bu işlem, hedefe yapılmış birikim GİDERLERİNİ silmez.
-    // Bu, genel bakiye tutarlılığını korumak için önemlidir.
     deleteDocument('hedefler', id).then(() => {
         toast.error("Hedef silindi.");
     });
 };
 
-// Hedefe para aktarmayı sağlayan en önemli fonksiyon
 const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
     const toastId = toast.loading("Birikim hedefinize aktarılıyor...");
 
@@ -477,24 +473,20 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
          if (!tutar || tutar <= 0) {
              throw new Error("Geçerli bir tutar girilmedi.");
         }
-
-        // 1. Hedefin kendi içindeki birikim tutarını güncelle
+        
         const yeniMevcutTutar = (hedef.mevcutTutar || 0) + tutar;
         const hedefGuncellemePromise = addOrUpdateDocument('hedefler', { mevcutTutar: yeniMevcutTutar }, hedefId);
 
-        // 2. Bu işlemi bir "gider" olarak kaydet ki seçilen hesabın bakiyesi düşsün.
-        // Bu sayede sistemin genel bakiye tutarlılığı bozulmaz.
         const giderVerisi = {
             aciklama: `'${hedef.ad}' hedefi için birikim`,
             tutar: tutar,
-            kategori: 'Hedef Birikimi', // Bu özel bir kategori adıdır.
+            kategori: 'Hedef Birikimi',
             tarih: new Date().toISOString().split('T')[0],
             hesapId: kaynakHesapId,
-            hedefId: hedefId // Giderin hangi hedefe ait olduğunu belirtmek için
+            hedefId: hedefId
         };
         const giderEklemePromise = addIslem(ISLEM_TURLERI.GIDER, giderVerisi);
         
-        // İki işlemi de aynı anda çalıştır
         await Promise.all([hedefGuncellemePromise, giderEklemePromise]);
 
         toast.success(`${formatCurrency(tutar)} hedefinize eklendi!`, { id: toastId });
@@ -505,19 +497,16 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
     }
 };
     const updateBildirimAyarlari = async (yeniBildirimAyar) => {
-    if (!currentUser) return; // Sadece giriş yapmış kullanıcılar için
+    if (!currentUser) return; 
     
     try {
         const userDocRef = doc(db, 'users', currentUser.uid);
-        // setDoc'ta { merge: true } kullanmak, 'ayarlar' objesinin diğer alanlarını
-        // (gelecekte eklersek) silmeden sadece 'bildirimler' alanını günceller.
         await setDoc(userDocRef, {
             ayarlar: {
                 bildirimler: yeniBildirimAyar
             }
         }, { merge: true });
-
-        // Arayüzün anında güncellenmesi için local state'i de güncelle
+        
         setAyarlar(prev => ({
             ...prev,
             bildirimler: yeniBildirimAyar
@@ -529,6 +518,30 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         toast.error('Ayarlar güncellenirken bir hata oluştu.');
     }
 };
+
+    const updateTercihler = async (yeniTercihler) => {
+        if (!currentUser) return;
+        
+        try {
+            const userDocRef = doc(db, 'users', currentUser.uid);
+            await setDoc(userDocRef, {
+                ayarlar: {
+                    tercihler: yeniTercihler
+                }
+            }, { merge: true });
+
+            setAyarlar(prev => ({
+                ...prev,
+                tercihler: yeniTercihler
+            }));
+
+            toast.success('Tercihleriniz güncellendi!');
+        } catch (error) {
+            console.error("Tercihler güncellenirken hata:", error);
+            toast.error('Tercihler güncellenirken bir hata oluştu.');
+        }
+    };
+
     const handleVeriIndir = () => {
         if (!gelirler && !giderler && !transferler) { return toast.error("İndirilecek veri bulunmuyor."); }
         const toastId = toast.loading("Veriler hazırlanıyor...");
@@ -579,7 +592,6 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         } catch (error) { console.error("Toplu silme hatası:", error); toast.error("İşlemler silinirken bir hata oluştu."); }
     };
 
-    // DEĞİŞİKLİK: `birlesikIslemler` hesaplaması güncellendi
     const birlesikIslemler = useMemo(() => {
         const { startDate, endDate } = tarihAraligi[0];
         const baslangic = new Date(startDate);
@@ -593,7 +605,6 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
             ...transferler.map(t => ({ ...t, tip: ISLEM_TURLERI.TRANSFER }))
         ];
 
-        // YENİ: Arama metnini küçük harfe çevirerek daha esnek bir arama sağlıyoruz
         const aramaTerimi = aramaMetni.toLowerCase();
 
         const filtrelenmisListe = temelListe.filter(islem => {
@@ -604,7 +615,6 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
             const kategoriSart = islem.tip === 'Transfer' || birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori;
             const hesapSart = birlesikFiltreHesap === 'Tümü' || islem.hesapId === birlesikFiltreHesap || islem.gonderenHesapId === birlesikFiltreHesap || islem.aliciHesapId === birlesikFiltreHesap;
 
-            // YENİ: Arama filtresi
             const aramaSart = aramaTerimi === '' || (islem.aciklama && islem.aciklama.toLowerCase().includes(aramaTerimi));
 
             return tarihSart && tipSart && kategoriSart && hesapSart && aramaSart;
@@ -618,23 +628,17 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
                 default: return new Date(b.tarih) - new Date(a.tarih);
             }
         });
-    // YENİ: Bağımlılık dizisine `aramaMetni` eklendi
     }, [gelirler, giderler, transferler, tarihAraligi, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri, birlesikFiltreHesap, aramaMetni]);
 
-    
-    // ... (diğer useMemo hesaplamaları aynı kalıyor) ...
     const filtrelenmisGelirler = useMemo(() => gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [gelirler, seciliAy, seciliYil]);
     const filtrelenmisGiderler = useMemo(() => giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [giderler, seciliAy, seciliYil]);
 
-    // --- 2. TEMEL TOPLAMLAR ---
     const toplamGelir = useMemo(() => filtrelenmisGelirler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGelirler]);
     const toplamGider = useMemo(() => filtrelenmisGiderler.reduce((t, g) => t + g.tutar, 0), [filtrelenmisGiderler]);
 
-    // --- 3. GENEL BAKİYE HESAPLAMALARI ---
     const genelHesapBakiyeleri = useMemo(() => { return hesaplar.reduce((acc, hesap) => { const toplamGiren = gelirler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.aliciHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); const toplamCikan = giderler.filter(g => g.hesapId === hesap.id).reduce((t, g) => t + g.tutar, 0) + transferler.filter(t => t.gonderenHesapId === hesap.id).reduce((t, tr) => t + tr.tutar, 0); acc[hesap.id] = toplamGiren - toplamCikan; return acc; }, {}); }, [hesaplar, gelirler, giderler, transferler]);
     const toplamBakiye = useMemo(() => Object.values(genelHesapBakiyeleri).reduce((t, b) => t + b, 0), [genelHesapBakiyeleri]);
     
-    // --- 4. KARŞILAŞTIRMALI VERİ (Artık tüm bağımlılıkları hazır) ---
     const karsilastirmaliAylikOzet = useMemo(() => {
         const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1);
         const oncekiAy = oncekiAyTarih.getMonth() + 1;
@@ -655,30 +659,26 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         
         return { gelirDegisimYuzdesi, giderDegisimYuzdesi, aylikBakiyeDegisimi };
 
-    }, [gelirler, giderler, seciliAy, seciliYil, toplamGelir, toplamGider]); // `toplamBakiye` bağımlılığını kaldırdık
+    }, [gelirler, giderler, seciliAy, seciliYil, toplamGelir, toplamGider]);
     const onecelikliHedef = useMemo(() => {
-    // Henüz tamamlanmamış hedefleri filtrele
     const aktifHedefler = hedefler.filter(h => h.mevcutTutar < h.hedefTutar);
     
     if (aktifHedefler.length === 0) {
-        return null; // Gösterilecek aktif hedef yoksa null döndür
+        return null;
     }
 
-    // Bitiş tarihi olan hedefleri ayır ve en yakın tarihli olanı bul
     const tarihliHedefler = aktifHedefler.filter(h => h.hedefTarih);
     if (tarihliHedefler.length > 0) {
         tarihliHedefler.sort((a, b) => new Date(a.hedefTarih) - new Date(b.hedefTarih));
         return tarihliHedefler[0];
     }
 
-    // Eğer hiç bitiş tarihli hedef yoksa, en son oluşturulan hedefi göster
     aktifHedefler.sort((a, b) => new Date(b.olusturmaTarihi) - new Date(a.olusturmaTarihi));
     return aktifHedefler[0];
 
 }, [hedefler]);
 
     
-    // --- 5. DİĞER TÜM HESAPLAMALAR ---
     const tumHesaplar = useMemo(() => {
         const formatlanmisKrediKartlari = krediKartlari.map(kart => ({ ...kart, ad: `${kart.ad} (KK)`, tip: 'krediKarti' }));
         const formatlanmisNakitHesaplar = hesaplar.map(hesap => ({ ...hesap, tip: 'varlik' }));
@@ -686,42 +686,31 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
     }, [hesaplar, krediKartlari]);
     const aylikHesapGiderleri = useMemo(() => { const giderlerByHesap = filtrelenmisGiderler.reduce((acc, gider) => { const hesapId = gider.hesapId; if (!acc[hesapId]) acc[hesapId] = 0; acc[hesapId] += gider.tutar; return acc; }, {}); return hesaplar.map(hesap => { const aylikGider = giderlerByHesap[hesap.id] || 0; if (aylikGider === 0) return null; const giderYuzdesi = toplamGider > 0 ? (aylikGider / toplamGider) * 100 : 0; return { id: hesap.id, ad: hesap.ad, aylikGider, giderYuzdesi }; }).filter(Boolean).sort((a, b) => b.aylikGider - a.aylikGider); }, [hesaplar, filtrelenmisGiderler, toplamGider]);
     const butceDurumlari = useMemo(() => {
-    // Önceki aya ait harcamaları hesaplamak için gerekli tarih bilgileri
     const oncekiAyTarih = new Date(seciliYil, seciliAy - 2, 1);
     const oncekiAyGiderleri = giderler.filter(g => {
         const giderTarihi = new Date(g.tarih);
         return giderTarihi.getFullYear() === oncekiAyTarih.getFullYear() && giderTarihi.getMonth() === oncekiAyTarih.getMonth();
     });
 
-    // --- YENİ TAHMİN MANTIĞI İÇİN GEREKLİ BİLGİLER ---
     const bugun = new Date();
-    // Ayın son gününü alarak ayın kaç gün çektiğini buluyoruz (28, 29, 30 veya 31)
     const ayinSonGunu = new Date(seciliYil, seciliAy, 0).getDate(); 
-    // Ayın bugünkü gününü alıyoruz
     const bugununGunu = bugun.getDate();
 
     return butceler.map(butce => {
-        // Mevcut ay için o kategorideki harcama
         const harcanan = filtrelenmisGiderler
             .filter(gider => gider.kategori.trim() === butce.kategori.trim())
             .reduce((toplam, gider) => toplam + gider.tutar, 0);
 
-        // Önceki ay için harcama
         const oncekiAyHarcanan = oncekiAyGiderleri
             .filter(gider => gider.kategori.trim() === butce.kategori.trim())
             .reduce((toplam, gider) => toplam + gider.tutar, 0);
-
-        // --- YENİ TAHMİN HESAPLAMASI ---
+        
         let tahminiHarcama = 0;
-        // Sadece içinde bulunduğumuz ay için ve harcama varsa tahmin yapalım
         if (harcanan > 0 && seciliYil === bugun.getFullYear() && seciliAy === bugun.getMonth() + 1) {
-            // Oran-orantı: (bugüne kadarki harcama / bugünün günü) * ayın toplam günü
             tahminiHarcama = (harcanan / bugununGunu) * ayinSonGunu;
         }
         const tahminiAsim = tahminiHarcama > butce.limit ? tahminiHarcama - butce.limit : 0;
-        // --- YENİ HESAPLAMANIN SONU ---
 
-        // Diğer hesaplamalar aynı kalıyor
         let degisimYuzdesi = 0;
         if (oncekiAyHarcanan > 0) {
             degisimYuzdesi = ((harcanan - oncekiAyHarcanan) / oncekiAyHarcanan) * 100;
@@ -734,17 +723,15 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         if (yuzdeRaw >= 100) { durum = 'asildi'; } 
         else if (yuzdeRaw >= 90) { durum = 'uyari'; }
         
-        // Yeni tahmin verilerini de objeye ekleyerek döndürüyoruz
         return { 
             ...butce, harcanan, kalan, yuzde: Math.min(yuzdeRaw, 100), 
             yuzdeRaw, degisimYuzdesi, durum,
-            tahminiHarcama, // YENİ
-            tahminiAsim,   // YENİ
+            tahminiHarcama,
+            tahminiAsim,
         };
     });
 }, [butceler, filtrelenmisGiderler, giderler, seciliAy, seciliYil]);
 const finansalSaglikPuani = useMemo(() => {
-    // --- Metrik 1: Tasarruf Oranı ---
     const sonUcAyGelir = gelirler
         .filter(g => new Date(g.tarih) > new Date(new Date().setMonth(new Date().getMonth() - 3)))
         .reduce((acc, g) => acc + g.tutar, 0);
@@ -762,7 +749,6 @@ const finansalSaglikPuani = useMemo(() => {
         tasarrufOraniPuani = Math.max(0, Math.min(1, tasarrufOraniYuzde / 0.2)) * 40;
     }
 
-    // --- Metrik 2: Bütçe Kontrolü ---
     let butceKontrolPuani = 0;
     let basariliButceOrani = 0;
     if (butceDurumlari && butceDurumlari.length > 0) {
@@ -772,8 +758,7 @@ const finansalSaglikPuani = useMemo(() => {
     } else {
         butceKontrolPuani = 15;
     }
-
-    // --- Metrik 3: Acil Durum Fonu ---
+    
     let acilDurumFonuPuani = 0;
     let fonKarsilamaAyi = 0;
     if (ortalamaAylikGider > 0) {
@@ -783,18 +768,16 @@ const finansalSaglikPuani = useMemo(() => {
     } else if (toplamBakiye > 0) {
         acilDurumFonuPuani = 30;
     }
-
-    // --- Nihai Puan ve Durum Hesaplaması (TANIMLAMALAR) ---
+    
     const toplamPuan = Math.round(tasarrufOraniPuani + butceKontrolPuani + acilDurumFonuPuani) || 0;
     
-    let genelDurum = 'Geliştirilmeli'; // TANIMLAMA BURADA
+    let genelDurum = 'Geliştirilmeli';
     if (toplamPuan > 80) genelDurum = 'Mükemmel';
     else if (toplamPuan > 60) genelDurum = 'İyi';
-
-    // --- Nihai Return Objesi ---
+    
     return {
         puan: toplamPuan,
-        durum: genelDurum, // ARTIK GÜVENLE KULLANILABİLİR
+        durum: genelDurum,
         metrikler: {
             tasarrufOrani: {
                 puan: Math.round(tasarrufOraniPuani) || 0,
@@ -825,10 +808,9 @@ const finansalSaglikPuani = useMemo(() => {
             let kalanGun = odeme.odemeGunu - bugununGunu; 
             if (kalanGun < 0) kalanGun += new Date(bugun.getFullYear(), bugun.getMonth() + 1, 0).getDate(); 
             return { ...odeme, kalanGun, tutar: odeme.tutar || 0 }; 
-        }).sort((a, b) => a.kalanGun - b.kalanGun); // DEĞİŞİKLİK: slice(0, 3) kaldırıldı, tüm liste lazım
+        }).sort((a, b) => a.kalanGun - b.kalanGun);
     }, [sabitOdemeler]);
 
-    // YENİ: Sabit Ödemeler sayfası için özet verisi
     const sabitOdemelerOzeti = useMemo(() => {
         const toplamAylikTaahhut = sabitOdemeler.reduce((acc, odeme) => acc + (odeme.tutar || 0), 0);
         const aktifOdemeSayisi = sabitOdemeler.length;
@@ -852,46 +834,37 @@ const finansalSaglikPuani = useMemo(() => {
             const kesimGunu = parseInt(kart.kesimGunu, 10);
             const sonOdemeGunu = parseInt(kart.sonOdemeGunu, 10);
             
-            // Bu ayki hesap kesim ve son ödeme tarihlerini belirle
             let hesapKesimTarihi = new Date(buYil, buAy, kesimGunu);
             let sonOdemeTarihi = new Date(buYil, buAy, sonOdemeGunu);
 
-            // Eğer son ödeme günü, kesim gününden küçükse (örn: kesim 27, ödeme 9), 
-            // son ödeme bir sonraki ayın demektir.
             if (sonOdemeGunu < kesimGunu) {
                 sonOdemeTarihi.setMonth(buAy + 1);
             }
             
-            // Eğer bugünün tarihi, bu ayın kesim gününü geçmişse,
-            // bir sonraki ekstreyi ve ödemeyi hesaplıyoruz.
             if (bugun.getDate() > kesimGunu) {
                 hesapKesimTarihi.setMonth(buAy + 1);
-                sonOdemeTarihi.setMonth(buAy + 2); // Son ödeme 2 ay sonraya kalır
-                if (sonOdemeGunu >= kesimGunu) { // Eğer aynı aydaysa
+                sonOdemeTarihi.setMonth(buAy + 2);
+                if (sonOdemeGunu >= kesimGunu) {
                     sonOdemeTarihi.setMonth(buAy + 1);
                 }
             }
 
-            // Önceki ayın kesim tarihini bul
             const oncekiKesimTarihi = new Date(hesapKesimTarihi);
             oncekiKesimTarihi.setMonth(oncekiKesimTarihi.getMonth() - 1);
 
-            // Son ekstre dönemindeki harcamaları topla
             const donemHarcamalari = giderler.filter(gider => {
                 if (gider.hesapId !== kart.id) return false;
                 const giderTarihi = new Date(gider.tarih);
-                // Harcama, önceki kesimden sonra VE bu ayki kesimden önce mi yapılmış?
                 return giderTarihi > oncekiKesimTarihi && giderTarihi <= hesapKesimTarihi;
             }).reduce((toplam, gider) => toplam + gider.tutar, 0);
 
-            // Son ödeme gününe kalan günü hesapla
             const zamanFarki = sonOdemeTarihi.getTime() - bugun.getTime();
             const kalanGun = Math.ceil(zamanFarki / (1000 * 60 * 60 * 24));
 
             return {
                 id: kart.id,
                 ad: kart.ad,
-                guncelBorc: donemHarcamalari, // Bu şimdilik sadece harcamalar, ödemeleri de düşebiliriz
+                guncelBorc: donemHarcamalari,
                 kalanGun: kalanGun,
                 sonOdemeTarihi: sonOdemeTarihi.toLocaleDateString('tr-TR')
             };
@@ -905,9 +878,7 @@ const finansalSaglikPuani = useMemo(() => {
     const trendVerisi = useMemo(() => { const labels = []; const gelirlerData = []; const giderlerData = []; const bugun = new Date(); for (let i = 5; i >= 0; i--) { const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1); const yil = tarih.getFullYear(); const ay = tarih.getMonth() + 1; labels.push(tarih.toLocaleString('tr-TR', { month: 'long' })); const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); gelirlerData.push(aylikGelir); giderlerData.push(aylikGider); } return { labels, gelirler: gelirlerData, giderler: giderlerData }; }, [gelirler, giderler]);
     const yillikRaporVerisi = useMemo(() => { const aylar = []; let yillikToplamGelir = 0; let yillikToplamGider = 0; for (let i = 1; i <= 12; i++) { const aylikGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); const aylikGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); if (aylikGelirler.length > 0 || aylikGiderler.length > 0) { const ayGelir = aylikGelirler.reduce((t, g) => t + g.tutar, 0); const ayGider = aylikGiderler.reduce((t, g) => t + g.tutar, 0); yillikToplamGelir += ayGelir; yillikToplamGider += ayGider; aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: ayGelir, gider: ayGider, bakiye: ayGelir - ayGider }); } } return { aylar, toplamGelir: yillikToplamGelir, toplamGider: yillikToplamGider, toplamBakiye: yillikToplamGelir - yillikToplamGider }; }, [gelirler, giderler, seciliYil]);
 
-    // YENİ FİKİR 1: Kategori Karşılaştırma Raporu için Veri
 const kategoriHarcamaOzeti = useMemo(() => {
-    // Tarih aralığına göre filtrelenmiş giderleri kullanıyoruz
     const filtrelenmisGiderler = giderler.filter(gider => {
         const giderTarihi = new Date(gider.tarih);
         const baslangic = new Date(tarihAraligi[0].startDate);
@@ -926,7 +897,6 @@ const kategoriHarcamaOzeti = useMemo(() => {
         return acc;
     }, {});
 
-    // Veriyi büyükten küçüğe sıralayarak daha anlamlı hale getiriyoruz
     return Object.entries(ozet)
         .sort(([, a], [, b]) => b - a)
         .reduce((r, [k, v]) => ({ ...r, [k]: v }), {});
@@ -934,13 +904,11 @@ const kategoriHarcamaOzeti = useMemo(() => {
 }, [giderler, tarihAraligi]);
 
 
-// YENİ FİKİR 2: Nakit Akışı Raporu için Veri
 const nakitAkisiVerisi = useMemo(() => {
     const labels = [];
     const netAkimData = [];
     const bugun = new Date();
 
-    // Son 6 ay için hesaplama yapıyoruz
     for (let i = 5; i >= 0; i--) {
         const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1);
         const yil = tarih.getFullYear();
@@ -962,7 +930,7 @@ const nakitAkisiVerisi = useMemo(() => {
 }, [gelirler, giderler]);
 const trendAnalizi = useMemo(() => {
         const { gelirler, giderler } = trendVerisi;
-        if (gelirler.length < 2) return null; // Analiz için en az 2 ay veri olmalı
+        if (gelirler.length < 2) return null;
 
         const sonAyGelir = gelirler[gelirler.length - 1];
         const oncekiAyGelir = gelirler[gelirler.length - 2];
@@ -984,7 +952,6 @@ const trendAnalizi = useMemo(() => {
         return { mesaj: "Finansal durumunuz dengede. Bu şekilde devam edin!", durum: "notr" };
     }, [trendVerisi]);
 
-    // YENİ: "Nakit Akışı" raporu için özet
     const nakitAkisiOzeti = useMemo(() => {
         const { netAkim, labels } = nakitAkisiVerisi;
         if (netAkim.length === 0) return null;
@@ -1000,10 +967,7 @@ const trendAnalizi = useMemo(() => {
         return { mesaj, durum: toplamNetAkim >= 0 ? "pozitif" : "negatif" };
     }, [nakitAkisiVerisi]);
     
-
-// YENİ FİKİR 3: En Büyük Harcamalar Raporu için Veri
 const enBuyukHarcamalar = useMemo(() => {
-    // Tarih aralığına göre filtrelenmiş giderleri kullanıyoruz
     return giderler.filter(gider => {
         const giderTarihi = new Date(gider.tarih);
         const baslangic = new Date(tarihAraligi[0].startDate);
@@ -1012,14 +976,12 @@ const enBuyukHarcamalar = useMemo(() => {
         bitis.setHours(23, 59, 59, 999);
         return giderTarihi >= baslangic && giderTarihi <= bitis;
     })
-    .sort((a, b) => b.tutar - a.tutar) // Büyükten küçüğe sırala
-    .slice(0, 10); // İlk 10 tanesini al
+    .sort((a, b) => b.tutar - a.tutar)
+    .slice(0, 10);
 
 }, [giderler, tarihAraligi]);
 
-    // DEĞİŞİKLİK: `contextValue` güncellendi
     const contextValue = {
-        // ... (mevcut tüm değerler) ...
         giderler, gelirler, transferler, hesaplar, giderKategorileri, gelirKategorileri, kategoriRenkleri, butceler, sabitOdemeler,
         krediKartlari,
         hedefler,
@@ -1041,6 +1003,7 @@ const enBuyukHarcamalar = useMemo(() => {
         handleHedefSil,
         handleHedefeParaEkle,
         updateBildirimAyarlari,
+        updateTercihler,
         handleVeriIndir,
         tarihAraligi,        
         setTarihAraligi,
@@ -1062,7 +1025,6 @@ const enBuyukHarcamalar = useMemo(() => {
         enBuyukHarcamalar,
         yaklasanOdemeler, krediKartiOzetleri, genelHesapBakiyeleri, aylikHesapGiderleri,
         transferGuestDataToFirestore,
-        // YENİ: Rapor analizleri context'e eklendi
         trendAnalizi,
         nakitAkisiOzeti,
         sabitOdemelerOzeti
