@@ -1,0 +1,9 @@
+.sayfa-basligi-header {
+  margin-bottom: 2rem;
+}
+
+.sayfa-basligi-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1a202c;
+}

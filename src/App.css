@@ -3143,7 +3143,7 @@ body {
   background-color: #ffffff;
   padding: 0 2rem; /* Sağ ve sol boşluklar */
   border-bottom: 1px solid #e8e8e8;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
 
   /* YAPIŞKAN HEADER: Sayfa aşağı kaydırıldığında header'ın yukarıda sabit kalmasını sağlar */
   position: sticky;
@@ -5916,4 +5916,358 @@ input:checked + .slider:before {
 }
 .danger-btn:hover {
     background-color: #c53030;
+}
+/* ========================================================= */
+/* ========== YENİ DASHBOARD DÜZENİ (EZİCİ KURALLAR) ======== */
+/* ========================================================= */
+
+/* Renk Değişkenleri ve Temel Ayarlar */
+:root {
+  --sidebar-bg: #1a202c;
+  --sidebar-text: #a0aec0;
+  --sidebar-text-hover: #ffffff;
+  --sidebar-active-bg: #2d3748;
+  --primary-color: #4A90E2;
+  --content-bg: #f7fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+}
+
+body {
+  background-color: var(--content-bg) !important; /* Eski body arkaplanını ezer */
+}
+
+/* --- ESKİ LAYOUT'U SIFIRLAMA --- */
+/* Bu kurallar eski header ve main-content'i etkisiz hale getirir. */
+.app-header, .main-content {
+  display: none !important; /* Eski header ve main alanını tamamen gizle */
+}
+
+/* --- YENİ DASHBOARD DÜZENİ --- */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.content-area {
+  flex-grow: 1;
+  padding: 2.5rem; /* İçerik için ferah bir alan */
+  overflow-y: auto;
+  width: 100%; /* Genişliğin kalan alanı doldurmasını sağla */
+}
+
+/* --- YENİ SIDEBAR --- */
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sidebar-text-hover);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding-left: 0.5rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a.active {
+  background-color: var(--primary-color);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a svg {
+  font-size: 1.25rem;
+}
+
+.sidebar-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid #2d3748;
+  padding-top: 1.5rem;
+}
+
+.kullanici-profili {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.kullanici-avatar { 
+  font-size: 1.8rem; 
+  color: var(--sidebar-text-hover); 
+}
+
+.kullanici-adi { 
+  font-weight: 600; 
+  color: var(--sidebar-text-hover); 
+}
+
+.ayar-linki, .cikis-butonu {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.ayar-linki:hover, .cikis-butonu:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+/* =================================================================== */
+/* ===         NİHAİ VE TAM DASHBOARD STİLLERİ (EZİCİ)             === */
+/* =================================================================== */
+
+/* --- BÖLÜM 1: Renkler ve Temel Sıfırlamalar --- */
+:root {
+  --sidebar-bg: #1a202c;
+  --sidebar-text: #a0aec0;
+  --sidebar-text-hover: #ffffff;
+  --sidebar-active-bg: #2d3748;
+  --primary-color: #4A90E2;
+  --content-bg: #f7fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+}
+
+body {
+  margin: 0;
+  background-color: var(--content-bg) !important;
+  font-family: 'Inter', sans-serif;
+  color: #2d3748;
+}
+
+#root {
+  display: block;
+}
+
+/* --- BÖLÜM 2: Eski Layout Yapısını Tamamen Devre Dışı Bırakma --- */
+.app-header, 
+.main-content, 
+.app-layout, 
+.container {
+  /* Bu eski sınıfların layout'a etki etmesini engelliyoruz */
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+/* --- BÖLÜM 3: Yeni Dashboard Ana Yapısı (Yapışkan Sidebar) --- */
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  flex-shrink: 0;
+  position: fixed; /* YAPIŞKAN & SOLA SABİT */
+  left: 0;
+  top: 0;
+  height: 100%;
+  z-index: 1000;
+}
+
+.content-area {
+  flex-grow: 1;
+  padding: 2.5rem;
+  overflow-y: auto;
+  margin-left: 260px; /* Sidebar genişliği kadar soldan boşluk bırak */
+  width: calc(100% - 260px);
+}
+
+
+/* --- BÖLÜM 4: Sidebar'ın İç Detayları --- */
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sidebar-text-hover);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding-left: 0.5rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a.active {
+  background-color: var(--primary-color);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a svg {
+  font-size: 1.25rem;
+}
+
+.sidebar-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid #2d3748;
+  padding-top: 1.5rem;
+}
+
+.kullanici-profili {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.kullanici-avatar { 
+  font-size: 1.8rem; 
+  color: var(--sidebar-text-hover); 
+}
+
+.kullanici-adi { 
+  font-weight: 600; 
+  color: var(--sidebar-text-hover); 
+}
+
+.ayar-linki, .cikis-butonu {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+}
+
+.ayar-linki:hover, .cikis-butonu:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+
+
+/* --- BÖLÜM 5: Yeni Sayfa İçi Bileşenler (Başlık ve Sekmeler) --- */
+.sayfa-basligi-header {
+  margin-bottom: 2rem;
+}
+
+.sayfa-basligi-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+
+.sayfa-ici-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 2rem;
+}
+
+.sayfa-ici-nav a {
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #718096;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: -2px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.sayfa-ici-nav a:hover {
+  color: #2d3748;
+  background-color: #f0f3f6;
+}
+
+.sayfa-ici-nav a.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background-color: transparent;
 }
