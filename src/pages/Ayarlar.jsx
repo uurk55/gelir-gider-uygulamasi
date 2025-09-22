@@ -1,7 +1,9 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import SayfaBasligi from '../components/SayfaBasligi';
-import '../components/SayfaIciNav.css';
+import SayfaKontrolPaneli from '../components/SayfaKontrolPaneli';
 
+// Sekmelerimizi ve yönlendirecekleri yolları tanımlıyoruz
 const ayarSekmeleri = [
   { path: 'profil', label: 'Profil Bilgileri' },
   { path: 'tercihler', label: 'Tercihler' },
@@ -11,20 +13,33 @@ const ayarSekmeleri = [
 ];
 
 function Ayarlar() {
+  const location = useLocation(); // Animasyon için location'ı alıyoruz
+
   return (
     <div className="sayfa-container">
       <SayfaBasligi title="Hesap Ayarları" />
       
-      <nav className="sayfa-ici-nav">
+      {/* DEĞİŞİKLİK: Eski <nav> yerine <SayfaKontrolPaneli> kullanıyoruz */}
+      <SayfaKontrolPaneli>
         {ayarSekmeleri.map(sekme => (
           <NavLink key={sekme.path} to={sekme.path}>
             {sekme.label}
           </NavLink>
         ))}
-      </nav>
+      </SayfaKontrolPaneli>
 
       <main className="sayfa-icerik-alani">
-        <Outlet />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Outlet />
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );

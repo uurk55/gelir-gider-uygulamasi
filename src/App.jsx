@@ -18,6 +18,13 @@ const Butceler = lazy(() => import('./pages/Butceler.jsx'));
 const Ozellestir = lazy(() => import('./pages/Ozellestir.jsx'));
 const Ayarlar = lazy(() => import('./pages/Ayarlar.jsx'));
 const HedeflerPage = lazy(() => import('./pages/HedeflerPage.jsx'));
+const GenelTrendRaporu = lazy(() => import('./components/Raporlar/GenelTrendRaporu.jsx'));
+const KategoriAnaliziRaporu = lazy(() => import('./components/Raporlar/KategoriAnaliziRaporu.jsx'));
+const NakitAkisiRaporu = lazy(() => import('./components/Raporlar/NakitAkisiRaporu.jsx'));
+const EnBuyukHarcamalarRaporu = lazy(() => import('./components/Raporlar/EnBuyukHarcamalarRaporu.jsx'));
+const HesaplarYonetimi = lazy(() => import('./components/Ozellestir/HesaplarYonetimi.jsx'));
+const KrediKartlariYonetimi = lazy(() => import('./components/Ozellestir/KrediKartlariYonetimi.jsx'));
+const KategorilerYonetimi = lazy(() => import('./components/Ozellestir/KategorilerYonetimi.jsx'));
 
 // Ayarlar'ın alt bileşenleri
 const ProfilBilgileri = lazy(() => import('./components/Ayarlar/ProfilBilgileri.jsx'));
@@ -45,11 +52,22 @@ function AppLayout() {
           <Routes>
             <Route path="/" element={<GenelBakis />} />
             <Route path="/islemler" element={<IslemlerPage />} />
-            <Route path="/raporlar/*" element={<Raporlar />} />
+            <Route path="/raporlar" element={<Raporlar />}>
+  <Route index element={<Navigate to="genel-trend" replace />} />
+  <Route path="genel-trend" element={<GenelTrendRaporu />} />
+  <Route path="kategori-analizi" element={<KategoriAnaliziRaporu />} />
+  <Route path="nakit-akisi" element={<NakitAkisiRaporu />} />
+  <Route path="en-buyuk-harcamalar" element={<EnBuyukHarcamalarRaporu />} />
+</Route>
             <Route path="/butceler" element={<Butceler />} />
             <Route path="/hedefler" element={<HedeflerPage />} />
             <Route path="/sabit-odemeler" element={<SabitOdemeler />} />
-            <Route path="/ozellestir" element={<Ozellestir />} />
+            <Route path="/ozellestir" element={<Ozellestir />}>
+  <Route index element={<Navigate to="hesaplar" replace />} />
+  <Route path="hesaplar" element={<HesaplarYonetimi />} />
+  <Route path="kartlar" element={<KrediKartlariYonetimi />} />
+  <Route path="kategoriler" element={<KategorilerYonetimi />} />
+</Route>
             
             <Route path="/ayarlar" element={<Ayarlar />}>
               <Route index element={<Navigate to="profil" replace />} />
