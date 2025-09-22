@@ -142,50 +142,46 @@ function GenelBakis() {
     const kullaniciAdi = currentUser?.displayName || currentUser?.email?.split('@')[0] || 'Kullanıcı';
 
     return (
-        // Sayfayı saran ana kapsayıcı
-        <div className="genel-bakis-sayfasi">
-            <AkilliBildirimCubugu />
-
-            {/* 1. KAHRAMAN BÖLÜMÜ */}
-            <header className="kahraman-bolumu">
-                <div className="selamlama-alani">
-                    <div className="selamlama-ikon"><FaRegHandPeace /></div>
-                    <div className="selamlama-metin">
-                        <h1>Hoş Geldin, {kullaniciAdi}!</h1>
-                        <p>Finansal durumuna genel bir bakış atalım.</p>
-                    </div>
+    <div className="sayfa-container">
+        
+        {/* Akıllı bildirim ve Hoş Geldin bölümleri aynı kalıyor */}
+        <AkilliBildirimCubugu />
+        <header className="kahraman-bolumu">
+            <div className="selamlama-alani">
+                <div className="selamlama-ikon"><FaRegHandPeace /></div>
+                <div className="selamlama-metin">
+                    <h1>Hoş Geldin, {kullaniciAdi}!</h1>
+                    <p>Finansal durumuna genel bir bakış atalım.</p>
                 </div>
-                <div className="tarih-secici-alani">
-                    <TarihSecici />
-                </div>
-            </header>
-
-            {/* 2. ANA İÇERİK GRID'İ */}
-            <div className="kokpit-grid">
-
-                {/* 2.1 ANA SÜTUN (SOL) */}
-                <main className="ana-sutun">
-                    <AylikOzetKarti />
-                    <HarcamaDagilimiKarti />
-                    <GelirKaynaklariKarti />
-                    <ButceDurumlariKarti />
-                </main>
-
-                {/* 2.2 YAN SÜTUN (SAĞ) */}
-                <aside className="yan-sutun">
-                    {/* YENİ: Finansal Sağlık Kartını en üste ekliyoruz */}
-                    <FinansalSaglikKarti />
-
-                    <GenelVarlikKarti bakiye={toplamBakiye} />
-                    <HedefOzetKarti /> 
-                    <YaklasanOdemelerKarti odemeler={yaklasanOdemeler} />
-                    <KrediKartiOzetKarti />
-                    <HesapGiderleriKarti />
-                </aside>
-
             </div>
-        </div>
-    );
-}
+            <div className="tarih-secici-alani">
+                <TarihSecici />
+            </div>
+        </header>
 
+        {/* YENİ İKİ SÜTUNLU DÜZENİMİZ */}
+        <div className="dengeli-kokpit">
+
+            {/* --- SOL TARAF: ANA SÜTUN (Detaylı Bilgiler) --- */}
+            <main className="ana-sutun">
+                <AylikOzetKarti />
+                <HarcamaDagilimiKarti />
+                <GelirKaynaklariKarti />
+                <ButceDurumlariKarti />
+                <HesapGiderleriKarti />
+            </main>
+
+            {/* --- SAĞ TARAF: YAN SÜTUN (Hızlı Özetler) --- */}
+            <aside className="yan-sutun">
+                <FinansalSaglikKarti />
+                <GenelVarlikKarti bakiye={toplamBakiye} />
+                <HedefOzetKarti />
+                <YaklasanOdemelerKarti odemeler={yaklasanOdemeler} />
+                <KrediKartiOzetKarti />
+            </aside>
+            
+        </div>
+    </div>
+);
+}
 export default GenelBakis;

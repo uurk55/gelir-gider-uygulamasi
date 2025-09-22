@@ -6306,3 +6306,44 @@ body {
   margin: 0;
   font-weight: 500;
 }
+/* =================================================================== */
+/* ===         YAKLAŞIM A: KLASİK VE DENGELİ KOKPİT DÜZENİ         === */
+/* =================================================================== */
+
+/* Ana kapsayıcı artık grid ile 2 sütun oluşturacak */
+.dengeli-kokpit {
+  display: grid;
+  /* Sol sütun daha geniş (2 kat), sağ sütun daha dar (1 kat) */
+  grid-template-columns: 2fr 1fr; 
+  /* Sütunlar ve satırlar arasına ferah bir boşluk bırak */
+  gap: 2rem; 
+  /* Dikey hizalamayı en üste sabitle */
+  align-items: start; 
+}
+
+/* Sol taraftaki ana içerik sütunu */
+.ana-sutun {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Kartlar arasına dikey boşluk ekler */
+}
+
+/* Sağ taraftaki yan bilgi sütunu */
+.yan-sutun {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Kartlar arasına dikey boşluk ekler */
+  /* Sağ sütunun her zaman en üstte kalmasını sağlayan "sticky" özelliği */
+  position: sticky;
+  top: 2.5rem; /* content-area'nın padding'i ile aynı değer */
+}
+
+/* Tüm kartların ortak stilini basitleştirelim ve hafifletelim */
+.dengeli-kokpit .card {
+  border-radius: 12px;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  /* Kartların kendi iç boşluğunu kaldıralım, çünkü bileşenlerin kendisinde var */
+  /* padding: 1.5rem; -- Bu satırı yorumluyoruz veya siliyoruz */
+}
