@@ -1,4 +1,4 @@
-// src/pages/GenelBakis.jsx (YENİDEN YAPILANDIRILMIŞ İSKELET)
+// src/pages/GenelBakis.jsx (DÜZELTİLMİŞ KOD)
 
 import { useFinans } from '../context/FinansContext';
 import { useAuth } from '../context/AuthContext';
@@ -13,11 +13,11 @@ import HesapGiderleriKarti from '../components/GenelBakis/HesapGiderleriKarti';
 import GelirKaynaklariKarti from '../components/GenelBakis/GelirKaynaklariKarti';
 import ButceDurumlariKarti from '../components/GenelBakis/ButceDurumlariKarti';
 import KrediKartiOzetKarti from '../components/GenelBakis/KrediKartiOzetKarti';
-import HedefOzetKarti from '../components/GenelBakis/HedefOzetKarti'; // YENİ IMPORT
-import FinansalSaglikKarti from '../components/GenelBakis/FinansalSaglikKarti'; // YENİ IMPORT
+import HedefOzetKarti from '../components/GenelBakis/HedefOzetKarti';
+import FinansalSaglikKarti from '../components/GenelBakis/FinansalSaglikKarti';
 import { FaPiggyBank, FaBell, FaRegHandPeace, FaExclamationCircle } from 'react-icons/fa';
 import { formatCurrency } from '../utils/formatters';
-import CountUp from 'react-countup'; // YENİ: Kütüphaneyi import ediyoruz
+import CountUp from 'react-countup';
 
 function AkilliBildirimCubugu() {
     const { bekleyenOdemeler, handleBekleyenOdemeleriIsle } = useFinans();
@@ -48,7 +48,8 @@ function AkilliBildirimCubugu() {
                 </div>
                 <div className="bildirim-sag-taraf">
                     <button onClick={handleYonet} className="secondary-btn-small">Detayları Yönet</button>
-                    <button onClick={handleBekleyenOdemeleriIsle} className="primary-btn-small">Tümünü Gider Ekle</button>
+                    {/* HATA BURADAYDI: onClick olayını arrow function içine aldık */}
+                    <button onClick={() => handleBekleyenOdemeleriIsle()} className="primary-btn-small">Tümünü Gider Ekle</button>
                 </div>
             </motion.div>
         </AnimatePresence>
@@ -79,7 +80,6 @@ function YaklasanOdemelerEmptyState() {
 }
 
 function GenelVarlikKarti({ bakiye }) {
-    // YENİ: Akıllı özet verisini context'ten çekiyoruz
     const { karsilastirmaliAylikOzet } = useFinans();
     const { aylikBakiyeDegisimi } = karsilastirmaliAylikOzet;
 
@@ -90,7 +90,6 @@ function GenelVarlikKarti({ bakiye }) {
                 <span className="genel-bakiye-tutar">
                     <CountUp end={bakiye} duration={1.5} separator="." decimal="," prefix="₺" />
                 </span>
-                {/* YENİ: Aylık değişim bilgisini gösteren bölüm */}
                 <div className="mini-kart-aciklama">
                     <span>Tüm hesaplarınızın toplamı</span>
                     {aylikBakiyeDegisimi !== 0 && (
@@ -130,7 +129,6 @@ function YaklasanOdemelerKarti({ odemeler }) {
 }
 
 
-// --- ANA GENELBAKIS BİLEŞENİ (TAMAMEN YENİ YAPI) ---
 function GenelBakis() {
     const { toplamBakiye, yaklasanOdemeler } = useFinans();
     const { currentUser } = useAuth();
@@ -144,7 +142,6 @@ function GenelBakis() {
     return (
     <div className="sayfa-container">
         
-        {/* Akıllı bildirim ve Hoş Geldin bölümleri aynı kalıyor */}
         <AkilliBildirimCubugu />
         <header className="kahraman-bolumu">
             <div className="selamlama-alani">
@@ -159,10 +156,8 @@ function GenelBakis() {
             </div>
         </header>
 
-        {/* YENİ İKİ SÜTUNLU DÜZENİMİZ */}
         <div className="dengeli-kokpit">
 
-            {/* --- SOL TARAF: ANA SÜTUN (Detaylı Bilgiler) --- */}
             <main className="ana-sutun">
                 <AylikOzetKarti />
                 <HarcamaDagilimiKarti />
@@ -171,7 +166,6 @@ function GenelBakis() {
                 <HesapGiderleriKarti />
             </main>
 
-            {/* --- SAĞ TARAF: YAN SÜTUN (Hızlı Özetler) --- */}
             <aside className="yan-sutun">
                 <FinansalSaglikKarti />
                 <GenelVarlikKarti bakiye={toplamBakiye} />

@@ -1,4 +1,4 @@
-// src/pages/SabitOdemeler.jsx (Tüm Geliştirmeleri İçeren Nihai Versiyon)
+// src/pages/SabitOdemeler.jsx (DÜZELTİLMİŞ VE NİHAİ KOD)
 
 import { useState, useEffect } from 'react';
 import { FaTrash, FaPen, FaSave, FaExclamationCircle, FaPiggyBank, FaCalendarCheck, FaFileInvoiceDollar, FaPlus, FaTimes } from 'react-icons/fa';
@@ -20,11 +20,11 @@ const OzetKarti = ({ ikon, baslik, deger }) => (
 
 // Liste Elemanı Alt Bileşeni
 const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
-    const { 
-        handleSabitOdemeSil, 
-        handleSabitOdemeGuncelle, 
-        giderKategorileri, 
-        hesaplar, 
+    const {
+        handleSabitOdemeSil,
+        handleSabitOdemeGuncelle,
+        giderKategorileri,
+        hesaplar,
         handleBekleyenOdemeleriIsle,
         handleBekleyenOdemeyiAtla,
         bekleyenOdemeler
@@ -51,7 +51,7 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
     useEffect(() => {
         setEditState({ ...odeme });
     }, [isEditing, odeme]);
-    
+
     const odemeHesabi = hesaplar.find(h => h.id === odeme.hesapId)?.ad || 'Belirtilmemiş';
 
     const handleTekilIsle = () => {
@@ -60,33 +60,13 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
             handleBekleyenOdemeleriIsle([bekleyenOdeme]);
         }
     };
-    
+
     const handleAtla = () => {
         handleBekleyenOdemeyiAtla(odeme);
     };
 
-    if (isBekleyen) {
-        return (
-             <li className="yonetim-listesi-item sabit-odeme-item bekleyen-odeme">
-                <FaExclamationCircle className="bekleyen-odeme-ikon" title="Bu ödemenin vadesi geçmiş ve gider olarak işlenmeyi bekliyor." />
-                <div className="sabit-odeme-orta">
-                    <span className="sabit-odeme-aciklama">{odeme.aciklama}</span>
-                    <div className="islem-etiketler">
-                        <span className="islem-etiket">{odeme.kategori}</span>
-                        <span className="islem-etiket">{odemeHesabi}</span>
-                    </div>
-                </div>
-                <div className="sabit-odeme-sag">
-                    <span className="sabit-odeme-tutar">{formatCurrency(odeme.tutar)}</span>
-                    <div className="buton-grubu">
-                        <button onClick={handleAtla} className="icon-btn ikincil-btn" title="Bu Ay Atla">Atla</button>
-                        <button onClick={handleTekilIsle} className="icon-btn birincil-btn" title="Gider Olarak Ekle">Ekle</button>
-                    </div>
-                </div>
-            </li>
-        )
-    }
-
+    // --- DÜZENLEME MODU ---
+    // Bu blok hem normal hem de bekleyen ödemeler için çalışacak
     if (isEditing) {
         return (
             <li className="ozellestir-liste-item ekleme-formu sabit-odeme-formu is-editing">
@@ -108,6 +88,8 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
                     <div className="form-grup">
                         <label>Hesap</label>
                         <select name="hesapId" value={editState.hesapId} onChange={(e) => setEditState(p => ({...p, hesapId: parseInt(e.target.value)}))}>
+                             {/* Düzeltme: Seçim için bir başlangıç değeri ekleyelim */}
+                            <option value="" disabled>Hesap Seçiniz...</option>
                             {hesaplar.map(h => (<option key={h.id} value={h.id}>{h.ad}</option>))}
                         </select>
                     </div>
@@ -130,8 +112,11 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
         );
     }
 
+    // --- GÖRÜNÜM MODU ---
+    // Bu blok, ödemenin bekleyen olup olmamasına göre farklı buton setleri gösterecek
     return (
-        <li className="yonetim-listesi-item sabit-odeme-item">
+         <li className={`yonetim-listesi-item sabit-odeme-item ${isBekleyen ? 'bekleyen-odeme' : ''}`}>
+            {isBekleyen && <FaExclamationCircle className="bekleyen-odeme-ikon" title="Bu ödemenin vadesi geçmiş ve gider olarak işlenmeyi bekliyor." />}
             <div className="sabit-odeme-orta">
                 <span className="sabit-odeme-aciklama">{odeme.aciklama}</span>
                 <div className="islem-etiketler">
@@ -145,8 +130,20 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
             <div className="sabit-odeme-sag">
                 <span className="sabit-odeme-tutar">{formatCurrency(odeme.tutar)}</span>
                 <div className="buton-grubu">
-                    <button onClick={() => setIsEditing(true)} className="icon-btn duzenle-btn"><FaPen /></button>
-                    <button onClick={() => handleSabitOdemeSil(odeme.id)} className="icon-btn sil-btn"><FaTrash /></button>
+                    {isBekleyen ? (
+                        <>
+                            <button onClick={handleAtla} className="icon-btn ikincil-btn" title="Bu Ay Atla">Atla</button>
+                            <button onClick={handleTekilIsle} className="icon-btn birincil-btn" title="Gider Olarak Ekle">Ekle</button>
+                            {/* BEKLEYEN ÖDEMEYE DE DÜZENLEME VE SİLME BUTONLARI EKLENDİ */}
+                            <button onClick={() => setIsEditing(true)} className="icon-btn duzenle-btn"><FaPen /></button>
+                            <button onClick={() => handleSabitOdemeSil(odeme.id)} className="icon-btn sil-btn"><FaTrash /></button>
+                        </>
+                    ) : (
+                        <>
+                            <button onClick={() => setIsEditing(true)} className="icon-btn duzenle-btn"><FaPen /></button>
+                            <button onClick={() => handleSabitOdemeSil(odeme.id)} className="icon-btn sil-btn"><FaTrash /></button>
+                        </>
+                    )}
                 </div>
             </div>
         </li>
@@ -154,6 +151,7 @@ const SabitOdemeListItem = ({ odeme, isBekleyen }) => {
 };
 
 
+// Ana Sayfa Bileşeni (Değişiklik yok)
 function SabitOdemeler() {
   const { sabitOdemeler, handleSabitOdemeEkle, giderKategorileri, bekleyenOdemeler, hesaplar, sabitOdemelerOzeti } = useFinans();
   const [isAdding, setIsAdding] = useState(false);
