@@ -1,5 +1,5 @@
 // src/context/FinansContext.jsx (HATADAN ARINDIRILMIŞ KESİN KOD)
-
+import * as XLSX from 'xlsx'; // <<--- YENİ IMPORT
 import Papa from 'papaparse';
 import { useState, useEffect, createContext, useContext, useMemo } from 'react';
 import toast from 'react-hot-toast';
@@ -126,6 +126,163 @@ export const FinansProvider = ({ children }) => {
         Object.keys(guestDataMap).forEach(key => localStorage.removeItem(`guest_${key}`));
         localStorage.removeItem('guest_hesaplar'); localStorage.removeItem('guest_giderKategorileri'); localStorage.removeItem('guest_gelirKategorileri');
         toast.success("Misafir verileriniz hesabınıza başarıyla aktarıldı!", { id: toastId });
+    };
+
+    // YENİ: CSV verilerini toplu halde işleyecek fonksiyon
+   const handleVeriIçeAktar = async (veriler, toastId) => {
+        // 1. Giriş Kontrolü
+        if (!currentUser) {
+            return toast.error("Verileri içe aktarmak için giriş yapmış olmalısınız.", { id: toastId });
+        }
+        // 2. Veri Varlığı Kontrolü
+        if (!veriler || veriler.length === 0) {
+            return toast.error("Excel dosyasında içe aktarılacak veri bulunamadı.", { id: toastId });
+        }
+
+        const hatalar = []; // Satır bazlı hataları biriktir
+        let eklenenIslemSayisi = 0;
+
+        // Uygulamadaki mevcut hesap ve kategori adlarını küçük harfe çevirip Set'e at (hızlı kontrol için)
+        const mevcutHesapAdlari = new Set(hesaplar.map(h => h.ad.toLowerCase().trim()));
+        const mevcutGiderKategorileri = new Set(giderKategorileri.map(k => k.toLowerCase().trim()));
+        const mevcutGelirKategorileri = new Set(gelirKategorileri.map(k => k.toLowerCase().trim()));
+
+        // Excel'den gelen tarihleri (sayı veya farklı formatlar olabilir) YYYY-MM-DD metnine çeviren fonksiyon
+        const excelTarihiniFormatla = (excelDate) => {
+            if (typeof excelDate === 'number') {
+                // Excel tarih sayısı -> JavaScript Date -> YYYY-MM-DD
+                const jsDate = new Date(Date.UTC(1899, 11, 30 + excelDate));
+                if (!isNaN(jsDate.getTime())) {
+                    return jsDate.toISOString().split('T')[0];
+                }
+            } else if (typeof excelDate === 'string') {
+                // "YYYY-MM-DD" formatını direkt kullan
+                if (excelDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
+                    return excelDate;
+                }
+                // "DD.MM.YYYY" veya "DD/MM/YYYY" gibi formatları çevirmeyi dene
+                try {
+                    // Ayırıcıyı nokta veya slash yap, sonra parçala
+                    const parts = excelDate.replace(/\//g, '.').split('.');
+                    if (parts.length === 3) {
+                         // YYYY-MM-DD formatına getir
+                        const year = parts[2];
+                        const month = parts[1].padStart(2, '0');
+                        const day = parts[0].padStart(2, '0');
+                        const dateObj = new Date(`${year}-${month}-${day}`);
+                         // Geçerli bir tarih mi diye son kontrol
+                        if (!isNaN(dateObj.getTime())) {
+                            return `${year}-${month}-${day}`;
+                        }
+                    }
+                } catch (e) { /* Hata olursa aşağıda null dönecek */ }
+            }
+            // Geçersiz veya tanınmayan format
+            return null;
+        };
+
+
+        // --- ÖN KONTROL AŞAMASI: Hesap ve Kategori adları uygulamada var mı? ---
+        for (const [index, satir] of veriler.entries()) {
+            const satirNumarasi = index + 2; // Excel'deki satır numarası (+1 header, +1 index)
+            const hesapAdi = satir.Hesap?.toString().trim(); // Hesap adı sayı da olabilir, stringe çevir ve boşlukları al
+            const kategori = satir.Kategori?.trim();
+            const tip = satir.Tip?.trim().toLowerCase();
+
+            // Hesap Adı Kontrolü
+            if (hesapAdi && !mevcutHesapAdlari.has(hesapAdi.toLowerCase())) {
+                hatalar.push(`${satirNumarasi}. Satır: '${hesapAdi}' hesabı uygulamada tanımlı değil.`);
+            }
+            // Kategori Adı Kontrolü (Tipe göre)
+            if (kategori) {
+                if (tip === 'gider' && !mevcutGiderKategorileri.has(kategori.toLowerCase())) {
+                    hatalar.push(`${satirNumarasi}. Satır: '${kategori}' gider kategorisi bulunamadı.`);
+                } else if (tip === 'gelir' && !mevcutGelirKategorileri.has(kategori.toLowerCase())) {
+                    hatalar.push(`${satirNumarasi}. Satır: '${kategori}' gelir kategorisi bulunamadı.`);
+                }
+            }
+            // Diğer zorunlu alanların varlığını da kontrol edebiliriz (isteğe bağlı)
+            // if (!tip || !satir.Tarih || !satir.Açıklama || !satir.Tutar) {
+            //     hatalar.push(`${satirNumarasi}. Satır: Tip, Tarih, Açıklama veya Tutar bilgisi eksik.`);
+            // }
+        }
+
+        // Eğer ön kontrolde bir hata bulunduysa, işlemi durdur ve tüm hataları göster.
+        if (hatalar.length > 0) {
+            const benzersizHatalar = [...new Set(hatalar)]; // Aynı hatayı tekrar gösterme
+            toast.error(
+                <div>
+                    <b>İçe aktarma başarısız! Lütfen önce Excel dosyanızdaki şu hataları düzeltin:</b>
+                    <ul style={{ textAlign: 'left', paddingLeft: '20px', marginTop: '10px', maxHeight: '200px', overflowY: 'auto' }}>
+                        {benzersizHatalar.map((h, i) => <li key={i}>{h}</li>)}
+                    </ul>
+                </div>,
+                { id: toastId, duration: 15000 } // Hataları okumak için uzun süre göster
+            );
+            return; // Fonksiyondan çık
+        }
+
+        // --- VERİ İŞLEME VE KAYDETME AŞAMASI ---
+        const batch = writeBatch(db);
+        try {
+            for (const [index, satir] of veriler.entries()) {
+                const satirNumarasi = index + 2;
+                const tip = satir.Tip?.trim().toLowerCase();
+                // Tutar'ı daha sağlam al: Para birimi simgesi, binlik ayıracı temizle, ondalık virgülünü noktaya çevir
+                const tutarStr = satir.Tutar?.toString().replace(/[^0-9.,-]+/g,"").replace(',', '.');
+                const tutar = parseFloat(tutarStr);
+                const tarih = excelTarihiniFormatla(satir.Tarih); // Formatlanmış tarihi al
+                const aciklama = satir.Açıklama?.trim(); // Excel başlığı 'Açıklama' olmalı
+                const kategori = satir.Kategori?.trim();
+                const hesapAdi = satir.Hesap?.toString().trim();
+
+                // Satırın geçerli olup olmadığını son kez kontrol et (daha detaylı)
+                 if (!['gelir', 'gider'].includes(tip)) {
+                    console.warn(`${satirNumarasi}. Satır: Geçersiz 'Tip' ('${satir.Tip}'). Atlandı.`); continue;
+                }
+                if (isNaN(tutar)) {
+                    console.warn(`${satirNumarasi}. Satır: Geçersiz 'Tutar' ('${satir.Tutar}'). Atlandı.`); continue;
+                }
+                 if (!tarih) {
+                    console.warn(`${satirNumarasi}. Satır: Geçersiz 'Tarih' ('${satir.Tarih}'). Atlandı.`); continue;
+                 }
+                if (!aciklama) {
+                    console.warn(`${satirNumarasi}. Satır: 'Açıklama' boş. Atlandı.`); continue;
+                 }
+                 if (!kategori) {
+                    console.warn(`${satirNumarasi}. Satır: 'Kategori' boş. Atlandı.`); continue;
+                 }
+                 if (!hesapAdi) {
+                    console.warn(`${satirNumarasi}. Satır: 'Hesap' boş. Atlandı.`); continue;
+                 }
+
+                // Hesap ID'sini bul (ön kontrolden geçtiği için bulunmalı)
+                const hesap = hesaplar.find(h => h.ad.toLowerCase().trim() === hesapAdi.toLowerCase());
+                if (!hesap) continue; // Yine de bir kontrol ekleyelim
+
+                // Veritabanına yazılacak veriyi oluştur
+                const islemVerisi = { aciklama, tutar, kategori, tarih, hesapId: hesap.id };
+
+                // Doğru koleksiyona ekle
+                const collectionName = tip + 'ler';
+                const docRef = doc(collection(db, 'users', currentUser.uid, collectionName));
+                batch.set(docRef, islemVerisi); // Toplu yazma işlemine ekle
+                eklenenIslemSayisi++;
+            }
+
+            // Toplu yazma işlemini gerçekleştir
+            if (eklenenIslemSayisi > 0) {
+                await batch.commit();
+                toast.success(`${eklenenIslemSayisi} adet işlem başarıyla içe aktarıldı!`, { id: toastId });
+            } else {
+                // Bu durum genellikle dosya boşsa veya tüm satırlar hatalıysa olur.
+                toast.error("Dosyada içe aktarılacak geçerli formatta bir veri bulunamadı.", { id: toastId });
+            }
+
+        } catch (error) {
+            console.error("Toplu veri ekleme sırasında hata:", error);
+            toast.error("Veriler içe aktarılırken beklenmedik bir hata oluştu. Lütfen tekrar deneyin.", { id: toastId });
+        }
     };
     useEffect(() => {
         if (currentUser) {
@@ -543,32 +700,130 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
     };
 
     const handleVeriIndir = () => {
-        if (!gelirler && !giderler && !transferler) { return toast.error("İndirilecek veri bulunmuyor."); }
-        const toastId = toast.loading("Veriler hazırlanıyor...");
+        if (!gelirler && !giderler && !transferler) {
+            return toast.error("İndirilecek veri bulunmuyor.");
+        }
+        const toastId = toast.loading("Excel dosyası hazırlanıyor...");
+
         try {
+            // Veriyi hazırlama (CSV ile aynı mantık)
             const raporVerisi = [
                 ...gelirler.map(item => ({ Tip: 'Gelir', Tarih: item.tarih, Aciklama: item.aciklama, Kategori: item.kategori, Hesap: hesaplar.find(h => h.id === item.hesapId)?.ad || 'Bilinmiyor', Tutar: item.tutar })),
-                ...giderler.map(item => ({ Tip: 'Gider', Tarih: item.tarih, Aciklama: item.aciklama, Kategori: item.kategori, Hesap: hesaplar.find(h => h.id === item.hesapId)?.ad || 'Bilinmiyor', Tutar: -item.tutar })),
-                ...transferler.map(item => ({ Tip: 'Transfer', Tarih: item.tarih, Aciklama: item.aciklama || 'Transfer', Kategori: '', Hesap: `${hesaplar.find(h => h.id === item.gonderenHesapId)?.ad || '?'} -> ${hesaplar.find(h => h.id === item.aliciHesapId)?.ad || '?'}`, Tutar: -item.tutar }))
+                ...giderler.map(item => ({ Tip: 'Gider', Tarih: item.tarih, Aciklama: item.aciklama, Kategori: item.kategori, Hesap: hesaplar.find(h => h.id === item.hesapId)?.ad || 'Bilinmiyor', Tutar: item.tutar })), // Gider tutarı pozitif kalsın
+                ...transferler.map(item => ({ Tip: 'Transfer', Tarih: item.tarih, Aciklama: item.aciklama || 'Transfer', Kategori: '', Hesap: `${hesaplar.find(h => h.id === item.gonderenHesapId)?.ad || '?'} -> ${hesaplar.find(h => h.id === item.aliciHesapId)?.ad || '?'}`, Tutar: item.tutar }))
             ];
-            raporVerisi.sort((a, b) => new Date(b.Tarih) - new Date(a.Tarih));
-            const csv = Papa.unparse(raporVerisi);
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement("a");
-            const url = URL.createObjectURL(blob);
-            link.setAttribute("href", url);
+            raporVerisi.sort((a, b) => new Date(b.Tarih) - new Date(a.Tarih)); // Tarihe göre sırala
+
+            // Excel için veri formatını düzenle (Başlık sırası önemli)
+            const excelData = raporVerisi.map(item => ({
+                'Tip': item.Tip,
+                'Tarih': item.Tarih,
+                'Açıklama': item.Aciklama,
+                'Kategori': item.Kategori,
+                'Hesap': item.Hesap,
+                'Tutar': item.Tutar // Sayı olarak bırakıyoruz
+            }));
+
+            // Excel Çalışma Sayfası Oluşturma
+            const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+            // Sütun genişliklerini ayarlama (isteğe bağlı ama güzel görünür)
+            worksheet['!cols'] = [
+                { wch: 10 }, // Tip
+                { wch: 12 }, // Tarih
+                { wch: 30 }, // Açıklama
+                { wch: 15 }, // Kategori
+                { wch: 25 }, // Hesap
+                { wch: 15 }  // Tutar
+            ];
+
+             // Tutar sütununu para birimi formatına ayarlama (isteğe bağlı)
+            // Bu kısım biraz daha detaylı, şimdilik sayı olarak bırakalım, istersen sonra ekleriz.
+             Object.keys(worksheet).forEach(cellAddress => {
+                if (cellAddress.startsWith('F') && cellAddress !== 'F1') { // F sütunu (Tutar), başlık hariç
+                    const cell = worksheet[cellAddress];
+                    if (cell && typeof cell.v === 'number') {
+                        cell.t = 'n'; // Sayı formatı
+                        cell.z = '#,##0.00 ₺'; // Türkçe para birimi formatı
+                    }
+                }
+             });
+
+
+            // Excel Çalışma Kitabı Oluşturma
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "İşlemler"); // Sayfa adı
+
+            // Dosyayı İndirme
             const today = new Date().toISOString().slice(0, 10);
-            link.setAttribute("download", `FinansTakip-Rapor-${today}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            toast.success("Veriler başarıyla indirildi!", { id: toastId });
+            XLSX.writeFile(workbook, `FinansTakip-Rapor-${today}.xlsx`);
+
+            toast.success("Excel dosyası başarıyla indirildi!", { id: toastId });
+
         } catch (error) {
-            console.error("CSV indirme hatası:", error);
-            toast.error("Veriler indirilirken bir hata oluştu.", { id: toastId });
+            console.error("Excel indirme hatası:", error);
+            toast.error("Excel dosyası indirilirken bir hata oluştu.", { id: toastId });
         }
     };
+    const handleDownloadExcelTemplate = () => {
+    try {
+        // Şablonda görünecek örnek veriler
+        const templateData = [
+            { Tip: 'gider', Tarih: 'YYYY-AA-GG', Açıklama: 'Market Alışverişi', Kategori: 'Market', Hesap: 'Banka Hesabı', Tutar: 150.75 },
+            { Tip: 'gelir', Tarih: 'YYYY-AA-GG', Açıklama: 'Ekim Ayı Maaşı', Kategori: 'Maaş', Hesap: 'Banka Hesabı', Tutar: 15000.00 }
+            // İstersen daha fazla örnek satır ekleyebilirsin
+        ];
+        // Veriyi Excel sayfasına dönüştür
+        const worksheet = XLSX.utils.json_to_sheet(templateData);
 
+        // Sütun başlıklarını kalın yap (isteğe bağlı)
+         const headerCellStyle = { font: { bold: true } };
+         ['A1', 'B1', 'C1', 'D1', 'E1', 'F1'].forEach(cell => {
+             if(worksheet[cell]) worksheet[cell].s = headerCellStyle;
+         });
+
+        // Sütun genişliklerini ayarla (daha okunaklı olması için)
+        worksheet['!cols'] = [
+            { wch: 10 }, // Tip
+            { wch: 12 }, // Tarih
+            { wch: 30 }, // Açıklama
+            { wch: 15 }, // Kategori
+            { wch: 25 }, // Hesap
+            { wch: 15 }  // Tutar
+        ];
+
+        // Tutar sütununu para birimi formatına ayarla
+         Object.keys(worksheet).forEach(cellAddress => {
+            // F sütunu (Tutar), başlık (F1) hariç
+            if (cellAddress.startsWith('F') && cellAddress !== 'F1') {
+                const cell = worksheet[cellAddress];
+                // Hücre varsa ve değeri bir sayı ise formatı uygula
+                if (cell && typeof cell.v === 'number') {
+                    cell.t = 'n'; // Hücre tipini 'sayı' yap
+                    cell.z = '#,##0.00 ₺'; // Türkçe para birimi formatı
+                }
+            }
+             // Tarih sütununu metin olarak ayarla (Excel'in otomatik çevirmesini engellemek için)
+             else if (cellAddress.startsWith('B') && cellAddress !== 'B1') {
+                 const cell = worksheet[cellAddress];
+                 if (cell) {
+                     cell.t = 's'; // Hücre tipini 'metin' yap
+                 }
+             }
+         });
+
+        // Yeni bir Excel çalışma kitabı oluştur
+        const workbook = XLSX.utils.book_new();
+        // Çalışma sayfasını kitaba ekle, sayfa adı "Şablon" olsun
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Şablon");
+        // Kullanıcıya dosyayı indir
+        XLSX.writeFile(workbook, "FinansTakip_Sablon.xlsx");
+
+    } catch (error) {
+        console.error("Excel şablon indirme hatası:", error);
+        toast.error("Şablon indirilirken bir hata oluştu.");
+    }
+};
     const handleTopluSil = async (silinecekIdBilgileri) => {
         if (!silinecekIdBilgileri || silinecekIdBilgileri.length === 0) return;
         if (!currentUser) {
@@ -594,6 +849,8 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
 
     const birlesikIslemler = useMemo(() => {
         const { startDate, endDate } = tarihAraligi[0];
+
+        // Filtre tarihlerinin saatini sıfırlayarak tam gün kapsaması sağla
         const baslangic = new Date(startDate);
         baslangic.setHours(0, 0, 0, 0);
         const bitis = new Date(endDate);
@@ -608,25 +865,37 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
         const aramaTerimi = aramaMetni.toLowerCase();
 
         const filtrelenmisListe = temelListe.filter(islem => {
-            const islemTarihi = new Date(islem.tarih);
+            let islemTarihi;
+
+            // --- YENİ VE KESİN TARİH DÖNÜŞTÜRME MANTIĞI ---
+            // islem.tarih'in ne olduğunu kontrol edip her zaman geçerli bir Date nesnesine dönüştürür.
+            if (islem.tarih && typeof islem.tarih.toDate === 'function') {
+                // Seçenek 1: Bu bir Firestore Timestamp nesnesi.
+                islemTarihi = islem.tarih.toDate();
+            } else if (typeof islem.tarih === 'string' && islem.tarih.includes('-')) {
+                // Seçenek 2: Bu "YYYY-MM-DD" formatında bir metin. Saat dilimi sorunlarını önlemek için parçalayarak birleştir.
+                const dateParts = islem.tarih.split('-');
+                islemTarihi = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+            } else {
+                // Seçenek 3: Bu zaten bir Date nesnesi veya başka bir format.
+                islemTarihi = new Date(islem.tarih);
+            }
+            // --- DÖNÜŞTÜRME SONU ---
             
+            // Artık islemTarihi'nin her zaman geçerli bir Date nesnesi olduğundan eminiz.
             const tarihSart = islemTarihi >= baslangic && islemTarihi <= bitis;
+            
             const tipSart = birlesikFiltreTip === 'Tümü' || islem.tip === birlesikFiltreTip;
             const kategoriSart = islem.tip === 'Transfer' || birlesikFiltreKategori === 'Tümü' || islem.kategori === birlesikFiltreKategori;
             const hesapSart = birlesikFiltreHesap === 'Tümü' || islem.hesapId === birlesikFiltreHesap || islem.gonderenHesapId === birlesikFiltreHesap || islem.aliciHesapId === birlesikFiltreHesap;
-
             const aramaSart = aramaTerimi === '' || (islem.aciklama && islem.aciklama.toLowerCase().includes(aramaTerimi));
 
             return tarihSart && tipSart && kategoriSart && hesapSart && aramaSart;
         });
 
         return filtrelenmisListe.sort((a, b) => {
-            switch (birlesikSiralamaKriteri) {
-                case 'tarih-eski': return new Date(a.tarih) - new Date(b.tarih);
-                case 'tutar-artan': return a.tutar - b.tutar;
-                case 'tutar-azalan': return b.tutar - a.tutar;
-                default: return new Date(b.tarih) - new Date(a.tarih);
-            }
+            // Sıralama için new Date() kullanmak güvenlidir.
+            return new Date(b.tarih) - new Date(a.tarih);
         });
     }, [gelirler, giderler, transferler, tarihAraligi, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri, birlesikFiltreHesap, aramaMetni]);
 
@@ -1004,7 +1273,9 @@ const enBuyukHarcamalar = useMemo(() => {
         handleHedefeParaEkle,
         updateBildirimAyarlari,
         updateTercihler,
-        handleVeriIndir,
+        handleVeriIndir, // Güncellenmiş Excel indirme
+        handleVeriIçeAktar, // Güncellenmiş Excel içe aktarma
+        handleDownloadExcelTemplate,
         tarihAraligi,        
         setTarihAraligi,
         seciliAy, setSeciliAy, seciliYil, setSeciliYil,
@@ -1027,7 +1298,7 @@ const enBuyukHarcamalar = useMemo(() => {
         transferGuestDataToFirestore,
         trendAnalizi,
         nakitAkisiOzeti,
-        sabitOdemelerOzeti
+        sabitOdemelerOzeti,        
     };
 
     return <FinansContext.Provider value={contextValue}>{children}</FinansContext.Provider>;
