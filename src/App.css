@@ -1,0 +1,8330 @@
+/* App.css */
+
+/* ==========================================================================
+   TEMA SİSTEMİ - CSS DEĞİŞKENLERİ
+   ========================================================================== */
+
+/* Varsayılan (Açık Mod) Renkler */
+:root {
+  --background-primary: #f8f9fa;   /* Ana sayfa arka planı */
+  --background-secondary: #ffffff;  /* Kartların arka planı */
+  --text-primary: #212529;         /* Ana metin rengi */
+  --text-secondary: #6c757d;       /* İkincil, daha soluk metinler */
+  --border-color: #e9ecef;         /* Kenarlıklar ve ayırıcılar */
+  
+  --primary-color: #1a73e8;        /* Ana vurgu rengi (mavi) */
+  --primary-color-hover: #155cb0;  /* Mavi buton hover rengi */
+  
+  --danger-color: #dc2626;         /* Tehlike/Silme rengi (kırmızı) */
+  --danger-color-hover: #b91c1c;   /* Kırmızı buton hover rengi */
+
+  --success-color: #28a745;        /* Başarı/Gelir rengi (yeşil) */
+  --warning-color: #ffc107;        /* Uyarı rengi (sarı) */
+  
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Koyu Mod'a geçildiğinde bu renkler devreye girecek */
+html.koyu {
+  --background-primary: #121212;
+  --background-secondary: #1e1e1e;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a0a0a0;
+  --border-color: #333333;
+
+  --primary-color: #42a5f5;
+  --primary-color-hover: #64b5f6;
+
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+/* --- UYGULAMA GENELİNDE BU DEĞİŞKENLERİ KULLANMAK İÇİN BAZI TEMEL STİLLER --- */
+body {
+  background-color: var(--background-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.card {
+  background-color: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--card-shadow);
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.primary-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+.primary-btn:hover {
+  background-color: var(--primary-color-hover);
+}
+.danger-btn {
+    background-color: var(--danger-color);
+    color: white;
+}
+.danger-btn:hover {
+    background-color: var(--danger-color-hover);
+}
+
+/* Diğer genel stillerinizi de bu değişkenleri kullanacak şekilde güncelleyebilirsiniz.
+   Örn: h1, input, select vb. */
+
+/* === YENİ TASARIM İÇİN TEMEL AYARLAR === */
+:root {
+  /* Renk Paleti */
+  --primary-brand: #4a69bd;
+  --success-color: #27ae60;
+  --danger-color: #c0392b;
+  --warning-color: #f39c12;
+  
+  /* Arka Plan Renkleri */
+  --background-page: #f4f7fa;
+  --background-card: #ffffff;
+  
+  /* Metin Renkleri */
+  --primary-text: #2f3542;
+  --secondary-text: #576574;
+
+  /* Diğer Stiller */
+  --border-color: #dfe4ea;
+  --border-radius: 12px;
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Mevcut body stilini bununla güncelliyoruz */
+body {
+  margin: 0;
+  font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background-color: var(--background-page);
+  color: var(--primary-text);
+  /* justify-content ve display flex'i buradan kaldırıyoruz, çünkü artık tam sayfa düzeni istiyoruz */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Evrensel Kutu Modeli (Bu kalmalı, çünkü bu her zaman iyidir) */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Sayfanın Temelini Hazırlama (Orijinal Ortalanmış Hali) */
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+  display: flex; /* İçeriği ortalamak için */
+  justify-content: center; /* İçeriği ortalamak için */
+  min-height: 100vh;
+}
+
+/* Ana Uygulama Konteyneri (Orijinal Dar Hali) */
+.app-container {
+  width: 100%;
+  max-width: 900px; /* 600px biraz dardı, 900px daha iyi bir denge olabilir */
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Başlıklar */
+h1, h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #ecf0f1;
+  padding-bottom: 10px;
+}
+
+/* Form Elemanları */
+form div {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+
+/* Butonlar */
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  color: white;
+}
+
+button[type="submit"] {
+  background-color: #27ae60; /* Yeşil */
+}
+
+button[type="submit"]:hover {
+  background-color: #2ecc71;
+}
+
+/* Gider Listesi */
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li span:first-child {
+  font-weight: 500;
+}
+
+/* Sil Butonu */
+li button {
+  background-color: #c0392b; /* Kırmızı */
+}
+
+li button:hover {
+  background-color: #e74c3c;
+}
+/* App.css dosyasının en altına eklenecekler */
+
+.rapor-bolumu {
+  display: flex;
+  justify-content: space-around;
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+}
+
+.rapor-bolumu h2 {
+  border: none;
+  margin: 0;
+}
+
+.icerik-bolumu {
+  display: flex;
+  gap: 30px; /* Sütunlar arası boşluk */
+}
+
+.bolum {
+  flex: 1; /* Her iki sütunun da eşit genişlikte olmasını sağlar */
+}
+/* App.css dosyasının en altına eklenecekler */
+
+.buton-grubu {
+  display: flex;
+  gap: 5px; /* Butonlar arası boşluk */
+}
+
+.duzenle-btn {
+  background-color: #f39c12; /* Turuncu */
+}
+
+.duzenle-btn:hover {
+  background-color: #f1c40f;
+}
+/* App.css dosyasının en altına eklenecekler */
+
+.aciklama-kategori {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+}
+
+.kategori-etiketi {
+  background-color: #3498db;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+.gelir-etiketi {
+  background-color: #27ae60; /* Yeşil */
+}
+/* App.css dosyasının en altına eklenecekler */
+
+/* App.css'teki mevcut .filtre-siralama-kutusu'nu bununla değiştir */
+
+.filtre-siralama-kutusu {
+  display: flex;
+  gap: 20px;
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+  overflow: hidden; /* Animasyonun düzgün çalışması için önemli */
+}
+
+/* Mobil için de güncelleyelim */
+@media (max-width: 768px) {
+  .filtre-siralama-kutusu {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+
+.kontrol-grubu {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.kontrol-grubu label {
+  font-size: 14px;
+  font-weight: normal;
+  margin-bottom: 8px;
+  color: #6c757d;
+}
+/* App.css dosyasının en altına ekle */
+
+.gelir-renk {
+  color: #27ae60; /* Yeşil */
+  font-weight: bold;
+}
+
+.gider-renk {
+  color: #c0392b; /* Kırmızı */
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+
+.form-buton-grubu {
+  display: flex;
+  gap: 10px;
+}
+
+.form-buton-grubu button {
+  flex: 1; /* Butonların eşit genişlikte olmasını sağlar */
+}
+
+.vazgec-btn {
+  background-color: #7f8c8d; /* Gri */
+}
+
+.vazgec-btn:hover {
+  background-color: #95a5a6;
+}
+/* App.css dosyasının en altına ekle */
+
+.tarih-etiketi {
+  font-size: 12px;
+  color: #7f8c8d;
+  font-style: italic;
+}
+/* App.css dosyasının en altına ekle */
+
+.zaman-filtresi-kutusu {
+  display: flex;
+  gap: 20px;
+  background-color: #2c3e50; /* Koyu renk */
+  color: white;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.zaman-filtresi-kutusu .kontrol-grubu label {
+  color: white; /* Label rengini beyaz yap */
+}
+/* App.css dosyasının en altına ekle */
+
+.analiz-bolumu {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.analiz-bolumu h2 {
+  margin-top: 0;
+}
+
+.analiz-icerik {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.ozet-tablosu {
+  flex: 1;
+}
+
+.ozet-tablosu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ozet-tablosu li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+}
+
+.ozet-tablosu li span:last-child {
+  font-weight: bold;
+}
+
+.grafik-konteyner {
+  flex: 1;
+  max-width: 300px; /* Grafiğin çok büyümesini engelle */
+}
+/* App.css dosyasının en altına ekle */
+
+.nav-menu {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background-color: #ecf0f1;
+  padding: 5px;
+  border-radius: 8px;
+}
+
+.nav-menu a {
+  flex: 1;
+  text-decoration: none;
+  color: #2c3e50;
+  padding: 10px;
+  text-align: center;
+  border-radius: 5px;
+  font-weight: bold;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Aktif olan sekmeyi vurgulamak için */
+.nav-menu a.active {
+  background-color: #2c3e50;
+  color: white;
+}
+
+.nav-menu a:not(.active):hover {
+  background-color: #bdc3c7;
+}
+
+main {
+  margin-top: 20px;
+}
+/* App.css dosyasının en altına ekle */
+
+.sabit-odemeler-sayfasi {
+  display: flex;
+  gap: 30px;
+}
+/* App.css dosyasının en altına ekle */
+
+.otomatik-ikon {
+  font-size: 14px;
+  cursor: help; /* Üzerine gelince soru işareti çıkmasını sağlar */
+}
+/* App.css dosyasının en altına ekle */
+
+.bildirim-kutusu {
+  background-color: #fffbe6; /* Açık sarı */
+  border: 1px solid #f9ca24; /* Sarı */
+  color: #8a6d3b;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.bildirim-kutusu h3 {
+  margin-top: 0;
+  border: none;
+  color: #8a6d3b;
+}
+
+.bildirim-kutusu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.bildirim-kutusu li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid #fdecb7;
+}
+
+.bildirim-kutusu li:last-child {
+  border-bottom: none;
+}
+
+.bildirim-sol {
+  display: flex;
+  flex-direction: column;
+}
+
+.bildirim-aciklama {
+  font-weight: bold;
+}
+
+.bildirim-tutar {
+  font-size: 14px;
+}
+
+.onayla-btn {
+  background-color: #f39c12; /* Turuncu */
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+.onayla-btn:hover {
+  background-color: #f1c40f;
+}
+/* App.css dosyasını güncelle */
+
+/* .icerik-bolumu stilini bul ve .tek-sutun-layout ile değiştir veya yanına ekle */
+.tek-sutun-layout {
+  display: flex;
+  flex-direction: column; /* Artık tek sütun */
+  gap: 30px;
+}
+
+/* Dosyanın en altına yeni stilleri ekle */
+.islem-tipi-secici {
+  display: flex;
+  margin-bottom: 20px;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.islem-tipi-secici button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.islem-tipi-secici button.aktif {
+  background-color: white;
+  color: #2c3e50;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+/* App.css dosyasının en altına ekle */
+
+.sayfa-ici-ozet {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  border: 1px solid #e9ecef;
+}
+
+.ozet-kalem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.ozet-kalem span:first-child {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.ozet-kalem span:last-child {
+  font-size: 18px;
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+
+.yillik-rapor-tablosu {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.yillik-rapor-tablosu th,
+.yillik-rapor-tablosu td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.yillik-rapor-tablosu th {
+  background-color: #f8f9fa;
+  font-weight: bold;
+}
+
+.yillik-rapor-tablosu tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.yillik-rapor-tablosu tfoot {
+  background-color: #e9ecef;
+  font-size: 1.1em;
+}
+
+.yillik-rapor-tablosu td:not(:first-child),
+.yillik-rapor-tablosu th:not(:first-child) {
+  text-align: right;
+}
+/* App.css dosyasının en altına ekle */
+
+.kategori-ekle-form {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.kategori-ekle-form input {
+  flex: 1;
+}
+/* App.css dosyasının en altına ekle */
+
+.rapor-araclari {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 30px;
+  border: 1px solid #e9ecef;
+}
+
+.rapor-araclari h2 {
+  margin-top: 0;
+  border: none;
+}
+
+.disa-aktar-btn {
+  background-color: #3498db; /* Mavi */
+  font-weight: bold;
+}
+
+.disa-aktar-btn:hover {
+  background-color: #5dade2;
+}
+
+/* =============================================== */
+/*              MOBİL UYUMLULUK (RESPONSIVE)         */
+/* =============================================== */
+
+/* Geniş Tabletler ve Altı (992px ve daha dar ekranlar) */
+@media (max-width: 992px) {
+  .icerik-bolumu,
+  .analiz-icerik,
+  .sabit-odemeler-sayfasi,
+  .tek-sutun-layout {
+    flex-direction: column !important; /* !important ile kuralı ezmeye zorla */
+    gap: 40px; /* Alt alta gelince aradaki boşluğu artır */
+  }
+
+   .raporlar-sayfasi {
+    display: flex;
+    flex-direction: column; /* Raporlar sayfasındaki bölümleri alt alta getir */
+    gap: 30px;
+  }
+
+  .grafik-konteyner {
+    max-width: 100%;
+    margin-top: 30px;
+  }
+
+  .analiz-icerik .ozet-tablosu,
+  .analiz-icerik .grafik-konteyner {
+    flex-basis: 100%; /* Her birinin tam genişliği kaplamasını sağla */
+  }
+}
+
+/* Telefonlar (768px ve daha dar ekranlar) */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  .app-container {
+    padding: 20px;
+  }
+
+  h1 { font-size: 28px; }
+  h2 { font-size: 22px; }
+
+  .nav-menu {
+    gap: 5px;
+  }
+
+  .nav-menu a {
+    padding: 8px 5px;
+    font-size: 14px;
+  }
+
+  .rapor-bolumu,
+  .zaman-filtresi-kutusu,
+  .filtre-siralama-kutusu {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .islem-karti {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .islem-karti .aciklama-kategori {
+    width: 100%;
+  }
+
+  .islem-karti .tutar-yazisi {
+    width: auto; /* Otomatik genişlik */
+    text-align: left;
+    font-size: 22px;
+    padding: 5px 0;
+  }
+
+  .islem-karti .buton-grubu {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .bildirim-kutusu li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .bildirim-kutusu .onayla-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+/* =============================================== */
+/*              MİKRO-ETKİLEŞİMLER VE İKONLAR        */
+/* =============================================== */
+
+/* === İKONLU BUTONLARIN NİHAİ STİLİ === */
+.icon-btn {
+  background: none;
+  border: none;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  color: var(--secondary-text); /* Varsayılan renk soluk gri */
+  transition: all 0.2s ease-in-out;
+}
+
+.icon-btn:hover {
+  transform: scale(1.1);
+  background-color: #f1f1f1;
+}
+
+/* Silme ikonunu kalıcı kırmızı yapma */
+.sil-btn {
+  color: var(--danger-color);
+  opacity: 0.6;
+}
+.sil-btn:hover {
+  opacity: 1;
+  color: #a11d1d; /* Hover'da daha koyu kırmızı */
+  background-color: rgba(192, 57, 43, 0.1);
+}
+
+/* Düzenle ikonunun hover rengi */
+.duzenle-btn:hover {
+  color: #f39c12;
+}
+
+/* Ana Ekle/Güncelle Butonları için hover efekti */
+button[type="submit"]:hover, .onayla-btn:hover, .disa-aktar-btn:hover {
+  transform: translateY(-2px); /* Butonu hafifçe yukarı kaydır */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15); /* Gölgeyi belirginleştir */
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* App.css'e Ekle (eskileri silerek) */
+
+.analiz-bolumu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 30px;
+  margin-top: 30px;
+}
+
+.analiz-karti {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.analiz-karti h2 {
+  margin-top: 0;
+  font-size: 18px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.analiz-icerik {
+  display: flex;
+  gap: 20px;
+  flex-grow: 1; /* Kartın içini doldurmasını sağlar */
+}
+
+.analiz-icerik .ozet-tablosu {
+  flex: 1;
+}
+
+.analiz-icerik .grafik-konteyner {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gelir-analiz-karti {
+  min-height: 350px; /* Diğer kartla yüksekliğini eşitlemek için */
+}
+/* App.css dosyasının en altına ekle (eskileri silerek) */
+
+.butce-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.butce-kalemi {
+  /* Renkleri değişken olarak tanımlıyoruz */
+  --progress-color: #3498db; /* Varsayılan: Mavi */
+  --text-color: #3498db;
+}
+
+.butce-kalemi.uyari {
+  --progress-color: #f1c40f; /* Sarı */
+  --text-color: #d35400; /* Koyu Turuncu */
+}
+
+.butce-kalemi.asildi {
+  --progress-color: #e74c3c; /* Kırmızı */
+  --text-color: #c0392b; /* Koyu Kırmızı */
+}
+
+.butce-bilgi {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.butce-kategori {
+  font-weight: bold;
+}
+
+.butce-rakamlar {
+  font-size: 14px;
+  color: #6c757d;
+}
+
+.butce-rakamlar strong {
+  margin-left: 8px;
+  font-size: 13px;
+  font-weight: bold;
+  color: var(--text-color) !important; /* Değişkeni !important ile uygula */
+}
+
+.progress-bar-konteyner {
+  width: 100%;
+  height: 10px;
+  background-color: #e9ecef;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-dolgu {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.5s ease-in-out, background-color 0.5s ease;
+  background-color: var(--progress-color) !important; /* Değişkeni !important ile uygula */
+}
+
+.butce-durum {
+  text-align: right;
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 5px;
+  color: #6c757d;
+}
+/* App.css'teki mevcut .rapor-bolumu'nu bununla değiştir */
+
+.rapor-bolumu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Dikeyde ortala */
+  gap: 20px;
+  background-color: #ecf0f1;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.rapor-kalemleri {
+  display: flex;
+  gap: 30px;
+}
+
+.rapor-kalem h2 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  color: #7f8c8d;
+  border: none;
+  padding: 0;
+}
+
+.rapor-kalem span {
+  font-size: 24px;
+  font-weight: bold;
+}
+/* App.css dosyasının en altına ekle */
+
+.hizli-eylem-butonu-kucuk {
+  background-color: #34495e; /* Daha koyu bir renk */
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.hizli-eylem-butonu-kucuk:hover {
+  background-color: #2c3e50;
+  transform: scale(1.05); /* Hover'da hafifçe büyüsün */
+}
+.rapor-bolumu, .rapor-kalemleri {
+  flex-direction: column;
+  align-items: stretch; /* Elemanların tam genişliği kaplamasını sağla */
+}
+
+.rapor-kalem {
+  text-align: center;
+}
+
+.rapor-eylem {
+  width: 100%;
+}
+
+.hizli-eylem-butonu-kucuk {
+  width: 100%;
+}
+/* App.css dosyasının en altına ekle */
+
+.liste-baslik {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.liste-baslik h2 {
+  margin: 0;
+}
+
+.filtre-buton {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  border: 1px solid #bdc3c7;
+  padding: 8px 15px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.filtre-buton:hover {
+  background-color: #bdc3c7;
+}
+/* === MODERN TASARIM TEMEL STILLERİ === */
+
+/* 1. Genel Sayfa Yapısı ve Renk Paleti */
+:root {
+  --background-page: #f4f7fa; /* Sayfanın ana arka plan rengi (çok açık gri) */
+  --background-card: #ffffff; /* Kartların arka plan rengi (beyaz) */
+  --primary-text: #2f3542;    /* Ana metin rengi */
+  --secondary-text: #576574;  /* İkincil metin rengi (daha soluk) */
+  --primary-brand: #4a69bd;   /* Ana marka rengi (linkler, butonlar için) */
+  --border-color: #dfe4ea;   /* Çerçeve rengi */
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Kart gölgesi */
+  --border-radius: 12px;     /* Kenar yuvarlaklığı */
+}
+
+body {
+  background-color: var(--background-page);
+  color: var(--primary-text);
+}
+
+/* 2. Header (Üst Menü) Stilleri */
+.app-header {
+  background-color: var(--background-card);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 64px;
+}
+
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-brand);
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: var(--secondary-text);
+  padding: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border-bottom: 2px solid transparent; /* Aktif link için zemin */
+}
+
+.header-nav a:hover {
+  color: var(--primary-brand);
+}
+
+.header-nav a.active {
+  color: var(--primary-brand);
+  border-bottom: 2px solid var(--primary-brand);
+}
+
+/* 3. Ana İçerik ve Kart Stili */
+.main-content {
+  padding: 2rem;
+}
+
+.card {
+  background-color: var(--background-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+/* App.css dosyasının altına ekleyelim */
+
+.analiz-bolumu-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Sadece 1 sütun olsun diyoruz */
+  gap: 2rem;
+}
+/* App.css altına eklenecekler */
+
+.aylik-ozet-kutusu {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  margin: 1.5rem 0;
+  font-weight: 500;
+}
+
+.ozet-kalem {
+  display: flex;
+  flex-direction: column;
+}
+
+
+.ozet-tutar {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+.kart-ici-ayirici {
+  border: none;
+  border-top: 1px solid var(--border-color);
+  margin: 1rem 0;
+}
+
+.hesap-durumlari-listesi h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+}
+
+.hesap-satiri {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.hesap-durumlari-listesi .hesap-satiri:last-child {
+  border-bottom: none;
+}
+
+.hesap-satiri .hesap-adi {
+  font-weight: 500;
+}
+
+.hesap-satiri .hesap-bakiye {
+  font-weight: 700;
+}
+/* Harcama Dağılımı Kartı İçin Yeni Stiller */
+
+.analiz-icerik {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.ozet-tablosu {
+  flex: 1; /* Listenin mevcut alanı doldurmasını sağlar */
+}
+
+.grafik-konteyner {
+  flex: 1;
+  min-width: 150px; /* Grafiğin çok küçülmesini engeller */
+}
+
+.harcama-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.harcama-listesi li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.harcama-listesi li:last-child {
+    border-bottom: none;
+}
+
+.kategori-sol-taraf {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 0; /* Flexbox'ın küçülmesine izin verir */
+}
+
+.renk-noktasi {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 12px;
+  flex-shrink: 0; /* Noktanın küçülmesini engeller */
+}
+
+.kategori-adi {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; /* Uzun kategori adları için ... ekler */
+}
+
+/* Noktalı kılavuz çizgisi için */
+.kategori-adi::after {
+  content: '';
+  flex-grow: 1;
+  border-bottom: 2px dotted #ccc;
+  margin: 0 8px;
+  position: relative;
+  top: -4px;
+}
+
+.kategori-tutari {
+  font-weight: bold;
+  white-space: nowrap;
+  color: var(--primary-text);
+  margin-left: 8px; /* Çizgi ile arasında boşluk */
+}
+/* === DÜZELTİLMİŞ BÜTÇE KARTI STİLLERİ === */
+
+.butce-listesi {
+    margin-top: 1rem;
+}
+
+.butce-kalemi {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.butce-kalemi:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+/* Üst Satır: Kategori Adı ve Yüzde */
+.butce-bilgi {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.butce-kategori {
+    font-weight: bold; /* Orijinal stilini koruyoruz */
+}
+
+.butce-yuzde {
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: var(--secondary-text);
+}
+
+/* Orta Satır: Progress Bar */
+.progress-bar-konteyner {
+    margin: 0.5rem 0;
+}
+
+.progress-bar-dolgu {
+    height: 8px;
+    border-radius: 4px;
+    background-color: var(--primary-brand);
+    transition: width 0.4s ease-in-out;
+}
+
+.butce-kalemi.uyari .progress-bar-dolgu {
+    background-color: var(--warning-color);
+}
+
+.butce-kalemi.asildi .progress-bar-dolgu {
+    background-color: var(--danger-color);
+}
+
+/* Alt Satır: Rakamlar ve Kalan Durumu */
+.butce-detay-yeni {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.butce-rakamlar {
+    font-size: 14px;
+    color: var(--secondary-text);
+}
+
+.butce-durum {
+    text-align: right;
+    font-size: 12px;
+    font-style: italic;
+    color: var(--secondary-text);
+}
+
+.butce-kalemi.asildi .butce-durum {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+/* === YENİ GRID FORM TASARIMI === */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 sütunlu yapı */
+    gap: 1rem; /* Elemanlar arası boşluk */
+}
+.form-item-full {
+    grid-column: 1 / -1; /* Tam genişlik kaplar */
+}
+/* Form butonlarını sağa yaslamak için */
+.form-buton-grubu {
+    justify-content: flex-end;
+}
+
+/* === YENİ İŞLEM KARTI TASARIMI === */
+.islem-listesi-yeni {
+    list-style: none;
+    padding: 0;
+    margin-top: 1rem;
+}
+.islem-listesi-yeni li {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+.islem-listesi-yeni li:last-child {
+    border-bottom: none;
+}
+
+.islem-ikon {
+    font-size: 1.5rem;
+    margin-right: 1rem;
+    color: var(--secondary-text);
+    width: 40px;
+    text-align: center;
+}
+
+.islem-orta {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.islem-aciklama {
+    font-weight: 500;
+    color: var(--primary-text);
+}
+
+.islem-etiketler {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+}
+
+.islem-etiket {
+    font-size: 0.75rem;
+    background-color: #e9ecef;
+    color: var(--secondary-text);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.islem-sag {
+    text-align: right;
+    margin-left: 1rem;
+}
+
+.islem-tutar {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+}
+
+/* Buton gruplarını daha kompakt yapalım */
+.islem-sag .buton-grubu {
+    display: flex;
+    justify-content: flex-end;
+}
+.islem-sag .icon-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+}
+.sil-btn:hover { /* Sil butonuna özel hover rengi */
+    color: var(--danger-color);
+}
+/* === İŞLEM KARTI RENKLENDİRME VE STİLİ === */
+
+/* Liste elemanlarına genel bir stil verelim */
+.islem-listesi-yeni li {
+    border-radius: var(--border-radius);
+    padding: 1rem;
+    margin-bottom: 0.75rem; /* Kartlar arasına boşluk */
+    transition: background-color 0.2s ease-in-out;
+    border: 1px solid transparent; /* Geçişlerin pürüzsüz olması için */
+}
+
+/* Gelir kartının stili */
+.islem-karti-gelir {
+    background-color: rgba(39, 174, 96, 0.08); /* Çok açık, şeffaf yeşil */
+    border-left: 4px solid var(--success-color); /* Soluna belirgin yeşil bir çizgi */
+}
+.islem-karti-gelir:hover {
+    background-color: rgba(39, 174, 96, 0.12); /* Üzerine gelince biraz daha belirgin */
+}
+
+
+/* Gider kartının stili */
+.islem-karti-gider {
+    background-color: rgba(192, 57, 43, 0.07); /* Çok açık, şeffaf kırmızı */
+    border-left: 4px solid var(--danger-color); /* Soluna belirgin kırmızı bir çizgi */
+}
+.islem-karti-gider:hover {
+    background-color: rgba(192, 57, 43, 0.11); /* Üzerine gelince biraz daha belirgin */
+}
+/* Tarih etiketini diğer etiketlerden ayırmak için */
+.islem-etiket.tarih-etiketi {
+    background-color: transparent;
+    color: var(--secondary-text);
+    font-style: italic;
+    padding-left: 0;
+    padding-right: 0;
+}
+/* === RAPORLAR SAYFASI STİLLERİ === */
+
+/* Rapor İndirme Butonu */
+.disa-aktar-btn {
+  background-color: var(--primary-brand);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+.disa-aktar-btn:hover {
+  opacity: 0.9;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Modern Yıllık Rapor Tablosu */
+.yillik-rapor-tablosu {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+}
+
+.yillik-rapor-tablosu th,
+.yillik-rapor-tablosu td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.yillik-rapor-tablosu thead th {
+  background-color: var(--background-page);
+  font-weight: 500;
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.yillik-rapor-tablosu tbody tr:hover {
+  background-color: rgba(74, 105, 189, 0.05); /* Çok hafif bir hover rengi */
+}
+
+.yillik-rapor-tablosu tfoot tr {
+  border-top: 2px solid var(--primary-text);
+  font-size: 1.1rem;
+}
+
+.yillik-rapor-tablosu tfoot td {
+    border-bottom: none;
+}
+
+/* Sayısal değerleri sağa yaslamak için */
+.yillik-rapor-tablosu td:not(:first-child),
+.yillik-rapor-tablosu th:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums; /* Rakamların daha düzgün hizalanması için */
+}
+/* === YÖNETİM SAYFALARI GENEL STİLLERİ === */
+
+.yonetim-sayfasi-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+  gap: 2.5rem; /* Sütunlar arası boşluk */
+  margin-top: 1.5rem;
+  align-items: flex-start; /* Sütunların üstten hizalanması */
+}
+
+/* Form stillerini genelleyelim */
+.form-modern label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
+.form-modern input:focus,
+.form-modern select:focus {
+  outline: none;
+  border-color: var(--primary-brand);
+  box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.2);
+}
+
+.form-modern button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--primary-brand);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
+}
+.form-modern button[type="submit"]:hover {
+  background-color: #3a539b;
+}
+
+/* Liste stillerini genelleyelim */
+.yonetim-listesi {
+  list-style: none;
+  padding: 0.5rem; /* İçerik ve kenarlar arasına boşluk */
+  margin: 0;
+  background-color: #f8f9fa; /* Hafif gri arka plan */
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+}
+
+.yonetim-listesi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* Bu satır dikey ortalamayı sağlar */
+  padding: 0.8rem 1rem; /* Üst/Alt ve Sağ/Sol boşlukları ayarlar */
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 500;
+  background-color: transparent; /* Arka planı şeffaf yapar */
+}
+
+.yonetim-listesi-item:first-child {
+    padding-top: 0;
+}
+
+.yonetim-listesi-item .icon-btn {
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.yonetim-listesi-item:hover .icon-btn {
+    opacity: 1;
+}
+
+/* Mobil için iki sütunu alt alta getir */
+@media (max-width: 768px) {
+  .yonetim-sayfasi-layout {
+    grid-template-columns: 1fr;
+  }
+}
+/* === SABİT ÖDEMELER SAYFASI ÖZEL STİLLERİ === */
+
+/* Form grid yapısını bu sayfada da kullanalım */
+.form-grid .form-item-half {
+    grid-column: span 1;
+}
+
+.sabit-odeme-item {
+    align-items: flex-start; /* İçeriğin dikeyde en üste hizalanması */
+}
+
+.sabit-odeme-orta {
+    flex-grow: 1;
+}
+
+.sabit-odeme-aciklama {
+    font-weight: 500;
+    color: var(--primary-text);
+    margin-bottom: 0.35rem;
+    display: block;
+}
+
+.sabit-odeme-sag {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Tutar ve buton arası boşluk */
+    flex-shrink: 0; /* Küçülmesini engelle */
+}
+
+.sabit-odeme-tutar {
+    font-weight: 700;
+    min-width: 80px;
+    color: var(--primary-text);
+}
+/* === KATEGORİLER SAYFASI VE GENEL İYİLEŞTİRMELER (NİHAİ) === */
+
+/* 1. Kategori Listesi Stili */
+.yonetim-listesi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1rem; /* İç boşluklar */
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 500;
+  background-color: transparent; /* Arka planı şeffaf yapar */
+}
+
+/* 2. Silme İkonu Stili */
+.yonetim-listesi-item .sil-btn {
+  color: var(--danger-color); /* Kalıcı kırmızı */
+  opacity: 0.6;
+  transition: all 0.2s ease;
+}
+.yonetim-listesi-item:hover .sil-btn {
+  opacity: 1;
+  transform: scale(1.1);
+}
+.yonetim-listesi-item .sil-btn:hover {
+  background-color: rgba(192, 57, 43, 0.1);
+  color: #a11d1d; /* Hover'da daha koyu kırmızı */
+}
+
+
+/* === FORM ELEMANLARI NİHAİ STİLİ (GLOBAL) === */
+.form-modern input,
+.form-modern select,
+input[type="text"], 
+input[type="number"],
+input[type="date"],
+select {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #fff;
+  color: var(--primary-text);
+  border: 1px solid #ced4da;
+  transition: all 0.2s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus {
+  outline: none;
+  border-color: var(--primary-brand);
+  box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.2);
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23576574%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+  background-repeat: no-repeat;
+  background-position: right 1rem top 50%;
+  background-size: 12px auto;
+}
+/* === KATEGORİ SIRALAMA STİLLERİ === */
+
+.kategori-sol-taraf-sirala {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* İkon ve yazı arası boşluk */
+}
+
+.drag-handle {
+    cursor: grab; /* Sürükleme imleci */
+    color: #c8d6e5; /* Soluk bir renk */
+    transition: color 0.2s ease;
+}
+
+.drag-handle:hover {
+    color: var(--primary-text);
+}
+/* === GENEL BAKIŞ - HESAP LİSTESİ CİLA DOKUNUŞLARI === */
+
+.hesap-adi-ikon {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* İkon ve yazı arası boşluk */
+}
+
+.hesap-ikon {
+    color: var(--secondary-text);
+    font-size: 1.1rem;
+}
+
+.hesap-satiri.toplam-bakiye {
+    border-top: 2px solid var(--primary-text);
+    margin-top: 0.5rem;
+    padding-top: 0.75rem;
+    font-size: 1.1rem;
+}
+/* Kart Başlığı için Stil */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Başlığın altındaki varsayılan çizgiyi ve boşluğu kaldıralım */
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: 1.5rem; /* Başlık ve kart içeriği arasına boşluk koyar */
+}
+
+.card-header h2 {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+/* Kart Başlığındaki Eylem Butonu */
+.card-header-action {
+  background-color: var(--primary-brand);
+  color: white;
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.card-header-action:hover {
+  background-color: #3a539b; /* Marka renginin koyu tonu */
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+body {
+  background-color: #f0f2f5; /* Tasarımdaki gibi hafif gri/mavi bir ton */
+  font-family: 'Roboto', sans-serif; /* Daha modern bir font */
+}
+.main-content {
+  max-width: 1200px; /* İçeriğin çok genişlemesini önler */
+  margin: 0 auto;
+  padding: 24px;
+}
+/* === YENİ TASARIM İÇİN YERLEŞİM (LAYOUT) === */
+
+/* Header (Üst Menü) */
+.app-header {
+  background-color: var(--background-card);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 64px;
+  margin-bottom: 2rem; /* Header ile içerik arasına boşluk */
+}
+
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: var(--primary-brand);
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: var(--secondary-text);
+  padding: 1.25rem 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease-in-out;
+  border-bottom: 3px solid transparent;
+}
+.header-nav a:hover { color: var(--primary-brand); }
+.header-nav a.active {
+  color: var(--primary-brand);
+  border-bottom-color: var(--primary-brand);
+}
+
+/* Ana İçerik Alanı */
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem; /* Üstten ve alttan boşluk header'dan geldi, sağ/sol boşluk buradan */
+}
+
+/* Mevcut .card stilini bununla güncelliyoruz */
+.card {
+  background-color: var(--background-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  border: none; /* Eski border'ı kaldırıyoruz */
+}
+/* ==========================================================================
+   Genel Bakış Sayfası - Özet Kartı Stilleri (KULLANICI TERCİHİNE GÖRE)
+   ========================================================================== */
+
+/* Aylık Özet Kutusu (Başlık Üstte, Rakam Altta) */
+.aylik-ozet-kutusu {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  margin: 1.5rem 0;
+}
+
+.ozet-tutar {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+
+/* Hesap Durumları Listesi (Bu kısım öncekiyle aynı, çünkü yapısı güzel) */
+.hesap-durumlari-listesi h3 {
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+}
+
+.hesap-satiri {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+.hesap-durumlari-listesi .hesap-satiri:last-of-type {
+  border-bottom: none;
+}
+
+.hesap-adi-ikon {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hesap-ikon {
+  color: var(--secondary-text);
+  font-size: 1.2rem;
+}
+
+.hesap-adi {
+  font-weight: 500;
+}
+
+.hesap-bakiye {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.hesap-satiri.toplam-bakiye {
+  border-top: 2px solid var(--primary-text);
+  margin-top: 0.75rem;
+  padding-top: 0.85rem;
+  font-size: 1.1rem;
+}
+/* ==========================================================================
+   BEYİN FIRTINASI SONRASI EKLENEN YENİ STİLLER
+   ========================================================================== */
+
+/* 1. Tarih Seçici Kutusunu Oval Yapma */
+.zaman-filtresi-kutusu {
+  border-radius: var(--border-radius);
+  /* Mevcut stilinizde koyu renk vardı, tasarıma uyması için değiştirelim */
+  background-color: #34495e; /* Koyu Mavi/Gri */
+  padding: 1rem 1.5rem;
+}
+
+
+/* 3. Hesap Durumları Başlığını Belirginleştirme */
+.hesap-durumlari-listesi h3 {
+  font-size: 1.1rem; /* Biraz büyütelim */
+  font-weight: 600;  /* Kalınlaştıralım */
+  color: var(--primary-text); /* Rengini ana metin rengi yapalım */
+}
+
+/* 4. Toplam Varlık Rakamını Kalınlaştırma */
+.hesap-satiri.toplam-bakiye .hesap-bakiye strong {
+  font-weight: 700; /* Zaten kalındı, ama bu kural ile garantileyelim */
+}
+
+/* 5. Genel Kart Başlıklarını Tasarıma Uydurma */
+.card-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+  /* Eski border ve padding kurallarını ezelim */
+  border: none;
+  padding: 0;
+}
+/* ==========================================================================
+   AKILLI BÜTÇE KARTI STİLLERİ
+   ========================================================================== */
+
+.butce-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem; /* Bütçe kalemleri arasına daha fazla boşluk */
+}
+
+/* Üst Satır: Kategori Adı ve Yüzde */
+.butce-bilgi {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.butce-kategori {
+  font-weight: 600; /* Kategoriyi daha belirgin yapalım */
+  font-size: 1.05rem;
+}
+
+.butce-yuzde {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
+/* Orta Satır: Progress Bar */
+.progress-bar-konteyner {
+  width: 100%;
+  height: 10px; /* Biraz daha kalın yapalım */
+  background-color: #e9ecef;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.progress-bar-dolgu {
+  height: 100%;
+  border-radius: 5px;
+  background-color: var(--primary-brand); /* Varsayılan renk marka rengi */
+  transition: width 0.5s ease-in-out;
+}
+
+/* Duruma göre renkleri ayarlama */
+.butce-kalemi.uyari .progress-bar-dolgu {
+  background-color: var(--warning-color);
+}
+.butce-kalemi.asildi .progress-bar-dolgu {
+  background-color: var(--danger-color);
+}
+.butce-kalemi.uyari .butce-yuzde {
+  color: var(--warning-color);
+}
+.butce-kalemi.asildi .butce-yuzde {
+  color: var(--danger-color);
+}
+
+/* Alt Satır: Rakamlar ve Kalan Durumu */
+.butce-detay-yeni {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+}
+
+.butce-durum {
+  font-style: italic;
+}
+
+/* Bütçe aşıldığında durumu daha belirgin hale getir */
+.butce-kalemi.asildi .butce-durum {
+  color: var(--danger-color);
+  font-weight: 600;
+}
+/* ==========================================================================
+   KART BAŞLIKLARINI ORTALAMA
+   ========================================================================== */
+
+.card-header {
+  /* Zaten display: flex; kuralı vardı, bunu kullanarak ortalayalım */
+  justify-content: center; /* Yatayda ortalar */
+  position: relative; /* Butonun konumlanması için gerekli */
+  text-align: center; /* h2'yi de ortalar */
+}
+
+/* 
+  Eğer başlığın yanında bir buton varsa (Örn: "Yeni İşlem"), 
+  bu butonun başlığı ortalamasını engellememesi için 
+  onu mutlak konumlandırma ile sağ köşeye alıyoruz.
+*/
+.card-header .card-header-action {
+  position: absolute;
+  right: 0; 
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Mobil cihazlarda başlık ve butonun alt alta gelmesi daha iyi olabilir */
+@media (max-width: 768px) {
+  .card-header {
+    flex-direction: column;
+    gap: 1rem;
+    justify-content: center;
+  }
+  .card-header .card-header-action {
+    position: static; /* Mutlak konumlandırmayı iptal et */
+    transform: none;
+    width: 100%; /* Mobil'de tam genişlik kaplasın */
+    text-align: center;
+    justify-content: center; /* Buton içindeki ikonu ve yazıyı ortala */
+  }
+}
+/* ==========================================================================
+   MOBİL UYUMLULUK (RESPONSIVE DESIGN)
+   ========================================================================== */
+
+/* Tablet ve daha küçük ekranlar için (örneğin 900px ve altı) */
+@media (max-width: 900px) {
+    /* Ana içeriğin kenar boşluklarını azaltalım */
+    .main-content {
+        padding: 1rem;
+    }
+
+    /* Tüm kartların iç boşluklarını azaltalım */
+    .card {
+        padding: 1rem;
+    }
+
+    /* İki sütunlu tüm yapıları tek sütuna düşürelim */
+    .analiz-bolumu-grid,
+    .yonetim-sayfasi-layout {
+        grid-template-columns: 1fr; /* Her zaman tek sütun */
+    }
+
+    /* Formlardaki iki sütunlu yapıyı tek sütuna düşürelim */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Sadece telefonlar için (örneğin 600px ve altı) */
+@media (max-width: 600px) {
+    /* Yazı boyutlarını biraz küçültelim */
+    h2, .card-header h2 {
+        font-size: 1.1rem;
+    }
+    .ozet-tutar {
+        font-size: 1.5rem;
+    }
+
+    /* Üst menüyü daha kompakt hale getirelim */
+    .app-header {
+        padding: 0 1rem;
+        height: 56px;
+    }
+    .header-logo {
+        font-size: 1.2rem;
+    }
+    .header-nav a {
+        padding: 1rem 0.5rem;
+        font-size: 0.8rem;
+    }
+    
+    /* Tarih seçiciyi alt alta getirelim */
+    .zaman-filtresi-kutusu {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+/* === İŞLEM KARTI MOBİL GÖRÜNÜMÜ === */
+@media (max-width: 600px) {
+    .islem-listesi-yeni li {
+        /* flex-direction: column; Her şeyi alt alta dizer */
+        align-items: flex-start; /* Elemanları sola hizalar */
+        position: relative; /* Butonları konumlandırmak için */
+        padding-bottom: 3rem; /* Butonlar için altta yer açar */
+    }
+
+    .islem-orta {
+        margin-bottom: 0.5rem;
+    }
+    
+    .islem-sag {
+        /* Rakamı ve butonları ekranın sağına değil, kartın altına alalım */
+        position: absolute;
+        bottom: 0.75rem;
+        right: 1rem;
+        width: auto;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    
+    .islem-tutar {
+        font-size: 1.2rem;
+    }
+    }
+ /* ==========================================================================
+   GENEL BAKIŞ - SON STİL DÜZELTMELERİ (KESİN ÇÖZÜM)
+   ========================================================================== */
+
+/* 1. "Aylık Özet" Başlıklarını Kalınlaştırma (Daha Güçlü Seçici) */
+.aylik-ozet-kutusu .ozet-baslik {
+  font-weight: 500 !important; /* !important kuralı ezilmesini engeller */
+  color: var(--secondary-text) !important;
+}
+
+/* 2. "Aylık Gider Dağılımı" Kartını Beğenilen Tasarıma Döndürme */
+.hesap-gider-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.hesap-gider-ust {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem; /* Üst ve alt satır arasına boşluk */
+}
+
+.hesap-gider-alt {
+  display: flex;
+  flex-direction: column; /* Yüzde metnini ve barı alt alta getirir */
+  align-items: flex-start; /* Bu ikiliyi sola hizalar */
+  gap: 0.5rem; /* Metin ve bar arasına boşluk */
+}
+
+/* Zaten var olan bu kuralların yerini teyit edelim */
+.hesap-gider-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  white-space: nowrap;
+}
+.hesap-progress-bar-konteyner {
+  width: 100%; /* Barın tam genişlikte olmasını sağlar */
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 4px;
+}
+.hesap-progress-bar-dolgu {
+  height: 100%;
+  background-color: var(--danger-color);
+  border-radius: 4px;
+}
+/* ==========================================================================
+   AKILLI GELİŞTİRMELER İÇİN YENİ STİLLER
+   ========================================================================== */
+
+/* 1. Tarih Seçici Yön Butonları */
+.tarih-yon-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    padding: 0;
+    line-height: 40px;
+    text-align: center;
+}
+.tarih-yon-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* 2. Aylık Durum Mesajı */
+.aylik-durum-mesaji {
+    text-align: center;
+    font-style: italic;
+    color: var(--secondary-text);
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* 3. Bütçe Karşılaştırma Metni */
+.degisim-yuzdesi {
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: right;
+    margin-top: 0.5rem;
+}
+.zaman-filtresi-kutusu {
+  display: flex;
+  gap: 1rem; /* Butonlar ve select kutuları arasına boşluk */
+  background-color: #34495e;
+  color: white;
+  padding: 1rem 1.5rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 2rem;
+  align-items: center; /* <<< BU SATIR HER ŞEYİ DİKEYDE ORTALAYACAK */
+}
+/* App.css'e eklenecekler */
+
+/* Transfer kartının arka plan rengi */
+.islem-karti-transfer {
+    background-color: #e9ecef; /* DAHA BELİRGİN BİR GRİ TONU */
+    border-left: 4px solid var(--secondary-text); 
+}
+.islem-karti-transfer:hover {
+    background-color: #dfe4ea; /* Hover için biraz daha koyu bir ton */
+}
+
+/* Nötr renk (gri) */
+.notr-renk {
+    color: var(--secondary-text);
+}
+/* ==========================================================================
+   İŞLEM KARTI - ETİKET TASARIMI GÜNCELLEMESİ
+   ========================================================================== */
+
+.islem-etiketler {
+  display: flex;
+  align-items: center; /* Etiketleri dikeyde ortalar */
+  gap: 0.5rem; /* Etiketler arasına boşluk bırakır */
+  margin-top: 0.5rem; /* Açıklama ile arasına boşluk koyar */
+}
+
+/* Kategori ve Hesap Etiketlerinin Genel Stili */
+.islem-etiket {
+  font-size: 0.75rem; /* 12px */
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px; /* Daha yuvarlak kenarlar */
+  background-color: #f1f2f6; /* Nötr, açık gri bir arka plan */
+  color: var(--secondary-text); /* Soluk metin rengi */
+}
+
+/* Tarih Etiketinin Özel Stili */
+.islem-etiket.tarih-etiketi {
+  background-color: transparent; /* Arka planı olmasın */
+  color: #a4b0be; /* Daha da soluk bir gri */
+  font-style: normal; /* İtalikliği kaldırabiliriz, daha modern durur */
+  padding: 0; /* Ekstra boşlukları kaldır */
+}
+
+/* Etiketler arasına ayırıcı nokta ekleyelim */
+.islem-etiket:not(:last-child)::after {
+  content: "•";
+  margin-left: 0.5rem;
+  color: #dfe4ea; /* Çok soluk bir ayırıcı rengi */
+}
+
+/* Tarih etiketinden sonra ayırıcı olmasın */
+.islem-etiket.tarih-etiketi::after {
+  content: "";
+  margin-left: 0;
+}
+/* ==========================================================================
+   İŞLEM KARTI - İKONLU VE ANLAMLI ETİKET TASARIMI
+   ========================================================================== */
+
+.islem-etiketler {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Mobilde etiketler sığmazsa alt satıra geçsin */
+  gap: 0.75rem; /* Etiketler arasına boşluk */
+  margin-top: 0.5rem;
+}
+
+/* Tüm etiketler için temel stil */
+.islem-etiket {
+  display: inline-flex; /* İkon ve metni yan yana getirir */
+  align-items: center;
+  gap: 0.4rem; /* İkon ve metin arasına boşluk */
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background-color: #f1f2f6;
+  color: var(--secondary-text);
+}
+
+/* Kategori, Hesap ve Transfer için hafif farklı arka planlar */
+.islem-etiket.kategori-etiketi {
+  background-color: #eef2f7;
+}
+.islem-etiket.hesap-etiketi {
+  background-color: #f0f4f8;
+}
+.islem-etiket.transfer-etiketi {
+    background-color: #e9ecef;
+    font-weight: 600;
+}
+
+/* Tarih etiketi yine daha sade */
+.islem-etiket.tarih-etiketi {
+  background-color: transparent;
+  color: #a4b0be;
+  padding: 0;
+}
+
+/* Ayırıcı noktaları artık kullanmıyoruz, ikonlar bu işi görüyor */
+.islem-etiket::after {
+  content: "";
+  margin: 0;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - YAN FİLTRE PANELİ STİLLERİ
+   ========================================================================== */
+
+.filtre-kontrol-paneli {
+    display: flex;
+    justify-content: flex-end; /* Butonu sağa yaslar */
+    margin-bottom: 1rem;
+}
+
+.filtre-ac-btn {
+    background-color: var(--background-card);
+    color: var(--primary-text);
+    border: 1px solid var(--border-color);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+.filtre-ac-btn:hover {
+    background-color: #f8f9fa;
+}
+
+/* --- Yan Menü --- */
+.filtre-yan-menu-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+.filtre-yan-menu {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 350px; /* Panelin maksimum genişliği */
+    background-color: var(--background-card);
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+}
+
+.filtre-yan-menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.filtre-yan-menu-header h3 {
+    margin: 0;
+}
+.filtre-yan-menu-header button {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--secondary-text);
+}
+
+.filtre-yan-menu-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    overflow-y: auto; /* Çok fazla filtre olursa kaydırma çubuğu çıkar */
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - AÇILIR FİLTRE KARTI STİLLERİ
+   ========================================================================== */
+
+/* Liste başlığını (İşlem Listesi ve Filtre Butonu) yan yana getirir */
+.liste-baslik {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+.liste-baslik h2 {
+  margin: 0;
+}
+
+/* Filtre açma butonu */
+.filtre-ac-btn {
+    background-color: #f1f2f6;
+    color: var(--primary-text);
+    border: none;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+}
+.filtre-ac-btn:hover {
+    background-color: #dfe4ea;
+}
+
+/* Animasyonla açılan ana filtre kutusu */
+.acilir-filtre-kutusu {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: var(--border-radius);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+}
+
+/* select kutularını grid yapıda dizer */
+.filtre-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Net bir şekilde 2 eşit sütun oluştur */
+    gap: 1.5rem; /* Sütunlar ve satırlar arasına boşluk koy */
+}
+
+/* ==========================================================================
+   İŞLEMLER SAYFASI - FİLTRELERİ TEMİZLE BUTONU STİLİ
+   ========================================================================== */
+
+/* Açılır filtre kutusunun iç yapısını butonun konumlanması için düzenliyoruz */
+.acilir-filtre-kutusu {
+    display: flex;
+    flex-direction: column; /* İçerikleri alt alta dizer */
+    gap: 1.5rem; /* Filtre grubu ile buton arasına boşluk koyar */
+}
+
+/* "Filtreleri Temizle" butonunun yeni stili */
+.filtre-temizle-btn {
+    align-self: flex-end; /* Butonu kutunun sağına yaslar */
+    background-color: transparent;
+    color: var(--secondary-text);
+    border: 1px solid var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin-top: 0; /* Eski margin'i sıfırla */
+    float: none;   /* Eski float'ı sıfırla */
+}
+
+.filtre-temizle-btn:hover {
+    background-color: #f8f9fa; /* Hafif bir arkaplan rengi */
+    color: var(--primary-text);
+    border-color: #ced4da;
+    text-decoration: none; /* Alt çizgiyi kaldır */
+}
+
+/* Aylık özet kutusunun stilini güncelleyelim */
+.sayfa-ici-ozet {
+    padding: 1rem;
+    margin-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-around;
+}
+.ozet-kalem {
+    text-align: center;
+}
+/* ==========================================================================
+   ÖZELLEŞTİR SAYFASI - BASİT VE ZARİF STİLLER (İLK HALİNE DÖNÜŞ)
+   ========================================================================== */
+
+.yonetim-sayfasi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+.yonetim-sayfasi-header h2 {
+  font-size: 1.5rem;
+  margin: 0; border: none; padding: 0;
+}
+.yonetim-sayfasi-header .islem-tipi-secici { margin: 0; }
+
+.yonetim-sayfasi-icerik { margin-top: 1.5rem; }
+.yonetim-sayfasi-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.bolum h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.form-modern label {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem;
+}
+.form-modern input { margin-bottom: 0.75rem; }
+.form-modern button { font-size: 0.9rem; }
+
+.yonetim-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.yonetim-listesi-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.1rem 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: 500;
+}
+.yonetim-listesi-item:last-child {
+  border-bottom: none;
+}
+.kategori-sol-taraf-sirala {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.drag-handle {
+    cursor: grab;
+    color: #c8d6e5;
+}
+/* ==========================================================================
+   ADIM 1: ANA ÖZET KARTI İYİLEŞTİRMELERİ
+   ========================================================================== */
+
+/* Özet kartındaki başlıkları (Toplam Gelir, Toplam Gider vb.) stilize edelim */
+.aylik-ozet-kutusu .ozet-baslik {
+  font-size: 1rem; /* 16px */
+  font-weight: 500;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem; /* Rakamla arasına boşluk koyar */
+}
+
+/* Rakamların (tutar) stilini daha VURUCU yapalım */
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem; /* Font boyutunu belirgin şekilde artırdık (örn: 36px) */
+  font-weight: 700;   /* Daha kalın bir font ağırlığı */
+  line-height: 1.1;   /* Satır yüksekliğini ayarlayarak dikey boşluğu toparlar */
+}
+
+/* Renkleri :root'taki değişkenlere bağlayarak tutarlılığı garantileyelim */
+.aylik-ozet-kutusu .gelir-renk {
+  color: var(--success-color);
+}
+
+.aylik-ozet-kutusu .gider-renk {
+  color: var(--danger-color);
+}
+
+/* Aylık Durum (Net Bakiye) rakamını diğerlerinden ayırt edelim */
+.aylik-ozet-kutusu .ozet-tutar.aylik-durum {
+  color: var(--primary-text); /* Ana metin rengini kullansın */
+}
+
+/* Net bakiye pozitif ise yeşil, negatif ise kırmızı olsun */
+.aylik-ozet-kutusu .ozet-tutar.aylik-durum.gelir-renk {
+  color: var(--success-color);
+}
+
+.aylik-ozet-kutusu .ozet-tutar.aylik-durum.gider-renk {
+  color: var(--danger-color);
+}
+/* ==========================================================================
+   GENEL BAKIŞ - YENİ KARTLAR İÇİN EKLENEN STİLLER
+   ========================================================================== */
+
+/* Yeni mini kartları yan yana dizmek için bir grid konteyneri */
+.yeni-kartlar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+  gap: 2rem; /* Kartlar arası boşluk */
+  margin-bottom: 2rem;
+}
+
+/* Tek bir mini kartın temel stili */
+.mini-kart {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-kart-baslik {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--secondary-text);
+  margin-bottom: 1rem;
+}
+
+.mini-kart-baslik h3 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.mini-kart-icerik {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Genel Bakiye Kartı'na özel stiller */
+.genel-bakiye-tutar {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-text);
+  line-height: 1.2;
+}
+
+.mini-kart-aciklama {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 0.25rem;
+}
+
+/* Yaklaşan Ödemeler Kartı'na özel stiller */
+.yaklasan-odeme-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* Liste elemanları arasına boşluk */
+}
+
+.yaklasan-odeme-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: #f1f2f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--primary-text);
+}
+
+/* Mobil cihazlar için yeni kartları alt alta getir */
+@media (max-width: 900px) {
+  .yeni-kartlar-grid {
+    grid-template-columns: 1fr; /* Tek sütuna düşür */
+  }
+}
+/* ==========================================================================
+   HARCAMA LİSTESİ YÜZDE GÖSTERİMİ İÇİN STİLLER
+   ========================================================================== */
+
+/* Kategori adı ve yüzdesini bir arada tutan yeni div için */
+.kategori-detay {
+  display: flex;
+  flex-direction: column; /* İsim ve yüzdeyi alt alta getirir */
+  align-items: flex-start; /* Sola hizalar */
+}
+
+/* Yüzde metninin stili */
+.kategori-yuzdesi {
+  font-size: 0.8rem; /* Daha küçük font */
+  color: var(--secondary-text); /* Soluk metin rengi */
+  font-weight: 400; /* Daha ince font */
+  margin-top: 2px; /* Kategori adıyla arasına hafif boşluk */
+}
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI - NİHAİ STİLLER (TÜM İYİLEŞTİRMELER)
+   ========================================================================== */
+
+/* 1. SAYFA DÜZENİ: Kusursuz hizalama için Ana Grid Yapısı */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr; /* Her zaman tek sütun */
+  gap: 2rem; /* Ana satırlar (kart grupları) arasındaki dikey boşluk */
+}
+
+.grid-row-2-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem; /* Kartlar arasındaki yatay boşluk */
+  align-items: stretch; /* Kartların yüksekliklerini eşitler */
+}
+
+/* Grid içindeki kartların satır yüksekliğine tam olarak uymasını sağlar */
+.grid-row-2-col > .card {
+    height: 100%;
+}
+
+/* Mobil cihazlar için iki sütunlu yapıyı tek sütuna düşürür */
+@media (max-width: 900px) {
+  .grid-row-2-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* 2. KART STİLLERİ: Yeni Kartları Canlandırma ve Başlıkları Eşitleme */
+
+/* "Genel Varlık Durumu" ve "Yaklaşan Ödemeler" kart başlıklarını diğerleriyle eşitleme */
+.mini-kart-baslik h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+/* "Genel Varlık Durumu" kartına özel gradient arkaplan */
+.mini-kart.varlik-karti {
+  background: linear-gradient(45deg, #4a69bd, #6a89cc);
+  color: white;
+}
+.mini-kart.varlik-karti .mini-kart-baslik,
+.mini-kart.varlik-karti .mini-kart-aciklama {
+  color: rgba(255, 255, 255, 0.9);
+}
+.mini-kart.varlik-karti .genel-bakiye-tutar {
+  color: white;
+}
+
+/* "Yaklaşan Ödemeler" listesinde 3 gün veya daha az kalanlar için uyarı rengi */
+.yaklasan-odeme-item .kalan-gun.uyari {
+  background-color: var(--warning-color);
+  color: white;
+  font-weight: 700;
+}
+
+
+/* 3. MEVCUT KART İYİLEŞTİRMELERİ */
+
+/* "Aylık Özet" kartındaki rakamları daha vurucu yapma */
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+/* Harcama Dağılımı listesine eklenen yüzde metninin stili */
+.kategori-detay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kategori-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI - NİHAİ VE BİRLEŞTİRİLMİŞ STİLLER
+   ========================================================================== */
+
+/* 1. YENİ KARTLARIN YERLEŞİMİ ("Genel Varlık" ve "Yaklaşan Ödemeler") */
+.yeni-kartlar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* İki eşit sütun */
+  gap: 2rem; /* Kartlar arası boşluk */
+  margin-bottom: 2rem;
+}
+
+
+/* 2. YENİ KARTLARIN İÇ STİLLERİ VE RENKLENDİRİLMESİ */
+
+/* Tek bir mini kartın temel yapısı */
+.mini-kart {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Kart başlığı (ikon ve yazı) */
+.mini-kart-baslik {
+  display: flex;
+  align-items: center; /* İkon ve metni dikeyde ortalar */
+  gap: 0.75rem;
+  color: var(--secondary-text);
+  margin-bottom: 1rem;
+}
+
+/* Başlıkların ana kart başlıklarıyla aynı stile gelmesi */
+.mini-kart-baslik h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+/* Kartların ana içerik alanı */
+.mini-kart-icerik {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* "Genel Varlık Durumu" kartına özel gradient arkaplan ve renkler */
+.mini-kart.varlik-karti {
+  background: linear-gradient(45deg, #4a69bd, #6a89cc);
+  color: white;
+}
+.mini-kart.varlik-karti .mini-kart-baslik,
+.mini-kart.varlik-karti .mini-kart-aciklama {
+  color: rgba(255, 255, 255, 0.9);
+}
+.mini-kart.varlik-karti .genel-bakiye-tutar {
+  color: white;
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.mini-kart-aciklama {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 0.25rem;
+}
+
+/* "Yaklaşan Ödemeler" kartı liste stili */
+.yaklasan-odeme-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.yaklasan-odeme-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: #f1f2f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--primary-text);
+}
+
+/* 3 gün veya daha az kalan ödemeler için uyarı rengi */
+.yaklasan-odeme-item .kalan-gun.uyari {
+  background-color: var(--warning-color);
+  color: white;
+  font-weight: 700;
+}
+
+
+/* 3. ANA ÖZET KARTI İYİLEŞTİRMELERİ */
+
+.aylik-ozet-kutusu .ozet-baslik {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--secondary-text);
+  margin-bottom: 0.5rem;
+}
+
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+
+/* 4. HARCAMA LİSTESİ YÜZDE GÖSTERİMİ */
+
+.kategori-detay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kategori-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+
+/* 5. MOBİL UYUMLULUK */
+
+/* Mobil cihazlar için iki sütunlu yapıyı tek sütuna düşürür */
+@media (max-width: 900px) {
+  .yeni-kartlar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ==========================================================================
+   "MÜKEMMEL" GENEL BAKIŞ SAYFASI İÇİN GEREKLİ TÜM STİLLER
+   ========================================================================== */
+
+/* 1. YENİ KARTLARIN YERLEŞİMİ ("Genel Varlık" ve "Yaklaşan Ödemeler") */
+.yeni-kartlar-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* 2. YENİ KARTLARIN İÇ STİLLERİ */
+.mini-kart {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-kart-baslik {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--secondary-text);
+  margin-bottom: 1rem;
+}
+
+/* Mini kart başlıklarının ana kart başlıklarıyla aynı olması */
+.mini-kart-baslik h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-text);
+}
+
+.mini-kart-icerik {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.genel-bakiye-tutar {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--primary-text);
+  line-height: 1.2;
+}
+
+.mini-kart-aciklama {
+  font-size: 0.85rem;
+  color: var(--secondary-text);
+  margin-top: 0.25rem;
+}
+
+.yaklasan-odeme-listesi {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.yaklasan-odeme-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.95rem;
+}
+
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: #f1f2f6;
+  padding: 4px 8px;
+  border-radius: 6px;
+  color: var(--primary-text);
+}
+
+/* 3. ANA ÖZET KARTI İYİLEŞTİRMELERİ */
+.aylik-ozet-kutusu .ozet-tutar {
+  font-size: 2.25rem;
+  font-weight: 700;
+}
+
+/* 4. HARCAMA LİSTESİ YÜZDE GÖSTERİMİ */
+.kategori-detay {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.kategori-yuzdesi {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* 5. MOBİL UYUMLULUK */
+@media (max-width: 900px) {
+  .yeni-kartlar-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* === Form Izgara (Grid) Yapısı Düzeltmesi === */
+
+/* Formun ana iskeleti */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Formu iki eşit sütuna böler */
+    gap: 1rem; /* Sütunlar ve satırlar arasına boşluk ekler */
+    align-items: flex-end; /* Form elemanlarını dikeyde alta hizalar, daha düzenli görünür */
+}
+
+/* Formdaki her bir eleman grubu (etiket + input) */
+.form-item-full,
+.form-item-half {
+    display: flex;
+    flex-direction: column; /* Etiketi input'un üzerine getirir */
+    gap: 0.3rem; /* Etiket ile input arasına hafif bir boşluk koyar */
+}
+
+/* Tam satır kaplayan elemanlar (Açıklama, Butonlar vb.) */
+.form-item-full {
+    grid-column: 1 / -1; /* "Birinci sütundan başla, son sütuna kadar git" demektir */
+}
+
+/* Form etiketlerinin stili (örn: "Açıklama:") */
+.form-grid label {
+    font-size: 0.9rem; /* Biraz küçülttük */
+    font-weight: 500;
+    color: #555; /* Yazı rengini biraz yumuşattık */
+    margin-left: 2px;
+}
+
+/* Formdaki TÜM input ve select kutularının ortak stili */
+.form-grid input[type="text"],
+.form-grid input[type="number"],
+.form-grid input[type="date"],
+.form-grid select {
+    width: 100%; /* Bulunduğu kabı %100 doldurur */
+    padding: 0.8rem; /* İç boşluğu artırdık, daha rahat bir görünüm için */
+    border: 1px solid #ccc; /* Kenarlık rengi */
+    border-radius: 8px; /* Kenarları yuvarlaklaştırdık */
+    font-size: 1rem; /* Yazı boyutunu standart hale getirdik */
+    box-sizing: border-box; /* Padding ve border'ın genişliği etkilememesini sağlar */
+}
+/* === YENİ Authentication Sayfaları Stilleri === */
+
+/* Sayfanın tamamını kaplayan ana konteyner */
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f0f2f5; /* Ana uygulamanızdaki gibi açık gri bir arka plan */
+    padding: 1rem;
+}
+
+/* Giriş/Kayıt kartının kendisi */
+.auth-card {
+    width: 100%;
+    max-width: 480px; /* Kartı biraz daha genişlettik */
+    padding: 2.5rem 3rem; /* İç boşlukları artırdık */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e8e8e8;
+}
+
+/* Yeni eklediğimiz marka başlığı bölümü */
+.auth-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #333; /* Ana başlık rengi */
+    margin: 0;
+}
+
+.auth-subtitle {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    color: #666; /* Daha yumuşak bir alt başlık rengi */
+}
+
+/* Formun kendisi */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem; /* Form elemanları arası boşluğu artırdık */
+}
+
+/* Input alanlarının etiketleri (E-posta, Şifre) */
+.auth-form label {
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+    display: block;
+    color: #444;
+}
+
+/* Input alanlarının kendisi */
+/* Input alanlarının kendisi */
+.auth-form input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    
+    /* YENİ EKLENEN SATIRLAR */
+    background-color: #fff !important; /* Arka planı BEYAZ olmaya zorla */
+    color: #333 !important;           /* İçindeki yazı rengini KOYU GRİ yap */
+}
+
+/* Input'a tıklandığında (focus) */
+.auth-form input:focus {
+    outline: none;
+    border-color: var(--primary-color, #007bff); /* Ana temanızın mavi rengi */
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+
+/* Giriş/Kayıt butonu */
+.auth-button {
+    width: 100%; /* Butonu tam genişlik yaptık */
+    margin-top: 1rem;
+    padding: 0.9rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #fff;
+    background-color: var(--primary-color, #007bff); /* Ana temanızın mavi rengi */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.auth-button:hover {
+    background-color: var(--primary-color-dark, #0056b3); /* Hover için mavinin koyu tonu */
+}
+
+.auth-button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+/* "Hesabın yok mu? Kayıt Ol" linki */
+.auth-switch {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.auth-switch a {
+    color: var(--primary-color, #007bff);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-switch a:hover {
+    text-decoration: underline;
+}
+/* Header ve Çıkış Yap Butonu Stilleri */
+
+/* Header'ı esnek bir kutu yapıp elemanları iki uca yaslıyoruz */
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logout-button {
+    background-color: transparent;
+    color: var(--primary-color, #007bff);
+    border: 1px solid var(--primary-color, #007bff);
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.logout-button:hover {
+    background-color: var(--primary-color, #007bff);
+    color: #fff;
+}
+/* === Ana Uygulama İskeleti (Layout) === */
+
+/* Bütün uygulamayı saran ana konteyner */
+.app-layout {
+  display: grid;
+  /* İki satır tanımlıyoruz: 1. header için, 2. ana içerik için */
+  grid-template-rows: auto 1fr; 
+  min-height: 100vh;
+  background-color: #f0f2f5; /* Sayfa arka plan rengi */
+}
+
+/* Üst menü / Header */
+.app-header {
+  grid-row: 1; /* Grid'in 1. satırına yerleş */
+  background-color: #ffffff;
+  padding: 0 2rem; /* Sağ ve sol boşluklar */
+  border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); 
+
+  /* YAPIŞKAN HEADER: Sayfa aşağı kaydırıldığında header'ın yukarıda sabit kalmasını sağlar */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Diğer elemanların üzerinde kalması için */
+}
+
+/* Sayfaların gösterildiği ana içerik alanı */
+.main-content {
+  grid-row: 2; /* Grid'in 2. satırına yerleş */
+  overflow-y: auto; /* İçerik taşarsa, sadece bu alan scroll olur */
+  padding: 2rem; /* İçeriğe dört bir yandan boşluk verir */
+}
+
+/* Bu, App.jsx'teki <main> etiketinin içindeki .container class'ı olabilir.
+   Eğer .container adında genel bir class'ınız varsa bu padding'i ona da uygulayabilirsiniz.
+   Emin olmak için bu kuralı da ekleyelim. */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0; /* Ana .main-content zaten padding verdiği için bunu sıfırlayabiliriz */
+}
+/* src/App.css altına eklenecek stiller */
+
+.danger-zone {
+  border: 2px solid var(--danger-color);
+  border-radius: var(--border-radius);
+  background-color: rgba(192, 57, 43, 0.05);
+}
+
+.danger-zone h3 {
+  color: var(--danger-color);
+  padding-left: 1rem;
+}
+
+.danger-zone-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.danger-zone-item p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
+.danger-btn {
+  background-color: var(--danger-color);
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.danger-btn:hover {
+  background-color: #a11d1d; /* Kırmızının daha koyu tonu */
+}
+
+.danger-btn:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+/* ==========================================================================
+   YENİ MODERN DASHBOARD TASARIMI - TEMEL YAPI VE HEADER
+   ========================================================================== */
+
+/* 1. Genel Sayfa Yapısı ve Renk Paleti (Mevcut :root'u güncelleyebilir veya bunu kullanabiliriz) */
+:root {
+  --background-page: #f0f2f5; /* Sayfanın ana arka plan rengi (hafif gri/mavi) */
+  --background-card: #ffffff; /* Kartların arka plan rengi (beyaz) */
+  --primary-text: #1d2129;    /* Ana metin rengi (daha koyu) */
+  --secondary-text: #606770;  /* İkincil metin rengi (soluk gri) */
+  --primary-brand: #4a69bd;   /* Ana marka rengi (mavi tonu) */
+  --primary-brand-hover: #3b5998; /* Marka renginin hover hali */
+  --border-color: #dfe4ea;   /* Çerçeve rengi */
+  --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* Kart gölgesi */
+  --border-radius: 12px;     /* Kenar yuvarlaklığı */
+}
+
+/* Body stilini sıfırlayıp temel ayarları yapıyoruz */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--background-page);
+  color: var(--primary-text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 2. Ana Uygulama İskeleti (Layout) */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* 3. Yeni, Şık ve Yapışkan Header (Üst Menü) */
+.app-header {
+  background-color: var(--background-card);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  height: 64px;
+  border-bottom: 1px solid var(--border-color);
+
+  /* YAPIŞKAN HEADER: Sayfa kaydırıldığında yukarıda sabit kalır */
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Diğer elemanların üzerinde kalması için */
+}
+
+.header-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-brand);
+}
+
+.header-nav {
+  display: flex;
+  height: 100%;
+}
+
+.header-nav a {
+  text-decoration: none;
+  color: var(--secondary-text);
+  padding: 0 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.header-nav a:hover {
+  color: var(--primary-brand);
+  background-color: #f5f6f7;
+}
+
+/* Aktif olan sekmeyi vurgulamak için */
+.header-nav a.active {
+  color: var(--primary-brand);
+  border-bottom-color: var(--primary-brand);
+}
+
+.header-actions .logout-button,
+.header-actions .login-button {
+  background-color: var(--primary-brand);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.header-actions .logout-button:hover,
+.header-actions .login-button:hover {
+  background-color: var(--primary-brand-hover);
+}
+
+
+/* 4. Ana İçerik Alanı */
+.main-content {
+  flex-grow: 1; /* Header'dan kalan tüm dikey boşluğu doldurur */
+  width: 100%;
+}
+
+.container {
+  max-width: 1200px; /* İçeriğin maksimum genişliği */
+  margin: 0 auto; /* Yatayda ortalar */
+  padding: 2rem; /* İçeriğe dört bir yandan boşluk verir */
+}
+/* ==========================================================================
+   "BOŞ DURUM" (EMPTY STATE) KARTI İÇİN STİLLER
+   ========================================================================== */
+
+.empty-state-container {
+  text-align: center;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+  margin-top: 1rem;
+}
+
+.empty-state-container p {
+  margin: 0;
+  color: var(--secondary-text);
+  max-width: 400px; /* Metnin çok fazla yayılmasını engeller */
+  line-height: 1.5;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+/* Küçük ve etkili butonlar için genel stiller */
+.primary-btn-small,
+.secondary-btn-small {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.primary-btn-small {
+  background-color: var(--primary-brand);
+  color: white;
+}
+.primary-btn-small:hover {
+  background-color: var(--primary-brand-hover);
+}
+
+.secondary-btn-small {
+  background-color: transparent;
+  color: var(--primary-brand);
+  border-color: var(--primary-brand);
+}
+.secondary-btn-small:hover {
+  background-color: rgba(74, 105, 189, 0.1); /* Marka renginin çok şeffaf hali */
+}
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI - MİNİ KART İYİLEŞTİRMELERİ
+   ========================================================================== */
+
+/* Mini kartlar içindeki boş durumun padding'ini azaltıyoruz */
+.empty-state-container.mini-kart-empty {
+  padding: 1rem 0.5rem;
+  margin-top: 0;
+  gap: 0.75rem;
+}
+
+.empty-state-container.mini-kart-empty p {
+    font-size: 0.9rem; /* Yazıyı biraz küçültelim */
+}
+
+/* Yaklaşan ödemeler listesindeki "kalan gün" etiketinin stili */
+.yaklasan-odeme-item .kalan-gun {
+  font-weight: 600;
+  font-size: 0.85rem;
+  background-color: #f1f2f6;
+  padding: 4px 10px;
+  border-radius: 6px;
+  color: var(--primary-text);
+  white-space: nowrap; /* "gün sonra" yazısının alta kaymasını engeller */
+}
+
+/* 3 gün veya daha az kalan ödemeler için UYARI rengi */
+.yaklasan-odeme-item .kalan-gun.uyari {
+  background-color: var(--warning-color);
+  color: white;
+  font-weight: 700;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - ÇOKLU SEÇİM STİLLERİ
+   ========================================================================== */
+
+.liste-eylemler {
+  display: flex;
+  gap: 1rem;
+}
+
+.islem-listesi-yeni li.secilebilir {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+.islem-listesi-yeni li.secilebilir:hover {
+  background-color: #f0f2f5;
+}
+
+.islem-listesi-yeni li.secili {
+  background-color: #e7f3ff !important; /* Mavi tonda bir seçim rengi */
+  border-left-color: #007bff !important;
+}
+
+.secim-kutusu {
+  margin-right: 1rem;
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.islem-listesi-yeni li.secili .secim-kutusu {
+    color: #0056b3;
+}
+
+/* Sayfanın üstündeki eylem çubuğu */
+.secim-eylem-cubugu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #007bff;
+  color: white;
+  border-radius: var(--border-radius);
+  margin-top: 1.5rem;
+}
+
+.secim-eylem-cubugu span {
+  font-weight: 600;
+}
+
+.secim-eylem-cubugu .secim-eylem-btn,
+.secim-eylem-cubugu .danger-btn {
+  background: none;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  color: white;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.secim-eylem-cubugu .danger-btn {
+  border-color: #ffdddd;
+  background-color: var(--danger-color);
+}
+.secim-eylem-cubugu .danger-btn:disabled {
+  background-color: #a0a0a0;
+  border-color: #a0a0a0;
+}
+/* ==========================================================================
+   YAKLAŞAN ÖDEMELER KARTI - TUTAR GÖSTERİMİ İÇİN STİLLER
+   ========================================================================== */
+
+.yaklasan-odeme-item .odeme-detay {
+  display: flex;
+  flex-direction: column; /* Açıklama ve tutarı alt alta getirir */
+  align-items: flex-start; /* Sola hizalar */
+  gap: 2px; /* Aralarına çok hafif bir boşluk koyar */
+}
+
+.yaklasan-odeme-item .odeme-aciklama {
+  font-weight: 500; /* Açıklamayı biraz daha belirgin yapar */
+  color: var(--primary-text);
+}
+
+.yaklasan-odeme-item .odeme-tutar {
+  font-size: 0.85rem; /* Tutarı biraz daha küçük yapar */
+  color: var(--secondary-text); /* Rengini soluklaştırır */
+}
+/* ==========================================================================
+   GENEL BAKIŞ - YENİ VE SÜSLÜ SELAMLAMA KUTUSU
+   ========================================================================== */
+
+.selamlama-kutusu {
+  display: flex; /* İkon ve metni yan yana getirir */
+  align-items: center; /* Dikeyde ortalar */
+  justify-content: center; /* YENİ: İçeriği yatayda ortalar */
+  text-align: center;      /* DEĞİŞİKLİK: Metinleri de ortalar */
+  padding: 1.5rem 2rem; /* İç boşluklar (dikey, yatay) */
+  margin-bottom: 2rem; /* Altındaki tarih seçici ile arasına boşluk koyar */
+  
+  background-color: var(--background-card); /* Kartlarla aynı arka plan */
+  border-radius: var(--border-radius);
+  box-shadow: var(--card-shadow);
+
+  /* Hafif bir gradient ile daha şık bir görünüm */
+  background-image: linear-gradient(135deg, rgba(74, 105, 189, 0.05) 0%, rgba(255, 255, 255, 0) 40%);
+  border: 1px solid var(--border-color);
+}
+
+.selamlama-ikon {
+  font-size: 3rem; /* İkonu büyütür (48px) */
+  color: var(--primary-brand);
+  margin-right: 1.5rem; /* İkon ve metin arasına boşluk */
+  line-height: 1; /* İkonun tam oturmasını sağlar */
+}
+
+.selamlama-metin h1 {
+  font-size: 1.75rem; /* 28px */
+  font-weight: 700;
+  color: var(--primary-text);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.selamlama-metin p {
+  font-size: 1rem; /* 16px */
+  color: var(--secondary-text);
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+/* ==========================================================================
+   SABİT ÖDEMELER - BEKLEYEN ÖDEME VURGULAMA STİLLERİ
+   ========================================================================== */
+
+.yonetim-listesi-item.bekleyen-odeme {
+  position: relative; /* İkonun konumlanması için gerekli */
+  background-color: rgba(243, 156, 18, 0.08); /* --warning-color'ın çok şeffaf hali */
+  border-left: 4px solid var(--warning-color);
+  /* Sol kenarlık kadar içeri kaydırarak hizayı koru */
+  padding-left: calc(1rem - 4px); 
+}
+
+.bekleyen-odeme-ikon {
+  position: absolute;
+  left: -12px; /* Kenarlığın ortasına yerleştirir */
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--warning-color);
+  background-color: var(--background-card); /* Arka planı kart rengi yaparak kenarlığı keser */
+  border-radius: 50%;
+  font-size: 1.2rem; /* İkonu biraz büyütelim */
+  padding: 2px;
+}
+
+/* ==========================================================================
+   SABİT ÖDEMELER - BEKLEYEN İŞLEM BUTONLARI
+   ========================================================================== */
+   
+.icon-btn.birincil-btn,
+.icon-btn.ikincil-btn {
+    background: none;
+    border: 1px solid;
+    color: currentColor;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    width: auto;
+    height: auto;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.icon-btn.birincil-btn {
+    border-color: var(--success-color);
+    background-color: var(--success-color);
+    color: white;
+}
+.icon-btn.birincil-btn:hover {
+    background-color: #239b55;
+    border-color: #239b55;
+    transform: none; /* İkon hover efektini iptal et */
+}
+
+.icon-btn.ikincil-btn {
+    border-color: var(--secondary-text);
+    color: var(--secondary-text);
+}
+.icon-btn.ikincil-btn:hover {
+    background-color: #f1f2f6;
+    border-color: #f1f2f6;
+    color: var(--primary-text);
+    transform: none; /* İkon hover efektini iptal et */
+}
+/* ==========================================================================
+   AKILLI BİLDİRİM ÇUBUĞU İÇİN STİLLER (DAHA GÜÇLÜ VERSİYON)
+   ========================================================================== */
+
+/* Ana konteynere ID vererek özgüllüğü artırabiliriz veya direkt class ile devam edebiliriz.
+   Şimdilik mevcut class'ı daha güçlü hale getirelim. */
+div.akilli-bildirim-cubugu {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 1rem 1.5rem !important;
+  margin-bottom: 2rem !important;
+  background-color: var(--warning-color) !important;
+  color: #333 !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: 0 4px 10px rgba(243, 156, 18, 0.3) !important;
+}
+
+.akilli-bildirim-cubugu .bildirim-sol-taraf {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-ikon {
+  font-size: 1.75rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-metin {
+  display: flex;
+  flex-direction: column;
+}
+
+.akilli-bildirim-cubugu .bildirim-metin strong {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-metin span {
+  font-size: 0.9rem;
+}
+
+.akilli-bildirim-cubugu .bildirim-sag-taraf {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Butonları da daha güçlü seçicilerle hedef alalım */
+.akilli-bildirim-cubugu button.primary-btn-small {
+  background-color: #ffffff !important;
+  color: var(--primary-text) !important;
+  border: 1px solid transparent !important;
+}
+.akilli-bildirim-cubugu button.primary-btn-small:hover {
+  background-color: #f5f6f7 !important;
+}
+
+.akilli-bildirim-cubugu button.secondary-btn-small {
+  background-color: transparent !important;
+  color: #333 !important;
+  border-color: #333 !important;
+}
+.akilli-bildirim-cubugu button.secondary-btn-small:hover {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - NİHAİ TAKVİM STİLLERİ
+   ========================================================================== */
+
+/* Takvimi saran .card'ın iç boşluklarını sıfırlayarak tam oturmasını sağlıyoruz */
+.sabit-takvim-ust .rdrCalendarWrapper {
+  font-family: 'Roboto', sans-serif;
+  width: 100%;
+  border: none;
+  background-color: transparent !important;
+  color: var(--primary-text) !important;
+}
+
+/* Üstteki tarih gösterge alanını gizliyoruz, gereksiz */
+.sabit-takvim-ust .rdrDateDisplayWrapper {
+  display: none !important;
+}
+
+/* Sol taraftaki hazır aralıklar menüsü ("Bugün", "Dün" vb.) */
+.sabit-takvim-ust .rdrDefinedRangesWrapper {
+  border-right: 1px solid var(--border-color) !important;
+  width: 160px; /* Genişliği biraz artıralım */
+  background-color: #f8f9fa; /* Hafif gri bir arka plan */
+}
+
+.sabit-takvim-ust .rdrStaticRange {
+  border-bottom: none !important; /* Aradaki çizgileri kaldır */
+  background: transparent !important;
+}
+
+/* Sol menüdeki yazıların rengini ve stilini düzeltiyoruz */
+.sabit-takvim-ust .rdrStaticRangeLabel {
+  color: var(--secondary-text) !important;
+  font-weight: 500;
+  padding: 12px 20px !important;
+}
+
+.sabit-takvim-ust .rdrStaticRange:hover .rdrStaticRangeLabel {
+  background: rgba(74, 105, 189, 0.08) !important;
+}
+
+.sabit-takvim-ust .rdrStaticRangeSelected .rdrStaticRangeLabel {
+  background: rgba(74, 105, 189, 0.15) !important;
+  color: var(--primary-brand) !important;
+  font-weight: 600;
+}
+
+/* Takvimin ana gövdesi (günler, ay/yıl) */
+.sabit-takvim-ust .rdrMonthAndYearPickers select {
+  color: var(--primary-text);
+  font-weight: 600;
+}
+
+.sabit-takvim-ust .rdrDayNumber span {
+  color: var(--primary-text);
+}
+
+.sabit-takvim-ust .rdrDayPassive .rdrDayNumber span {
+  color: var(--secondary-text);
+  opacity: 0.5;
+}
+
+/* Seçili olan günlerin stilleri */
+.sabit-takvim-ust .rdrDay:not(.rdrDayPassive) .rdrInRange ~ .rdrDayNumber span,
+.sabit-takvim-ust .rdrDay:not(.rdrDayPassive) .rdrStartEdge ~ .rdrDayNumber span,
+.sabit-takvim-ust .rdrDay:not(.rdrDayPassive) .rdrEndEdge ~ .rdrDayNumber span {
+  color: white !important;
+}
+
+.sabit-takvim-ust .rdrDayToday .rdrDayNumber span:after {
+  background: var(--primary-brand) !important;
+}
+.sabit-takvim-ust .rdrStartEdge, .rdrEndEdge {
+  background: var(--primary-brand) !important;
+  border-radius: 1.5em; /* Daha yuvarlak kenarlar */
+}
+.sabit-takvim-ust .rdrInRange {
+  background: rgba(74, 105, 189, 0.15) !important;
+}
+/* ==========================================================================
+   KREDİ KARTI ÖZET KARTI STİLLERİ
+   ========================================================================== */
+
+.kk-ozet-listesi {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.kk-ozet-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.kk-ozet-sol, .kk-ozet-sag {
+    display: flex;
+    flex-direction: column;
+}
+
+.kk-ozet-sag {
+    text-align: right;
+}
+
+.kk-adi {
+    font-weight: 600;
+    color: var(--primary-text);
+}
+
+.kk-son-odeme {
+    font-size: 0.85rem;
+    color: var(--secondary-text);
+}
+
+.kk-borc {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--danger-color);
+}
+
+.kk-kalan-gun {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--secondary-text);
+}
+
+.kk-kalan-gun.uyari {
+    color: var(--danger-color);
+    font-weight: 700;
+}
+/* ==========================================================================
+   HEDEFLER İÇİN TEMEL VE ÇALIŞAN STİLLER (KARTLAR VE MODAL)
+   ========================================================================== */
+
+/* Bu genel kapsayıcı, kuralların çakışmasını engeller */
+.hedefler-sayfasi-container .hedefler-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.hedefler-sayfasi-container .hedef-karti {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 1.25rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.hedefler-sayfasi-container .hedef-karti:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.hedefler-sayfasi-container .hedef-karti-ust {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.hedefler-sayfasi-container .hedef-adi {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.hedefler-sayfasi-container .hedef-aksiyon-butonlari {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.hedefler-sayfasi-container .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    font-size: 1rem;
+    padding: 0.25rem;
+}
+
+.hedefler-sayfasi-container .icon-btn:hover {
+    color: #333;
+}
+
+.hedefler-sayfasi-container .hedef-karti-icerik {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.hedefler-sayfasi-container .hedef-tutar-bilgisi {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.hedefler-sayfasi-container .hedef-tutar-bilgisi .mevcut {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #1a73e8;
+}
+
+.hedefler-sayfasi-container .hedef-tutar-bilgisi .hedef {
+    font-size: 1rem;
+    color: #777;
+}
+
+.hedefler-sayfasi-container .hedef-karti-alt-bilgi {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.hedefler-sayfasi-container .progress-bar-container {
+    width: 100%;
+    height: 10px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.hedefler-sayfasi-container .progress-bar-dolu {
+    height: 100%;
+    background-image: linear-gradient(90deg, #42a5f5, #1e88e5);
+    border-radius: 10px;
+}
+
+.hedefler-sayfasi-container .hedef-karti-aksiyonlar {
+    margin-top: auto;
+    padding-top: 1rem;
+    align-self: flex-end;
+}
+
+.hedefler-sayfasi-container .hedef-karti.tamamlandi {
+    border-color: #34c759;
+    background-color: #f6fff8;
+}
+
+.hedefler-sayfasi-container .hedef-tamamlandi-mesaji {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1rem;
+    gap: 0.75rem;
+    color: #2e7d32;
+}
+
+.hedefler-sayfasi-container .hedef-tamamlandi-mesaji svg {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.hedefler-sayfasi-container .hedef-tamamlandi-mesaji h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+/* Modal Stilleri (Bunlar genellikle sorun çıkarmaz) */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6); display: flex;
+    align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-content {
+    background: white; padding: 2rem; border-radius: 12px;
+    width: 90%; max-width: 500px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+.modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 1.5rem;
+}
+.modal-header h2 { margin: 0; font-size: 1.5rem; }
+.modal-close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #888; }
+.modal-form .form-grup { margin-bottom: 1.25rem; }
+.modal-form label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #555; }
+.modal-form input, .modal-form select {
+    width: 100%; padding: 0.75rem; border: 1px solid #ccc;
+    border-radius: 8px; font-size: 1rem;
+}
+.modal-form input:focus, .modal-form select:focus {
+    outline: none; border-color: #1a73e8; box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}
+.form-hata {
+    color: #d32f2f; background-color: #ffebee; border: 1px solid #d32f2f;
+    border-radius: 8px; padding: 0.75rem; margin-bottom: 1rem;
+}
+.form-aksiyonlar {
+    display: flex; justify-content: flex-end; gap: 1rem; margin-top: 2rem;
+}
+/* ==========================================================================
+   HEDEFLER SAYFASI İYİLEŞTİRMELERİ (ÖZET PANOSU VE AKILLI KART)
+   ========================================================================== */
+
+/* --- Özet Panosu --- */
+.hedefler-ozet-panosu {
+    margin: 2.5rem 0;
+}
+
+.ozet-panosu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.ozet-karti {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+}
+
+.ozet-karti-ikon {
+    font-size: 2.5rem;
+    color: #1a73e8;
+    background-color: #e8f0fe;
+    border-radius: 50%;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ozet-karti:nth-child(2) .ozet-karti-ikon {
+    color: #e67e22; background-color: #fdf3e7;
+}
+.ozet-karti:nth-child(3) .ozet-karti-ikon {
+    color: #27ae60; background-color: #e9f7ef;
+}
+
+.ozet-karti-icerik {
+    display: flex;
+    flex-direction: column;
+}
+
+.ozet-karti-deger {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #333;
+    line-height: 1.2;
+}
+
+.ozet-karti-baslik {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #555;
+    margin-bottom: 0.25rem;
+}
+
+.ozet-karti-aciklama {
+    font-size: 0.85rem;
+    color: #888;
+    margin: 0;
+}
+
+/* --- Hedef Kartı İyileştirmeleri --- */
+.hedef-karti-alt-bilgi .hedef-kalan-bilgi {
+    font-weight: 500;
+    color: #e67e22; /* Kalan tutarı vurgulamak için farklı bir renk */
+}
+/* ==========================================================================
+   HEDEFLER SAYFASI FİNAL GÖRSEL DOKUNUŞLARI (v3 - MARGIN SIFIRLAMA)
+   ========================================================================== */
+
+/* 1. Başlık Alanını Ortalama */
+.hedefler-sayfasi-container .sayfa-baslik {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+.hedefler-sayfasi-container .sayfa-baslik p {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* YENİ EKLENEN KURAL: Başlığın kendi üst boşluğunu sıfırlıyoruz */
+.hedefler-sayfasi-container .sayfa-baslik h1 {
+    margin-top: 0;
+}
+
+/* 2. Üstteki Boşluğu Azaltma */
+.main-content .container {
+    padding-top: 0 !important;
+}
+.hedefler-sayfasi-container {
+    padding-top: 0.5rem; /* Bu değeri şimdi doğru şekilde ayarlayabilirsiniz */
+}
+
+
+/* 3. "Yeni Hedef Oluştur" Buton Rengini Düzeltme */
+.hedefler-sayfasi-container .sayfa-baslik .primary-btn {
+    background-color: #1a73e8; 
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.hedefler-sayfasi-container .sayfa-baslik .primary-btn:hover {
+    background-color: #155cb0;
+}
+/* ==========================================================================
+   GENEL BAKIŞ SAYFASI YENİ TASARIM (KOKPİT GÖRÜNÜMÜ)
+   ========================================================================== */
+
+/* --- 1. KAHRAMAN BÖLÜMÜ --- */
+.kahraman-bolumu {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f9fa; /* Hafif kırık beyaz bir arka plan */
+    padding: 2rem;
+    border-radius: 16px; /* Daha modern, yuvarlak köşeler */
+    margin-bottom: 2.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.selamlama-alani {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.selamlama-ikon {
+    font-size: 2.5rem;
+    color: #1a73e8;
+}
+
+.selamlama-metin h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    color: #333;
+}
+
+.selamlama-metin p {
+    font-size: 1.1rem;
+    margin: 0;
+    color: #666;
+}
+
+
+/* --- 2. KOKPİT GRID YAPISI --- */
+.kokpit-grid {
+    display: grid;
+    /* Ana sütun, yan sütunun yaklaşık 2 katı genişliğinde olacak */
+    grid-template-columns: minmax(0, 2fr) 1fr; 
+    gap: 2rem; /* Sütunlar arasındaki boşluk */
+    align-items: start; /* Sütunların içeriğini yukarıdan başlatır */
+}
+
+/* Sütunların içindeki kartlar için genel düzenlemeler */
+.ana-sutun,
+.yan-sutun {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Kartlar arasındaki dikey boşluk */
+}
+
+
+/* --- 3. MOBİL UYUMLULUK (RESPONSIVE) --- */
+/* Ekran genişliği 1024px'den küçük olduğunda... */
+@media (max-width: 1024px) {
+    /* Kahraman bölümünü alt alta getir */
+    .kahraman-bolumu {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+    }
+
+    /* Grid yapısını tek sütuna düşür */
+    .kokpit-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ==========================================================================
+   FİNAL CİLA: ANİMASYONLU RAKAMLAR VE TİPOGRAFİ
+   ========================================================================== */
+
+/* --- Genel Kart Başlıkları için --- */
+.card .card-header h2,
+.card .mini-kart-baslik h3 {
+    font-size: 1.1rem;
+    font-weight: 600; /* Başlıkları biraz daha kalın yapıyoruz */
+    color: #444; /* Rengi hafifçe koyulaştırıyoruz */
+}
+
+/* --- Genel Varlık Kartı Rakamı --- */
+.genel-bakiye-tutar {
+    font-size: 2.25rem; /* Rakamı büyütüyoruz */
+    font-weight: 500; /* Daha zarif bir kalınlık */
+    color: #222;
+    line-height: 1.2;
+}
+
+/* --- Aylık Özet Kartı Rakamları --- */
+.aylik-ozet-kutusu .ozet-tutar {
+    font-size: 1.5rem; /* Rakamları büyütüyoruz */
+    font-weight: 600;
+}
+/* ==========================================================================
+   ÖZELLEŞTİR SAYFASI YENİ TASARIM
+   ========================================================================== */
+
+/* --- Ana Kapsayıcı ve Kart --- */
+.ozellestir-sayfasi-container {
+    max-width: 1000px; /* Sayfanın çok genişlemesini engeller */
+    margin: 0 auto; /* Sayfayı ortalar */
+}
+
+.ozellestir-sayfasi-container .card {
+    padding: 0; /* İçerideki elementlerin boşluklarını kendimiz yöneteceğiz */
+    overflow: hidden; /* Köşelerden taşmaları engeller */
+}
+
+/* --- Sayfa Başlığı ve Sekmeler --- */
+.ozellestir-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+.ozellestir-header h1 {
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+.sekme-kontrol {
+    display: flex;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 0.25rem;
+}
+
+.sekme-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    background-color: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.2s ease-in-out;
+}
+
+.sekme-btn.aktif {
+    background-color: #fff;
+    color: #1a73e8;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* --- İçerik Alanı --- */
+.ozellestir-icerik {
+    padding: 2rem;
+}
+
+.yonetim-bolumu h2,
+.kategori-listesi-alani h3 {
+    font-size: 1.25rem;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+}
+
+/* --- Genel Liste ve Satır Stilleri --- */
+.ozellestir-liste {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Satırlar arası "nefes boşluğu" */
+}
+
+.ozellestir-liste-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem; /* Satır içi "nefes boşluğu" */
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+}
+
+.ozellestir-liste-item span {
+    font-weight: 500;
+}
+
+.liste-item-aksiyonlar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.liste-item-aksiyonlar .icon-btn {
+    color: #888;
+}
+.liste-item-aksiyonlar .icon-btn:hover {
+    color: #333;
+}
+.liste-item-aksiyonlar .icon-btn.danger:hover {
+    color: #d32f2f;
+}
+
+/* --- Satır İçi Form ve Inputlar --- */
+.liste-item-input {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0;
+}
+.liste-item-input:focus {
+    outline: none;
+}
+
+.ozellestir-liste-item.ekleme-formu {
+    background-color: #f8f9fa; /* Form satırını hafifçe farklılaştırır */
+}
+
+/* --- Ekle Butonu --- */
+.ekle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    font-weight: 600;
+    border: 1px dashed #1a73e8;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.ekle-btn:hover {
+    background-color: #dbe7fb;
+}
+
+.ekle-btn-small {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* --- Kategori Sayfasına Özel Stiller --- */
+.yonetim-bolumu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2.5rem;
+}
+
+.drag-handle-btn {
+    background: none;
+    border: none;
+    cursor: grab;
+    color: #ccc;
+    margin-right: 1rem;
+}
+.drag-handle-btn:active {
+    cursor: grabbing;
+}
+
+/* --- Kredi Kartı Sayfasına Özel Stiller --- */
+.kk-item-bilgi {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.kk-item-bilgi small {
+    color: #888;
+    font-size: 0.9rem;
+}
+.yonetim-bolumu-grid .form-grup {
+    margin-bottom: 1.25rem;
+}
+.yonetim-bolumu-grid label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.yonetim-bolumu-grid input {
+    width: 100%;
+}
+
+/* --- Mobil Uyumluluk --- */
+@media (max-width: 768px) {
+    .ozellestir-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+    }
+    .yonetim-bolumu-grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* ==========================================================================
+   RAPORLAR SAYFASI YENİ TASARIM (v3 - FİNAL DOKUNUŞLAR)
+   ========================================================================== */
+
+/* --- Ana Sayfa Düzeni (Aynı) --- */
+.raporlar-sayfasi-container { width: 100%; }
+.rapor-icerik { display: flex; flex-direction: column; gap: 2rem; }
+
+/* --- Başlık ve Kontrol Şeridi (Aynı) --- */
+.raporlar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #e9ecef;
+}
+.raporlar-header h1 { font-size: 2rem; margin: 0; }
+.rapor-kontrolleri { display: flex; align-items: center; gap: 1rem; }
+
+
+
+/* --- Tablo ve Modal Stilleri (Değişiklik yok, öncekiyle aynı) --- */
+.tablo-container {
+    width: 100%;
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+th, td {
+    padding: 1rem;
+    border-bottom: 1px solid #f1f3f5;
+}
+th {
+    font-weight: 600;
+    color: #868e96;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+td {
+    font-weight: 500;
+}
+tfoot .toplam-satiri {
+    background-color: #f8f9fa;
+    border-top: 2px solid #e9ecef;
+}
+tfoot .toplam-satiri td {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: #333;
+}
+.date-range-modal {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* --- Mobil Uyumluluk --- */
+@media (max-width: 992px) {
+    .raporlar-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.5rem;
+    }
+    .rapor-kontrolleri {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}
+/* ==========================================================================
+   RAPORLAR SAYFASI - SEKMELİ YAPI STİLLERİ
+   ========================================================================== */
+
+.rapor-sekmeleri {
+    margin-bottom: 2rem;
+    align-self: flex-start; /* Sekmeleri sola yaslar */
+}
+/* ==========================================================================
+   RAPORLAR SAYFASI - BUTON GÖRÜNÜM DÜZELTMESİ
+   ========================================================================== */
+
+/* 
+   Butonları hedefleyen bu kurallar, genel stilleri ezecek kadar
+   spesifik ve güçlüdür.
+*/
+.raporlar-sayfasi-container .rapor-kontrolleri .secondary-btn,
+.raporlar-sayfasi-container .rapor-kontrolleri .primary-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1.25rem; /* Butonların iç boşluğunu artırıyoruz */
+    border-radius: 8px;
+    font-size: 1rem; /* Yazı boyutunu belirliyoruz */
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Hafif bir gölge ekliyoruz */
+    transition: all 0.2s ease-in-out;
+}
+
+/* "Tarih Aralığı Seç" Butonu */
+.raporlar-sayfasi-container .rapor-kontrolleri .secondary-btn {
+    background-color: #ffffff; /* Arka planı BEYAZ yapıyoruz */
+    border: 1px solid #ced4da;  /* İnce bir kenarlık ekliyoruz */
+    color: #495057;           /* Yazı rengini KOYU GRİ yapıyoruz */
+}
+
+/* "CSV İndir" Butonu */
+.raporlar-sayfasi-container .rapor-kontrolleri .primary-btn {
+    background-color: #1a73e8; /* Arka planı ANA MAVİ yapıyoruz */
+    color: white;             /* Yazı rengini BEYAZ yapıyoruz */
+    border: 1px solid #1a73e8;
+}
+
+/* Hover Efektleri */
+.raporlar-sayfasi-container .rapor-kontrolleri .secondary-btn:hover {
+    background-color: #f8f9fa;
+    transform: translateY(-2px); /* Hafif yukarı kalkma efekti */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.raporlar-sayfasi-container .rapor-kontrolleri .primary-btn:hover {
+    background-color: #155cb0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+/* ==========================================================================
+   YÖNETİM SAYFALARI ORTAK STİLLERİ (Özelleştir & Bütçeler)
+   ========================================================================== */
+
+/* --- Ana Kapsayıcı ve Kart --- */
+.ozellestir-sayfasi-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.ozellestir-sayfasi-container .card {
+    padding: 0;
+    overflow: hidden;
+}
+
+/* --- Sayfa Başlığı ve Sekmeler --- */
+.ozellestir-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e9ecef;
+    background-color: #f8f9fa;
+}
+
+.ozellestir-header h1 {
+    font-size: 1.75rem;
+    margin: 0;
+}
+
+/* --- İçerik Alanı --- */
+.ozellestir-icerik {
+    padding: 2rem;
+}
+
+/* --- Genel Liste ve Satır Stilleri --- */
+.ozellestir-liste {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.ozellestir-liste-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    min-height: 60px; /* Tüm satırların aynı yükseklikte olmasını sağlar */
+}
+
+.ozellestir-liste-item span {
+    font-weight: 500;
+}
+
+.liste-item-aksiyonlar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.liste-item-aksiyonlar .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem;
+    color: #888;
+}
+.liste-item-aksiyonlar .icon-btn:hover {
+    color: #333;
+}
+.liste-item-aksiyonlar .icon-btn.danger:hover {
+    color: #d32f2f;
+}
+
+/* --- Satır İçi Form ve Inputlar --- */
+.liste-item-input,
+.liste-item-select {
+    flex-grow: 1;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 500;
+    padding: 0;
+}
+.liste-item-input:focus,
+.liste-item-select:focus {
+    outline: none;
+}
+
+.ozellestir-liste-item.ekleme-formu {
+    background-color: #f8f9fa;
+}
+
+/* --- Ekle Butonu --- */
+.ekle-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 8px;
+    background-color: #e8f0fe;
+    color: #1a73e8;
+    font-weight: 600;
+    border: 1px dashed #1a73e8;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.ekle-btn:hover {
+    background-color: #dbe7fb;
+}
+
+
+/* --- BÜTÇELER SAYFASINA ÖZEL EK STİLLER --- */
+.ozellestir-liste-item .liste-item-sag-taraf {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.ozellestir-liste-item .liste-item-deger {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: #333;
+    min-width: 100px;
+    text-align: right;
+}
+/* ==========================================================================
+   AYARLAR SAYFASI NİHAİ TASARIM (Sol Menü + Tema Desteği)
+   ========================================================================== */
+
+/* --- Sol Menü --- */
+.ayarlar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ayar-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    color: var(--text-secondary);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ayar-menu-item svg {
+    font-size: 1.25rem;
+}
+
+.ayar-menu-item:hover {
+    background-color: var(--background-primary);
+    color: var(--text-primary);
+}
+
+.ayar-menu-item.aktif {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* --- Sağ İçerik Alanı --- */
+.ayarlar-icerik {
+    background-color: var(--background-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+}
+
+.ayar-icerik-bolumu {
+    padding: 2rem;
+}
+
+.ayar-icerik-bolumu h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.ayar-formu {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 500px; /* Formun çok genişlemesini engeller */
+}
+.ayar-formu .form-grup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.ayar-formu button {
+    align-self: flex-start;
+}
+
+/* --- Görünüm Ayarları Stilleri --- */
+.tema-secenekleri {
+    display: flex;
+    gap: 0.75rem;
+}
+.tema-secenekleri button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-color);
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+}
+.tema-secenekleri button.aktif {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+/* --- Tehlikeli Bölge --- */
+.ayar-bolumu.tehlikeli-bolge {
+    background-color: rgba(220, 38, 38, 0.05);
+    border: 1px solid rgba(220, 38, 38, 0.2);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+.tehlikeli-bolge h4 {
+    color: var(--danger-color);
+    margin-top: 0;
+}
+
+/* --- Mobil Uyumluluk --- */
+@media (max-width: 768px) {
+    .ayarlar-layout {
+        grid-template-columns: 1fr; /* Menüyü içeriğin üstüne al */
+    }
+}
+/* ==========================================================================
+   AYARLAR SAYFASI TASARIMI (Sadeleştirilmiş - Tema Yok)
+   ========================================================================== */
+
+
+/* --- Sol Menü --- */
+.ayarlar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.ayar-menu-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: left;
+    color: #6c757d; /* İkincil metin rengi */
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.ayar-menu-item svg {
+    font-size: 1.25rem;
+}
+
+.ayar-menu-item:hover {
+    background-color: #f8f9fa; /* Hafif hover arka planı */
+    color: #212529; /* Ana metin rengi */
+}
+
+.ayar-menu-item.aktif {
+    background-color: #1a73e8; /* Ana mavi renk */
+    color: white;
+}
+
+/* --- Sağ İçerik Alanı --- */
+.ayarlar-icerik {
+    background-color: #ffffff; /* Beyaz kart arka planı */
+    border-radius: 12px;
+    border: 1px solid #e9ecef; /* İnce kenarlık */
+}
+
+.ayar-icerik-bolumu {
+    padding: 2rem;
+}
+
+.ayar-icerik-bolumu h2 {
+    margin-top: 0;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.ayar-formu {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    max-width: 500px;
+}
+.ayar-formu .form-grup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.ayar-formu button {
+    align-self: flex-start;
+}
+
+/* --- Tehlikeli Bölge --- */
+.ayar-bolumu.tehlikeli-bolge {
+    background-color: #fff5f5;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+.tehlikeli-bolge h4 {
+    color: #b91c1c;
+    margin-top: 0;
+}
+
+/* --- Mobil Uyumluluk --- */
+@media (max-width: 768px) {
+    .ayarlar-layout {
+        grid-template-columns: 1fr;
+    }
+}
+/* ==========================================================================
+   AYARLAR SAYFASI - BİLDİRİMLER SEKİMESİ STİLLERİ
+   ========================================================================== */
+
+/* Ayar içeriğindeki açıklama metni için stil */
+.ayar-aciklama {
+    font-size: 0.95rem;
+    color: #6c757d; /* İkincil metin rengi */
+    margin-top: -1rem; /* Başlıkla arasını biraz kapatır */
+    margin-bottom: 2rem;
+    max-width: 500px;
+}
+
+/* --- Switch (Açma/Kapama) Anahtarı Stilleri --- */
+.switch-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef; /* Ayarlar arasına ince bir çizgi */
+}
+/* Son elemanın altındaki çizgiyi kaldır */
+.ayar-formu .switch-container:last-child {
+    border-bottom: none;
+}
+
+.switch-label { 
+    font-weight: 500;
+    padding-right: 1rem; /* Metnin butona yapışmasını engeller */
+}
+
+.switch { 
+    position: relative; 
+    display: inline-block; 
+    width: 50px; 
+    height: 28px; 
+    flex-shrink: 0; /* Küçülmesini engeller */
+}
+
+.switch input { 
+    opacity: 0; 
+    width: 0; 
+    height: 0; 
+}
+
+.slider { 
+    position: absolute; 
+    cursor: pointer; 
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background-color: #ccc; 
+    transition: .4s; 
+}
+
+.slider:before { 
+    position: absolute; 
+    content: ""; 
+    height: 20px; 
+    width: 20px; 
+    left: 4px; 
+    bottom: 4px; 
+    background-color: white; 
+    transition: .4s; 
+}
+
+input:checked + .slider { 
+    background-color: #28a745; /* Açık olduğunda yeşil renk */
+}
+
+input:focus + .slider { 
+    box-shadow: 0 0 1px #28a745; 
+}
+
+input:checked + .slider:before { 
+    transform: translateX(22px); 
+}
+
+.slider.round { 
+    border-radius: 34px; 
+}
+
+.slider.round:before { 
+    border-radius: 50%; 
+}
+/* ==========================================================================
+   AKILLI KART GÖRSEL İYİLEŞTİRMELERİ
+   ========================================================================== */
+
+/* --- Genel Varlık Kartı - Aylık Değişim --- */
+.mini-kart-aciklama {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.aylik-degisim {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* --- Aylık Özet Kartı - Trend Göstergesi --- */
+.ozet-baslik-ve-trend {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.trend-gostergesi {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* --- Genel Renk Sınıfları --- */
+.pozitif {
+    color: #28a745; /* Yeşil */
+}
+.negatif {
+    color: #dc3545; /* Kırmızı */
+}
+/* ==========================================================================
+   HEDEF ÖZET KARTI STİLLERİ
+   ========================================================================== */
+
+.hedef-ozet-karti .hedef-ozet-icerik {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.hedef-ozet-karti .hedef-adi {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.hedef-ozet-karti .hedef-tutar-bilgisi {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.hedef-ozet-karti .hedef-tutar-bilgisi .mevcut {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.hedef-ozet-karti .hedef-tutar-bilgisi .hedef {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+}
+
+.hedef-ozet-karti .progress-bar-container {
+    height: 8px;
+    background-color: var(--background-primary);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.hedef-ozet-karti .progress-bar-dolu {
+    height: 100%;
+    background-color: var(--success-color, #28a745); /* Yeşil renk */
+    border-radius: 8px;
+}
+
+.hedef-ozet-karti .hedef-ozet-alt-bilgi {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.hedef-ozet-karti .detay-link {
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+}
+.hedef-ozet-karti .detay-link:hover {
+    text-decoration: underline;
+}
+/* ==========================================================================
+   BÜTÇE KARTI ORİJİNAL STİLLERİ
+   ========================================================================== */
+
+.butce-listesi {
+    list-style: none;
+    padding: 1rem;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Her bütçe arası boşluk */
+}
+.butce-item-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+.butce-item-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+    color: #888;
+}
+.kalan-tutar.negatif {
+    color: #dc3545;
+    font-weight: 600;
+}
+
+/* --- Progress Bar Stilleri --- */
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.progress-bar-dolu {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.5s ease-out;
+    background-color: #28a745; /* Varsayılan: Yeşil (normal) */
+}
+.progress-bar-dolu.uyari {
+    background-color: #ffc107; /* Sarı */
+}
+.progress-bar-dolu.asildi {
+    background-color: #dc3545; /* Kırmızı */
+}
+.yuzde-gosterge.uyari { color: #ffc107; font-weight: 600; }
+.yuzde-gosterge.asildi { color: #dc3545; font-weight: 600; }
+/* ==========================================================================
+   BÜTÇE KARTI - EKSİK TAHMİN UYARISI STİLLERİ
+   ========================================================================== */
+
+/* 
+   Her bir bütçe satırının (.butce-item) içindeki tahmin kutusunun
+   görünümünü düzenler.
+*/
+.tahmin-uyari-kutusu {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem; /* İkon ve metin arası boşluk */
+    background-color: #fffbeb; /* Açık sarı, dikkat çekici ama yormayan arka plan */
+    border: 1px solid #fde68a; /* Sarı kenarlık */
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin-top: 0.75rem; /* Üstündeki bölümle arasına boşluk koyar */
+}
+
+.tahmin-uyari-kutusu .uyari-ikonu {
+    color: #f59e0b; /* Koyu sarı ikon rengi */
+    font-size: 1.1rem;
+    flex-shrink: 0; /* İkonun sıkışmasını engeller */
+}
+
+.tahmin-uyari-kutusu .uyari-metni {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #b45309; /* Okunaklı, koyu sarı/kahverengi metin rengi */
+    line-height: 1.4; /* Satır yüksekliği */
+}
+/* ==========================================================================
+   GENEL BAKIŞ - NİHAİ TASARIM (vSON)
+   ========================================================================== */
+
+/* --- Kart Başlıklarını Mavi ve Kalın Yapma --- */
+.card .card-header h2,
+.card .mini-kart-baslik h3 {
+    color: var(--primary-color, #1a73e8);
+    font-weight: 700 !important;
+}
+
+/* --- Aylık Özet Kartı Özel Yapısı --- */
+.aylik-ozet-kutusu {
+    /* Bu, içindeki kalemleri yan yana dizer */
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 0;
+}
+.ozet-kalem {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+}
+.ozet-baslik {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6c757d; /* Varsayılan başlık rengi */
+    margin-bottom: 0.25rem;
+}
+.ozet-tutar {
+    font-size: 1.75rem; /* Ana tutarı büyütüyoruz */
+    font-weight: 600;
+}
+
+/* --- Trend Göstergesi Yeni Stili (GÜÇLENDİRİLMİŞ) --- */
+.aylik-ozet-karti-container .trend-gostergesi {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.8rem !important;  /* Küçülmeyi garantilemek için !important */
+    font-weight: 500;
+    margin-top: 0.7rem; /* Üstündeki ana tutar ile arasına boşluk ekler */
+}
+.aylik-ozet-karti-container .trend-gostergesi.bos {
+    height: 1.35em; 
+    margin-top: 0.5rem;
+}
+
+/* --- RENK SINIFLARI (EN GÜÇLÜ HALİ) --- */
+.gelir-renk { color: #28a745 !important; }
+.gider-renk { color: #dc3545 !important; }
+.pozitif { color: #28a745; }
+.negatif { color: #dc3545; }
+.aylik-degisim.pozitif { color: #28a745; }
+.aylik-degisim.negatif { color: #dc3545; }
+/* ==========================================================================
+   FİNANSAL SAĞLIK KARTI STİLLERİ
+   ========================================================================== */
+
+.finansal-saglik-karti .saglik-karti-icerik {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem 0;
+}
+
+.finansal-saglik-karti .puan-daire {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    line-height: 1;
+}
+
+.finansal-saglik-karti .puan-sayisi {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.finansal-saglik-karti .puan-maksimum {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-left: 0.25rem;
+}
+
+.finansal-saglik-karti .durum-etiketi {
+    padding: 0.3rem 1rem;
+    border-radius: 16px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+}
+
+/* Durum etiketleri için renkler */
+.finansal-saglik-karti .durum-etiketi.pozitif {
+    background-color: #28a745; /* Yeşil */
+}
+.finansal-saglik-karti .durum-etiketi.uyari {
+    background-color: #ffc107; /* Sarı */
+    color: #333; /* Sarı arka planda koyu metin daha okunaklı */
+}
+.finansal-saglik-karti .durum-etiketi.negatif {
+    background-color: #dc3545; /* Kırmızı */
+}
+/* ==========================================================================
+   FİNANSAL SAĞLIK KARTI - TIKLANABİLİR HALE GETİRME
+   ========================================================================== */
+
+/* 
+   Kartı butona çevirdiğimiz için, butonun varsayılan stillerini sıfırlayıp
+   kart gibi görünmesini sağlıyoruz.
+*/
+.finansal-saglik-karti {
+    /* Mevcut .card stillerini miras alır, ek olarak şunları ekliyoruz: */
+    width: 100%; /* Bulunduğu sütunu tamamen kaplaması için */
+    border: 1px solid var(--border-color);
+    text-align: left; /* Butonların varsayılan ortalamasını iptal et */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.finansal-saglik-karti:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
+}
+
+.finansal-saglik-karti .detay-ipucu {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+/* ='========================================================================
+   FİNANSAL SAĞLIK MODALI STİLLERİ (TEMİZLENMİŞ VE NİHAİ)
+   ========================================================================== */
+
+.saglik-modal {
+    max-width: 600px;
+    padding: 0;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.saglik-modal .modal-header {
+    padding: 1.5rem 2rem;
+}
+
+.saglik-modal-ozet {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0.5rem 2rem 1.5rem 2rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 0.5rem;
+}
+
+/* 1. PUANIN BOYUTUNU GERİ GETİRMEK İÇİN */
+.saglik-modal-ozet .ozet-puan {
+    font-size: 4rem; /* Sadece font boyutunu ekliyoruz */
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-top: -2rem;
+    line-height: 1;
+}
+
+/* 2. DURUM METNİNİ RENKLENDİRMEK İÇİN */
+.saglik-modal-ozet .ozet-durum {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+/* Sadece "Mükemmel", "İyi" gibi kelimeleri renklendiriyoruz */
+.ozet-durum .pozitif { color: #28a745; }
+.ozet-durum .uyari { color: #f59e0b; }
+.ozet-durum .negatif { color: #dc3545; }
+
+.metrik-detay-listesi {
+    padding: 1.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto; /* Dikey kaydırma */
+}
+
+.metrik-detay-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.metrik-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+.metrik-ikon { font-size: 1.5rem; color: var(--primary-color); }
+.metrik-baslik-puan { flex-grow: 1; }
+.metrik-baslik-puan h4 { margin: 0; font-size: 1.1rem; }
+.metrik-durum { font-size: 0.85rem; font-weight: 600; }
+.metrik-puan { font-weight: 600; white-space: nowrap; }
+.metrik-puan small { font-weight: 400; color: var(--text-secondary); }
+
+.metrik-progress-bar-container {
+    width: 100%; height: 6px; background-color: var(--background-primary);
+    border-radius: 6px; overflow: hidden;
+}
+.metrik-progress-bar-dolu { height: 100%; border-radius: 6px; }
+.metrik-progress-bar-dolu.pozitif { background-color: #28a745; }
+.metrik-progress-bar-dolu.uyari { background-color: #ffc107; }
+.metrik-progress-bar-dolu.negatif { background-color: #dc3545; }
+
+.metrik-aciklama {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - GENİŞ TAKVİM MODALI (NİHAİ DÜZELTME)
+   ========================================================================== */
+
+/* Bu kural, takvim modalının genişliğini diğer tüm kuralları
+  ezerek uygular ve doğru görünmesini sağlar.
+*/
+.modal-content.date-range-modal {
+    max-width: 860px !important; /* Genişliği zorla uygula */
+    padding: 1rem !important;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Sol taraftaki "Bugün", "Dün" gibi yazıların rengini düzeltir */
+.date-range-modal .rdrStaticRangeLabel {
+    color: #333 !important;
+}
+
+/* Sol menüde seçili olan elemanın arka planını daha belirgin yapar */
+.date-range-modal .rdrStaticRange:hover .rdrStaticRangeLabel,
+.date-range-modal .rdrStaticRangeSelected .rdrStaticRangeLabel {
+    background-color: #f1f2f6 !important;
+}
+
+/* Modal içindeki buton grubunun stilleri (generic modal stillerini ezer) */
+.date-range-modal .modal-actions {
+    display: flex; /* Butonları yan yana getirir */
+    justify-content: flex-end; /* Butonları sağa yaslar */
+    gap: 1rem; /* Butonlar arasına boşluk bırakır */
+    width: 100%;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border-color);
+}
+
+/* Genel modal buton stillerini burada da kullanalım */
+.date-range-modal .modal-actions .primary-btn,
+.date-range-modal .modal-actions .cancel-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.date-range-modal .modal-actions .primary-btn {
+    background-color: #1a73e8;
+    color: white;
+}
+.date-range-modal .modal-actions .primary-btn:hover {
+    background-color: #155cb0;
+}
+
+.date-range-modal .modal-actions .cancel-btn {
+    background-color: #dfe4ea;
+    color: #2f3542;
+}
+.date-range-modal .modal-actions .cancel-btn:hover {
+    background-color: #ced6e0;
+}
+/* ==========================================================================
+   İŞLEMLER SAYFASI - ARAMA KUTUSU STİLİ
+   ========================================================================== */
+
+/* Arama kutusunu ve ikonunu bir arada tutan kapsayıcı */
+.arama-kutusu {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+/* Arama input'unun stili */
+.arama-kutusu input {
+    width: 220px; /* Genişliği ayarlayabilirsiniz */
+    padding: 0.6rem 1rem 0.6rem 2.5rem; /* Sol padding, ikon için yer açar */
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+    background-color: #f8f9fa;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Input'a tıklandığında */
+.arama-kutusu input:focus {
+    background-color: #fff;
+    border-color: var(--primary-brand);
+    box-shadow: 0 0 0 3px rgba(74, 105, 189, 0.1);
+    outline: none;
+}
+
+/* Arama ikonu (input'un içine yerleştirilir) */
+.arama-kutusu .arama-ikonu {
+    position: absolute;
+    left: 1rem;
+    color: var(--secondary-text);
+    pointer-events: none; /* İkonun tıklanmasını engeller */
+}
+/* ==========================================================================
+   ÖZELLEŞTİR SAYFASI - KARTLAR SEKME STİLLERİ
+   ========================================================================== */
+
+.ozellestir-liste-item .liste-item-ikon {
+    margin-right: 1rem;
+    color: var(--secondary-text);
+    font-size: 1.2rem;
+}
+
+.ozellestir-liste-item .kk-item-bilgi {
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* Kart adının mümkün olduğunca yer kaplamasını sağlar */
+}
+
+.ozellestir-liste-item .kk-item-detay {
+    display: flex;
+    gap: 1.5rem; /* "Kesim" ve "Son Ödeme" arası boşluk */
+    color: var(--secondary-text);
+    margin: 0 1.5rem; /* Kenarlarla arasına boşluk koyar */
+}
+
+/* Satır içindeki Kesim/Ödeme günü inputlarını bir arada tutan grup */
+.kk-input-grubu {
+    display: flex;
+    gap: 0.75rem;
+    margin: 0 1rem;
+}
+
+.kk-input-grubu input {
+    width: 80px; /* Inputların genişliğini sabitler */
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.liste-bos-mesaji {
+    padding: 2rem;
+    text-align: center;
+    color: var(--secondary-text);
+    font-style: italic;
+}
+/* ==========================================================================
+   RAPORLAR SAYFASI - OTOMATİK ANALİZ KUTUSU STİLİ
+   ========================================================================== */
+
+.analiz-kutusu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    margin: 1.5rem 1rem 1rem 1rem; /* Kartın kenarlarından biraz içeride durması için */
+    border-radius: 8px;
+    border: 1px solid;
+}
+
+.analiz-kutusu .analiz-ikon {
+    font-size: 1.5rem;
+    flex-shrink: 0; /* İkonun küçülmesini engeller */
+}
+
+.analiz-kutusu .analiz-mesaj {
+    margin: 0;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
+/* Duruma göre renkler */
+.analiz-kutusu.pozitif {
+    background-color: #f0fdf4; /* Açık yeşil */
+    border-color: #bbf7d0;
+    color: #166534;
+}
+
+.analiz-kutusu.negatif {
+    background-color: #fef2f2; /* Açık kırmızı */
+    border-color: #fecaca;
+    color: #991b1b;
+}
+
+.analiz-kutusu.notr {
+    background-color: #f8fafc; /* Açık gri */
+    border-color: #e2e8f0;
+    color: #334155;
+}
+/* ==========================================================================
+   SABİT ÖDEMELER - NİHAİ VE BİRLEŞTİRİLMİŞ STİLLER
+   ========================================================================== */
+
+/* Özet Panosunu Ortalamak için Sarmalayıcı */
+.ozet-panosu-container {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+/* Özet Panosu Grid'i */
+.ozet-panosu-grid-sabit-odeme {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 950px;
+}
+
+.ozet-karti-sabit-odeme {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    background-color: var(--background-card);
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-ikon {
+    font-size: 2rem;
+    color: var(--primary-brand);
+    background-color: #eef2f7;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-icerik {
+    display: flex;
+    flex-direction: column;
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-deger {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary-text);
+    line-height: 1.2;
+}
+
+.ozet-karti-sabit-odeme .ozet-karti-baslik {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--secondary-text);
+}
+
+/* Satır İçi Ekleme ve Düzenleme Formu */
+.ozellestir-liste-item.sabit-odeme-formu {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    border-color: var(--primary-brand);
+}
+
+.sabit-odeme-form-icerik {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.25rem;
+}
+
+.sabit-odeme-form-icerik .form-grup {
+    display: flex;
+    flex-direction: column;
+}
+
+.sabit-odeme-form-icerik .form-grup label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-bottom: 0.4rem;
+    color: var(--secondary-text);
+}
+
+.sabit-odeme-formu .liste-item-aksiyonlar {
+    align-self: flex-end;
+}
+
+/* Ödeme Tipi Seçici */
+.odeme-tipi-secici {
+    display: flex;
+    background-color: #e9ecef;
+    border-radius: 8px;
+    padding: 0.25rem;
+}
+
+.form-grup.odeme-tipi-grup {
+    grid-column: 1 / -1;
+}
+
+.odeme-tipi-secici button {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--secondary-text);
+    font-weight: 600;
+    padding: 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.odeme-tipi-secici button.aktif {
+    background-color: var(--background-card);
+    color: var(--primary-brand);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+/* ==========================================================================
+   BÜTÇELER SAYFASI - BASİT VE SAĞLAM TASARIM
+   ========================================================================== */
+
+.butce-listesi-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+}
+
+.butce-karti {
+    padding: 1.25rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem; /* Kart içindeki elemanlar arası boşluk */
+}
+
+.butce-karti-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.butce-karti-header .kategori-adi {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+.butce-karti-body .butce-karti-rakamlar {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+}
+.butce-karti-body .harcanan {
+    font-size: 1.25rem;
+    font-weight: 500;
+}
+.butce-karti-body .limit {
+    font-size: 1rem;
+    color: var(--secondary-text);
+}
+
+.butce-karti-footer {
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.kalan-tutar.pozitif { color: #28a745; }
+.kalan-tutar.negatif { color: #dc3545; }
+
+
+/* İlerleme Çubuğu ve Renkleri */
+.butce-karti.uyari .progress-bar-dolu { background-color: #ffc107; }
+.butce-karti.asildi .progress-bar-dolu { background-color: #dc3545; }
+
+/* Düzenleme ve Ekleme Formu Stilleri */
+.limit-input {
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    padding: 0.5rem;
+    text-align: right;
+    max-width: 120px;
+    font-size: 1rem;
+}
+.butce-karti.ekleme-formu {
+    border-style: dashed;
+}
+.butce-duzenleme-formu {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+.butce-duzenleme-formu select {
+    flex-grow: 1;
+}
+/* ==========================================================================
+   AYARLAR SAYFASI ÖZEL DÜZELTMELERİ (YENİ YÖNTEM)
+   ========================================================================== */
+
+/* Ayarlar Sayfası Üst Boşluk Düzeltmesi (Negatif Dış Boşluk Yöntemi) */
+.ayarlar-sayfasi {
+  margin-top: -2rem; /* Sayfayı yukarı doğru çeker */
+}
+/* Ayarlar Sayfası - Başlığı Grid Düzenine Dahil Etme */
+.ayarlar-layout h1 {
+  grid-column: 1 / -1; /* Başlığın tüm sütunları kaplamasını sağlar */
+}
+/* ============================================= */
+/* ========== AYARLAR SAYFASI STİLLERİ ========= */
+/* ============================================= */
+
+.ayarlar-layout {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  gap: 2rem;
+  /* DEĞİŞİKLİK 1: Hizalamayı garantilemek için 'start' en iyi yöntemdir. */
+  align-items: start; /* Her iki sütunun da içeriğini kendi hücrelerinin en tepesine yasla. */
+  
+  /* DEĞİŞİKLİK 2: Üst boşluğu minimum ve kontrollü hale getir. */
+  padding-top: 1.5rem; /* 2rem'den daha minimal bir değere düşürdük. */
+}
+
+/* DEĞİŞİKLİK 3: Olası margin farklarını sıfırlayarak hizalamayı garantile. */
+.ayarlar-menu, .ayarlar-icerik {
+    margin-top: 0;
+}
+
+/* Sol Menü (Navigasyon) */
+.ayarlar-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ayar-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #4a5568;
+  text-align: left;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.ayar-menu-item:hover {
+  background-color: #f7fafc;
+  color: #2d3748;
+}
+
+.ayar-menu-item.aktif {
+  background-color: #4A90E2; /* Projenin ana mavi rengi */
+  color: white;
+}
+
+.ayar-menu-item svg {
+  font-size: 1.2rem;
+}
+
+/* Sağdaki İçerik Alanı */
+.ayarlar-icerik {
+  width: 100%;
+}
+
+/* Ayar Kartı Stili */
+.ayar-karti {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e2e8f0;
+}
+
+.ayar-karti-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.ayar-karti-baslik {
+  font-size: 1.75rem; /* Yeni, daha vurgulu boyut */
+  margin: 0;
+  color: #1a202c;
+}
+
+.ayar-karti-aciklama {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+  color: #718096;
+}
+
+.ayar-karti-govde {
+  padding: 1.5rem;
+}
+
+/* Form Elemanları İyileştirmeleri */
+.ayar-formu .form-grup {
+  margin-bottom: 1.5rem;
+}
+.ayar-formu .form-grup:last-of-type {
+  margin-bottom: 0;
+}
+
+.ayar-formu label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  color: #4a5568;
+  display: block;
+}
+
+.ayar-formu input,
+.ayar-formu select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.ayar-formu input:focus,
+.ayar-formu select:focus {
+    outline: none;
+    border-color: #4A90E2;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+}
+
+.ayar-formu input:disabled {
+    background-color: #f7fafc;
+    color: #a0aec0;
+    cursor: not-allowed;
+}
+
+
+/* Tehlikeli Bölge Stili */
+.tehlikeli-bolge {
+  background-color: #fff5f5;
+  border: 1px solid #fc8181;
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.tehlikeli-bolge .tehlike-baslik {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #c53030;
+}
+
+.tehlikeli-bolge .tehlike-baslik svg {
+    font-size: 1.2rem;
+}
+
+.tehlikeli-bolge h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.tehlikeli-bolge p {
+  color: #9b2c2c;
+  margin: 0.5rem 0 1rem 0;
+}
+
+.danger-btn {
+    background-color: #e53e3e;
+    color: white;
+    /* ... diğer buton stilleri ... */
+}
+.danger-btn:hover {
+    background-color: #c53030;
+}
+/* ========================================================= */
+/* ========== YENİ DASHBOARD DÜZENİ (EZİCİ KURALLAR) ======== */
+/* ========================================================= */
+
+/* Renk Değişkenleri ve Temel Ayarlar */
+:root {
+  --sidebar-bg: #1a202c;
+  --sidebar-text: #a0aec0;
+  --sidebar-text-hover: #ffffff;
+  --sidebar-active-bg: #2d3748;
+  --primary-color: #4A90E2;
+  --content-bg: #f7fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+}
+
+body {
+  background-color: var(--content-bg) !important; /* Eski body arkaplanını ezer */
+}
+
+/* --- ESKİ LAYOUT'U SIFIRLAMA --- */
+/* Bu kurallar eski header ve main-content'i etkisiz hale getirir. */
+.app-header, .main-content {
+  display: none !important; /* Eski header ve main alanını tamamen gizle */
+}
+
+/* --- YENİ DASHBOARD DÜZENİ --- */
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.content-area {
+  flex-grow: 1;
+  padding: 2.5rem; /* İçerik için ferah bir alan */
+  overflow-y: auto;
+  width: 100%; /* Genişliğin kalan alanı doldurmasını sağla */
+}
+
+/* --- YENİ SIDEBAR --- */
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  flex-shrink: 0;
+}
+
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sidebar-text-hover);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding-left: 0.5rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a.active {
+  background-color: var(--primary-color);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a svg {
+  font-size: 1.25rem;
+}
+
+.sidebar-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid #2d3748;
+  padding-top: 1.5rem;
+}
+
+.kullanici-profili {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.kullanici-avatar { 
+  font-size: 1.8rem; 
+  color: var(--sidebar-text-hover); 
+}
+
+.kullanici-adi { 
+  font-weight: 600; 
+  color: var(--sidebar-text-hover); 
+}
+
+.ayar-linki, .cikis-butonu {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.ayar-linki:hover, .cikis-butonu:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+/* =================================================================== */
+/* ===         NİHAİ VE TAM DASHBOARD STİLLERİ (EZİCİ)             === */
+/* =================================================================== */
+
+/* --- BÖLÜM 1: Renkler ve Temel Sıfırlamalar --- */
+:root {
+  --sidebar-bg: #1a202c;
+  --sidebar-text: #a0aec0;
+  --sidebar-text-hover: #ffffff;
+  --sidebar-active-bg: #2d3748;
+  --primary-color: #4A90E2;
+  --content-bg: #f7fafc;
+  --card-bg: #ffffff;
+  --border-color: #e2e8f0;
+}
+
+body {
+  margin: 0;
+  background-color: var(--content-bg) !important;
+  font-family: 'Inter', sans-serif;
+  color: #2d3748;
+}
+
+#root {
+  display: block;
+}
+
+/* --- BÖLÜM 2: Eski Layout Yapısını Tamamen Devre Dışı Bırakma --- */
+.app-header, 
+.main-content, 
+.app-layout, 
+.container {
+  /* Bu eski sınıfların layout'a etki etmesini engelliyoruz */
+  display: block !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: auto !important;
+  max-width: none !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+
+/* --- BÖLÜM 3: Yeni Dashboard Ana Yapısı (Yapışkan Sidebar) --- */
+.dashboard-layout {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+.sidebar {
+  width: 260px;
+  background-color: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  flex-shrink: 0;
+  position: fixed; /* YAPIŞKAN & SOLA SABİT */
+  left: 0;
+  top: 0;
+  height: 100%;
+  z-index: 1000;
+}
+
+.content-area {
+  flex-grow: 1;
+  padding: 2.5rem;
+  overflow-y: auto;
+  margin-left: 260px; /* Sidebar genişliği kadar soldan boşluk bırak */
+  width: calc(100% - 260px);
+}
+
+
+/* --- BÖLÜM 4: Sidebar'ın İç Detayları --- */
+.sidebar-logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--sidebar-text-hover);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 2.5rem;
+  padding-left: 0.5rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.sidebar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.sidebar-nav a:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a.active {
+  background-color: var(--primary-color);
+  color: var(--sidebar-text-hover);
+}
+
+.sidebar-nav a svg {
+  font-size: 1.25rem;
+}
+
+.sidebar-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  border-top: 1px solid #2d3748;
+  padding-top: 1.5rem;
+}
+
+.kullanici-profili {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.kullanici-avatar { 
+  font-size: 1.8rem; 
+  color: var(--sidebar-text-hover); 
+}
+
+.kullanici-adi { 
+  font-weight: 600; 
+  color: var(--sidebar-text-hover); 
+}
+
+.ayar-linki, .cikis-butonu {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.8rem 1rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--sidebar-text);
+  font-weight: 500;
+  transition: background-color 0.2s, color 0.2s;
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  font-size: inherit;
+  text-align: left;
+}
+
+.ayar-linki:hover, .cikis-butonu:hover {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-text-hover);
+}
+
+
+/* --- BÖLÜM 5: Yeni Sayfa İçi Bileşenler (Başlık ve Sekmeler) --- */
+.sayfa-basligi-header {
+  margin-bottom: 2rem;
+}
+
+.sayfa-basligi-header h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin: 0;
+}
+
+.sayfa-ici-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 2rem;
+}
+
+.sayfa-ici-nav a {
+  padding: 0.75rem 1.25rem;
+  text-decoration: none;
+  font-weight: 600;
+  color: #718096;
+  border-radius: 8px 8px 0 0;
+  margin-bottom: -2px;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease-in-out;
+}
+
+.sayfa-ici-nav a:hover {
+  color: #2d3748;
+  background-color: #f0f3f6;
+}
+
+.sayfa-ici-nav a.active {
+  color: var(--primary-color);
+  border-bottom-color: var(--primary-color);
+  background-color: transparent;
+}
+/* --- Analiz Kutusu Bileşeni Stili --- */
+.analiz-kutusu {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin: 1rem; /* Kartın kenarlarından boşluk bırakmak için */
+  border-radius: 8px;
+  border-left-width: 5px;
+  border-left-style: solid;
+}
+
+.analiz-kutusu.pozitif {
+  background-color: #f0fff4;
+  border-left-color: #48bb78;
+  color: #2f855a;
+}
+.analiz-kutusu.negatif {
+  background-color: #fff5f5;
+  border-left-color: #fc8181;
+  color: #c53030;
+}
+.analiz-kutusu.notr {
+  background-color: #f0f7ff;
+  border-left-color: #63b3ed;
+  color: #2b6cb0;
+}
+
+.analiz-ikon {
+  font-size: 1.5rem;
+}
+.analiz-mesaj {
+  margin: 0;
+  font-weight: 500;
+}
+/* =================================================================== */
+/* ===         YAKLAŞIM A: KLASİK VE DENGELİ KOKPİT DÜZENİ         === */
+/* =================================================================== */
+
+/* Ana kapsayıcı artık grid ile 2 sütun oluşturacak */
+.dengeli-kokpit {
+  display: grid;
+  /* Sol sütun daha geniş (2 kat), sağ sütun daha dar (1 kat) */
+  grid-template-columns: 2fr 1fr; 
+  /* Sütunlar ve satırlar arasına ferah bir boşluk bırak */
+  gap: 2rem; 
+  /* Dikey hizalamayı en üste sabitle */
+  align-items: start; 
+}
+
+/* Sol taraftaki ana içerik sütunu */
+.ana-sutun {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Kartlar arasına dikey boşluk ekler */
+}
+
+/* Sağ taraftaki yan bilgi sütunu */
+.yan-sutun {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem; /* Kartlar arasına dikey boşluk ekler */
+  /* Sağ sütunun her zaman en üstte kalmasını sağlayan "sticky" özelliği */
+  position: sticky;
+  top: 2.5rem; /* content-area'nın padding'i ile aynı değer */
+}
+
+/* Tüm kartların ortak stilini basitleştirelim ve hafifletelim */
+.dengeli-kokpit .card {
+  border-radius: 12px;
+  background-color: var(--card-bg, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  /* Kartların kendi iç boşluğunu kaldıralım, çünkü bileşenlerin kendisinde var */
+  /* padding: 1.5rem; -- Bu satırı yorumluyoruz veya siliyoruz */
+}
+/* === Aylık Özet Kartı (Genel Bakış) === */
+
+.aylik-ozet-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.aylik-ozet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.aylik-ozet-header h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.net-durum-badge {
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-weight: 500;
+}
+
+.net-durum-badge.pozitif {
+  background: #e7f8ef;
+  color: #15803d;
+}
+
+.net-durum-badge.negatif {
+  background: #ffe8e6;
+  color: #c0392b;
+}
+
+.aylik-ozet-body {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 2fr);
+  gap: 2rem;
+}
+
+@media (max-width: 992px) {
+  .aylik-ozet-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.aylik-ozet-rakamlar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+}
+
+.ozet-kutu {
+  min-width: 0;
+  flex: 1 1 130px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ozet-etiket {
+  font-size: 0.85rem;
+  color: var(--secondary-text, #6b7280);
+}
+
+.ozet-deger {
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.bold-text {
+  font-weight: 600;
+}
+
+.trend-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0.15rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.trend-badge svg {
+  font-size: 0.7rem;
+}
+
+.trend-badge.trend-pozitif {
+  background: #e7f8ef;
+  color: #15803d;
+}
+
+.trend-badge.trend-negatif {
+  background: #ffe8e6;
+  color: #c0392b;
+}
+
+.trend-alt-yazi {
+  font-size: 0.75rem;
+  color: var(--secondary-text, #6b7280);
+}
+
+.aylik-ozet-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.progress-ust-satir {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--secondary-text, #6b7280);
+}
+
+.harcama-progress-bar {
+  position: relative;
+  width: 100%;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.harcama-progress-dolum {
+  position: absolute;
+  inset: 0;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+  transition: width 0.4s ease-out;
+}
+
+.progress-alt-yazi {
+  font-size: 0.8rem;
+  color: var(--secondary-text, #6b7280);
+}
+
+.aylik-ozet-mesaj {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--secondary-text, #6b7280);
+  text-align: center;
+}
+/* === Yaklaşan Ödemeler Kartı (Genel Bakış) === */
+
+.yaklasan-odemeler-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.yaklasan-odeme-ozet {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.85rem;
+}
+
+.yaklasan-odeme-ozet .ana-satir {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.yaklasan-odeme-ozet .alt-satir {
+  color: var(--secondary-text, #6b7280);
+}
+
+.yaklasan-odeme-ozet .mini-highlight {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: var(--secondary-text, #6b7280);
+}
+
+.yaklasan-odeme-ozet .mini-highlight .label {
+  font-weight: 500;
+  margin-right: 0.25rem;
+}
+
+.yaklasan-odeme-ozet .mini-highlight .value {
+  font-weight: 500;
+}
+
+.yaklasan-odeme-ozet .mini-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  font-size: 0.75rem;
+}
+
+/* liste elemanları */
+
+.yaklasan-odeme-listesi {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.yaklasan-odeme-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.odeme-detay {
+  display: flex;
+  flex-direction: column;
+}
+
+.odeme-aciklama {
+  font-weight: 500;
+}
+
+.odeme-tutar {
+  font-size: 0.8rem;
+  color: var(--secondary-text, #6b7280);
+}
+
+/* kalan gün rozetleri */
+
+.kalan-gun {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.kalan-gun.uyari {
+  background: #ffedd5;
+  color: #b45309;
+}
+
+.kalan-gun.bugun {
+  background: #fee2e2;
+  color: #b91c1c;
+  font-weight: 600;
+}
+/* === Bu Ayki Finansal Yorum Kartı === */
+
+.finansal-yorum-karti .finansal-yorum-icerik {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+}
+
+.yorum-metin {
+  margin: 0;
+}
+
+/* trendAnalizi.durum / nakitAkisiOzeti.durum ile uyumlu */
+.yorum-metin.pozitif {
+  color: #166534; /* yeşil */
+}
+
+.yorum-metin.negatif {
+  color: #b91c1c; /* kırmızı */
+}
+
+.yorum-metin.notr {
+  color: #4b5563; /* gri */
+}
+
+.yorum-footer {
+  margin-top: 0.15rem;
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Finansal Sağlık Kartı – Kısa Yorum */
+.finansal-saglik-karti .kisa-finansal-yorum {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--secondary-text, #555);
+  text-align: left;
+  display: block;
+}
+
+/* Buton olduğu için içeriği üst üste dizmek için (yoksa yan yana flex olabilir) */
+.finansal-saglik-karti .saglik-karti-icerik {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.4rem;
+}
+/* Finansal Sağlık Kartı – kısa yorum ortalama */
+.finansal-saglik-karti .kisa-finansal-yorum {
+  width: 100%;
+  text-align: center;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--secondary-text, #555);
+  margin-top: 0.35rem;
+  margin-bottom: 0.25rem;
+}
+
+/* İçeriklerin ortalanması için */
+.finansal-saglik-karti .saglik-karti-icerik {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* BURASI SOLA DAYALI OLMAYI DÜZELTİR */
+  gap: 0.45rem;
+}
+/* ==== ÜST NAVBAR ===================================================== */
+
+.app-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 0.75rem 2rem;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* Sol logo alanı */
+.app-navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.app-navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-navbar-logo .logo-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+.app-navbar-logo .logo-text {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #111827;
+}
+
+/* Orta navigasyon */
+.app-navbar-center {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+  flex: 1;
+}
+
+.app-navbar-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  color: #6b7280;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.app-navbar-link .link-icon {
+  font-size: 0.9rem;
+}
+
+.app-navbar-link.is-active {
+  background: #2563eb;
+  color: #ffffff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+.app-navbar-link:not(.is-active):hover {
+  background: #eff3ff;
+  color: #111827;
+}
+
+/* Sağ kullanıcı alanı */
+.app-navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.user-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.25rem 0.7rem 0.25rem 0.25rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: #2563eb;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+
+.user-name {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.user-sub {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+/* Body genel padding ayarı (sol sidebar kalkınca) */
+.app-shell-with-topnav {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app-shell-main {
+  flex: 1;
+  padding: 1.5rem 2rem 2rem;
+}
+/* === Hoş geldin alanı === */
+.hosgeldin-alani {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.75rem 2rem;
+  border-radius: 1.25rem;
+  background: linear-gradient(135deg, #eff6ff, #f8fafc);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+}
+
+.hosgeldin-sol {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.hosgeldin-ikon {
+  font-size: 2.4rem;
+}
+
+.hosgeldin-baslik {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0f172a;
+  margin-bottom: 0.25rem;
+}
+
+.hosgeldin-alt {
+  font-size: 0.9rem;
+  color: #64748b;
+}
+
+.hosgeldin-netdurum strong {
+  color: #16a34a;
+}
+
+/* === Ay / Yıl kapsül seçici === */
+.ay-yil-kapsul {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #ffffff;
+  border-radius: 999px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  align-items: center;
+}
+
+.ay-yil-kapsul .secici-grup {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.75rem;
+}
+
+.ay-yil-kapsul label {
+  color: #64748b;
+  margin-bottom: 2px;
+}
+
+.ay-yil-kapsul select {
+  border: none;
+  background: #f8fafc;
+  border-radius: 999px;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+/* === Üst grid 2-1 === */
+.genelbakis-ust-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.genelbakis-sag-kolon {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* (Opsiyonel) orta ve alt gridler için basit layout */
+.genelbakis-orta-grid,
+.genelbakis-alt-grid {
+  display: grid;
+  grid-template-columns: 2fr 1.4fr 1.4fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* === Yaklaşan ödeme rozetleri === */
+.odeme-rozet {
+  font-size: 0.7rem;
+  padding: 0.2rem 0.65rem;
+  border-radius: 999px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.rozet-kritik {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.rozet-yaklasan {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.rozet-uyari {
+  background: #e0f2fe;
+  color: #075985;
+}
+
+.rozet-normal {
+  background: #e5e7eb;
+  color: #374151;
+}
+
+/* Mobil / tablet için basit kırılım */
+@media (max-width: 1024px) {
+  .genelbakis-ust-grid,
+  .genelbakis-orta-grid,
+  .genelbakis-alt-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hosgeldin-alani {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .ay-yil-kapsul {
+    align-self: stretch;
+    justify-content: flex-start;
+  }
+}
+
+/* === TARİH SEÇİCİ YENİ STİLİ (override) ===================== */
+
+.zaman-filtresi-kutusu {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 0.9rem;
+  background: #ffffff;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+  font-size: 13px;
+}
+
+.zaman-filtresi-kutusu .tarih-secici-orta {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.tarih-yon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  background: #eef2ff;
+  color: #4f46e5;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease,
+    box-shadow 0.15s ease, color 0.15s ease;
+}
+
+.tarih-yon-btn:hover {
+  background: #4f46e5;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.35);
+}
+
+.tarih-yon-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.kontrol-grubu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.kontrol-grubu label {
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.kontrol-grubu select {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 4px 10px;
+  font-size: 13px;
+  background: #f9fafb;
+  outline: none;
+  min-width: 96px;
+}
+
+.kontrol-grubu select:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 1px rgba(79, 70, 229, 0.2);
+  background: #ffffff;
+}
+
+/* Mobilde biraz daha esnek olsun */
+@media (max-width: 768px) {
+  .zaman-filtresi-kutusu {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+/* === GENEL BAKIŞ 2 SÜTUN DÜZENİ (OVERRIDE) ================== */
+
+.genel-bakis-sayfasi {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Hoş geldin alanı üstte tam genişlik */
+.hosgeldin-alani {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Ana 2 sütunlu grid */
+.genelbakis-main-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2.1fr) minmax(280px, 0.9fr);
+  gap: 24px;
+  align-items: flex-start;
+}
+
+/* Sol kolon içindeki kartlar dikey dizilsin */
+.genelbakis-sol-kolon {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Sol kolonda yan yana iki kartlık satırlar için */
+.genelbakis-sol-iki-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+/* Sağ kolon (sidebar) kartları üst üste */
+.genelbakis-sag-kolon {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Küçük ekranlarda tek sütuna düşsün */
+@media (max-width: 1024px) {
+  .genelbakis-main-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .genelbakis-sag-kolon {
+    flex-direction: column;
+  }
+
+  .genelbakis-sol-iki-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* === Modern Tarih Seçici (Dashboard kapsül tasarım) === */
+
+.tarih-secici-kapsul {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  font-size: 13px;
+}
+
+.tarih-secici-arrow {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eef2ff;
+  color: #4f46e5;
+  font-size: 14px;          /* OKLAR NET GÖRÜNSÜN */
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.18s ease-out;
+  flex-shrink: 0;
+}
+
+
+.tarih-secici-arrow:hover {
+  background: #e0e7ff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(79, 70, 229, 0.25);
+}
+
+.tarih-secici-arrow:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.tarih-secici-selectler {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+}
+
+.tarih-secici-select {
+  border: none;
+  background: transparent;
+  font-size: 13px;
+  color: #111827;
+  outline: none;
+  padding: 2px 4px;
+  cursor: pointer;
+  min-width: 80px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.tarih-secici-select:focus {
+  outline: none;
+}
+
+.tarih-secici-ayrac {
+  width: 1px;
+  height: 18px;
+  background: rgba(148, 163, 184, 0.6);
+  border-radius: 999px;
+}
+
+/* Küçük ekranlarda biraz daha sıkı dursun */
+@media (max-width: 768px) {
+  .tarih-secici-kapsul {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .tarih-secici-arrow {
+    width: 26px;
+    height: 26px;
+  }
+
+  .tarih-secici-select {
+    font-size: 12px;
+    min-width: 70px;
+  }
+}
+/* ------------------------------------------------------ */
+/* YAKLAŞAN ÖDEMELER KARTI                              */
+/* ------------------------------------------------------ */
+
+.yaklasan-odemeler-karti {
+  display: flex;
+  flex-direction: column;
+}
+
+.yaklasan-odemeler-karti .card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.yaklasan-odemeler-liste {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  max-height: 320px;
+  overflow-y: auto;
+  padding-right: 4px; /* scrollbar gelince yazı bitişmesin */
+}
+
+.yaklasan-odemeler-karti .bos-mesaj {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* Tek tek satırlar */
+.yaklasan-odeme-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.25rem;
+  border-radius: 8px;
+  transition: background-color 0.15s ease-out, transform 0.15s ease-out;
+}
+
+.yaklasan-odeme-item:hover {
+  background-color: #f9fafb;
+  transform: translateY(-1px);
+}
+
+.yaklasan-odeme-item .odeme-sol {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.yaklasan-odeme-item .odeme-aciklama {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #111827;
+}
+
+.yaklasan-odeme-item .odeme-tutar {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Rozetler */
+.odeme-rozet {
+  padding: 0.2rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+/* vadesi geçmiş / bugün */
+.rozet-kritik {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+/* 1–3 gün içinde */
+.rozet-yaklasan {
+  background-color: #ffedd5;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+/* 4–7 gün içinde */
+.rozet-uyari {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-color: #fde68a;
+}
+
+/* 7 günden fazla */
+.rozet-normal {
+  background-color: #eff6ff;
+  color: #1d4ed8;
+  border-color: #dbeafe;
+}
+
+/* Yaklaşan ödeme kartı özet alanı */
+.yaklasan-odeme-ozet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f9fafb;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  margin-bottom: 0.75rem;
+  font-size: 0.85rem;
+  color: #374151;
+}
+
+.yaklasan-odeme-ozet strong {
+  color: #111827;
+  font-size: 0.9rem;
+}
+
+/* === AYLIK ÖZET KARTI GELİŞTİRME === */
+
+.aylik-ozet-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.aylik-ozet-baslik {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.aylik-ozet-alt-baslik {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.net-durum-alani {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.net-durum-tutar {
+  font-weight: 600;
+  font-size: 1rem;
+  color: #111827;
+}
+
+.rozet {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+}
+
+.net-pozitif {
+  background: #ecfdf3;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.net-negatif {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.net-nötr {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.aylik-ozet-icerik {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.aylik-ozet-metrik {
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metrik-etiket {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.metrik-deger {
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.metrik-deger.pozitif {
+  color: #15803d;
+}
+
+.metrik-deger.negatif {
+  color: #b91c1c;
+}
+
+.metrik-deger.notr {
+  color: #1f2937;
+}
+
+.degisim {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+}
+
+.degisim svg {
+  font-size: 0.65rem;
+}
+
+.degisim-pozitif {
+  color: #15803d;
+}
+
+.degisim-negatif {
+  color: #b91c1c;
+}
+
+.degisim.notr,
+.degisim.etiketsiz {
+  color: #6b7280;
+}
+
+.aylik-ozet-yorum {
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+/* === GENEL VARLIK KARTI === */
+
+.genelbakis-ust-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: stretch;
+}
+
+.genelbakis-sag-kolon {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.genel-varlik-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.genel-varlik-icerik {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.varlik-ana-tutar {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.varlik-aylik-net {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.varlik-aylik-net.pozitif {
+  color: #15803d;
+}
+
+.varlik-aylik-net.negatif {
+  color: #b91c1c;
+}
+
+.genel-varlik-not {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+/* === Hoşgeldin Alanı Revize === */
+
+.hosgeldin-alani {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #0f172a, #020617);
+  color: #e5e7eb;
+}
+
+.hosgeldin-sol {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.hosgeldin-ikon-kapsayici {
+  width: 52px;
+  height: 52px;
+  border-radius: 999px;
+  background: rgba(15, 118, 110, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hosgeldin-ikon {
+  font-size: 1.8rem;
+}
+
+.hosgeldin-metinler {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+.hosgeldin-ust-satir {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.hosgeldin-baslik {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #f9fafb;
+}
+
+.hosgeldin-etiket {
+  font-size: 0.75rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(148, 163, 184, 0.18);
+  color: #e5e7eb;
+}
+
+.hosgeldin-alt {
+  font-size: 0.9rem;
+  color: #cbd5f5;
+}
+
+.hosgeldin-netdurum.rozet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: 0.4rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.hosgeldin-netdurum.rozet-pozitif {
+  background: rgba(22, 163, 74, 0.15);
+  color: #bbf7d0;
+}
+
+.hosgeldin-netdurum.rozet-negatif {
+  background: rgba(220, 38, 38, 0.15);
+  color: #fecaca;
+}
+
+.hosgeldin-sag {
+  flex-shrink: 0;
+}
+
+/* Küçük ekranlarda hoşgeldin alanı alt alta gelsin */
+@media (max-width: 768px) {
+  .hosgeldin-alani {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .hosgeldin-sag {
+    width: 100%;
+  }
+}
+/* --- Hoş Geldin Alanı Modern Tasarım --- */
+
+.hosgeldin-alani {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 24px;
+  border-radius: 12px;
+  background: #f8fafc; /* çok hafif gri–beyaz */
+  margin-bottom: 22px;
+  border: 1px solid #e5e7eb;
+}
+
+.hosgeldin-icerik {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hosgeldin-ikon {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.hosgeldin-metinler {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.hosgeldin-baslik {
+  font-size: 1.45rem;
+  font-weight: 600;
+  color: #1f2937; /* koyu değil, soft siyah */
+  margin: 0;
+}
+
+.hosgeldin-alt {
+  font-size: 0.95rem;
+  margin: 0;
+  color: #4b5563; /* gri tonlu sade */
+}
+
+/* NET DURUM BANDI – soft minimal */
+.hosgeldin-netdurum-bant {
+  margin-top: 4px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.hosgeldin-netdurum-bant strong {
+  color: #111827;
+  font-weight: 600;
+}
+
+/* Sağ taraf (Tarih seçici) */
+.hosgeldin-sag {
+  display: flex;
+  align-items: center;
+}
+/* =============== GENEL VARLIK KARTI =============== */
+
+.genel-varlik-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.genel-varlik-baslik {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.genel-varlik-ikon-kapsayici {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(37, 99, 235, 0.08); /* soft mavi */
+  color: #2563eb;
+  flex-shrink: 0;
+}
+
+.genel-varlik-baslik-metin h3 {
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+.genel-varlik-baslik-metin {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.genel-varlik-aciklama {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.genel-varlik-rozet {
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.genel-varlik-rozet.pozitif {
+  background: #ecfdf5;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+.genel-varlik-rozet.negatif {
+  background: #fef2f2;
+  color: #b91c1c;
+  border-color: #fecaca;
+}
+
+.genel-varlik-icerik {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.varlik-tutar-blok {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.varlik-label {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.varlik-ana-tutar {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.varlik-alt-satir {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.82rem;
+}
+
+.varlik-aylik-label {
+  color: #6b7280;
+}
+
+.varlik-aylik-net {
+  font-weight: 500;
+}
+
+.varlik-aylik-net.pozitif {
+  color: #16a34a;
+}
+
+.varlik-aylik-net.negatif {
+  color: #dc2626;
+}
+
+.genel-varlik-not {
+  font-size: 0.78rem;
+  color: #9ca3af;
+  margin: 0;
+}
+/* ============ HARCAMA DAĞILIMI KARTI ============ */
+
+.harcama-dagilimi-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.harcama-header h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.15rem;
+}
+
+.card-subtitle {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Liste satırları biraz daha okunaklı olsun */
+.harcama-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.35rem 0;
+  font-size: 0.82rem;
+}
+
+.harcama-list-item:hover {
+  background: #f9fafb;
+}
+
+/* Boş durum görünümleri */
+.empty-state-container {
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6b7280;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Küçük buton stilleri (genel kullanıma da uygun) */
+.primary-btn-small,
+.secondary-btn-small {
+  border-radius: 999px;
+  font-size: 0.78rem;
+  padding: 0.3rem 0.9rem;
+  border: 1px solid transparent;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.primary-btn-small {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.primary-btn-small:hover {
+  background: #1d4ed8;
+}
+
+.secondary-btn-small {
+  background: #ffffff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.secondary-btn-small:hover {
+  background: #eff6ff;
+}
+/* ============ GELİR KAYNAKLARI KARTI ============ */
+
+.gelir-kaynaklari-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gelir-header h3 {
+  font-size: 0.95rem;
+  margin-bottom: 0.15rem;
+}
+
+.gelir-grafik-konteyner {
+  height: 300px;
+  position: relative;
+}
+/* ============ ÖNCELİKLİ HEDEF KARTI ============ */
+
+.hedef-ozet-karti {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.hedef-ozet-icerik {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.hedef-ust-satir {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.hedef-adi {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.hedef-yuzde-rozet {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  background: #e3f6ff;
+  color: #0077c2;
+  font-weight: 500;
+}
+
+.hedef-tutar-bilgisi {
+  font-size: 0.9rem;
+}
+
+.hedef-tutar-bilgisi .mevcut {
+  font-weight: 600;
+}
+
+.progress-bar-container {
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #edf2f7;
+  overflow: hidden;
+}
+
+.progress-bar-dolu {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.hedef-ozet-alt-bilgi {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #6b7280;
+  gap: 0.5rem;
+}
+
+.hedef-ozet-alt-bilgi .detay-link {
+  font-size: 0.8rem;
+}
+/* --- Kredi Kartı Özet Kartı --- */
+
+.kk-ozet-karti .kk-ozet-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+}
+
+.kk-ozet-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f9fbff;
+  border: 1px solid #eef2f7;
+  transition: 0.2s;
+}
+
+.kk-ozet-item:hover {
+  background: #f1f6ff;
+  border-color: #d4e3ff;
+}
+
+.kk-ozet-sol {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kk-adi {
+  font-weight: 600;
+  color: #1d1d1d;
+}
+
+.kk-son-odeme {
+  font-size: 13px;
+  color: #6c7a89;
+}
+
+.kk-ozet-sag {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.kk-borc {
+  font-weight: 700;
+  font-size: 16px;
+  color: #d63031;
+}
+
+/* rozet stilleri */
+.kk-rozet {
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.kk-rozet.normal { background: #3498db; }
+.kk-rozet.uyari { background: #f1c40f; color: #111; }
+.kk-rozet.yaklasan { background: #e67e22; }
+.kk-rozet.kritik { background: #e74c3c; }
+.kk-rozet.gecmis { background: #8e44ad; }
+
+.kk-footer {
+  text-align: right;
+  margin-top: 12px;
+}
+
+.kk-footer .detay-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: #2980b9;
+}
+/* --- Hesap Bazlı Gider Kartı --- */
+
+.hesap-gider-karti .hesap-gider-listesi {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.hesap-gider-satiri {
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: #f9fbff;
+  border: 1px solid #eef2f7;
+  transition: 0.2s;
+}
+
+.hesap-gider-satiri:hover {
+  background: #f1f6ff;
+  border-color: #d4e3ff;
+}
+
+.hesap-gider-ust {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.hesap-adi-ikon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hesap-ikon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ecf4ff;
+  color: #2b6cb0;
+  font-size: 15px;
+}
+
+.hesap-adi {
+  font-weight: 600;
+  color: #1d1d1d;
+}
+
+.hesap-aylik-gider {
+  font-weight: 700;
+  color: #e74c3c;
+  font-size: 15px;
+}
+
+.hesap-gider-alt {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hesap-gider-yuzdesi {
+  font-size: 12px;
+  color: #6c7a89;
+}
+
+.progress-bar-konteyner {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #eef2f7;
+  overflow: hidden;
+}
+
+.hesap-progress-bar-dolgu {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff7675, #e67e22);
+}
+/* --- Aylık Kategori Limitleri (Bütçe Durumları) --- */
+
+.butce-durum-karti .butce-listesi {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.butce-item {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #eef2f7;
+  background: #f9fbff;
+  transition: 0.2s;
+}
+
+.butce-item:hover {
+  background: #f1f6ff;
+  border-color: #d4e3ff;
+}
+
+.butce-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.kategori-adi {
+  font-weight: 600;
+  color: #1d1d1d;
+}
+
+.yuzde-gosterge {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eef2f7;
+  color: #4b5563;
+}
+
+.yuzde-gosterge.iyi {
+  background: #e6f6ed;
+  color: #15803d;
+}
+
+.yuzde-gosterge.uyari {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.yuzde-gosterge.kritik,
+.yuzde-gosterge.asildi {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Progress bar */
+
+.progress-bar-container {
+  width: 100%;
+  height: 8px;
+  border-radius: 999px;
+  background: #eef2f7;
+  overflow: hidden;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+
+.progress-bar-dolu {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3b82f6, #22c55e);
+}
+
+.progress-bar-dolu.iyi {
+  background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.progress-bar-dolu.uyari {
+  background: linear-gradient(90deg, #f59e0b, #eab308);
+}
+
+.progress-bar-dolu.kritik,
+.progress-bar-dolu.asildi {
+  background: linear-gradient(90deg, #ef4444, #b91c1c);
+}
+
+/* Alt bilgiler */
+
+.butce-item-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.harcanan-tutar {
+  font-weight: 500;
+}
+
+.kalan-tutar {
+  font-weight: 600;
+}
+
+.kalan-tutar.negatif {
+  color: #b91c1c;
+}
+
+/* Tahmin uyarısı */
+
+.tahmin-uyari-kutusu {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 12px;
+}
+
+.tahmin-uyari-kutusu .uyari-ikonu {
+  font-size: 14px;
+}
+/* --- Hoş Geldin Alanı --- */
+
+.hosgeldin-alani {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 20px;
+  border-radius: 16px;
+  background: linear-gradient(90deg, #f5f9ff, #fdfefe);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.03);
+  margin-bottom: 18px;
+}
+
+.hosgeldin-sol {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.hosgeldin-ikon-kapsayici {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  background: #fef3c7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hosgeldin-ikon {
+  font-size: 22px;
+}
+
+.hosgeldin-metinler {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.hosgeldin-baslik {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.hosgeldin-alt {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* Chip satırı */
+
+.hosgeldin-pill-row {
+  margin-top: 6px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.hosgeldin-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eef4ff;
+  border: 1px solid #dbe5ff;
+}
+
+.hosgeldin-pill-net {
+  background: #e0ecff;
+  border-color: #bfdbfe;
+}
+
+.pill-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #64748b;
+}
+
+.pill-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1d4ed8; /* Net varlık: koyu, okunur mavi */
+}
+
+.pill-value.negatif {
+  color: #b91c1c;
+}
+
+.hosgeldin-sag {
+  display: flex;
+  align-items: center;
+}
+
