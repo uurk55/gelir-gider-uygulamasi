@@ -1,11 +1,21 @@
 // src/components/AppNavbar.jsx
 
 import { NavLink } from "react-router-dom";
-import { FaChartPie, FaListUl, FaChartBar, FaWallet, FaBullseye, FaRedo, FaSlidersH } from "react-icons/fa";
+import {
+  FaChartPie,
+  FaListUl,
+  FaChartBar,
+  FaWallet,
+  FaBullseye,
+  FaRedo,
+  FaSlidersH,
+} from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import UserMenu from "./layout/UserMenu";
 
 function AppNavbar() {
   const { currentUser } = useAuth() || {};
+
   const displayName =
     currentUser?.displayName ||
     currentUser?.email?.split("@")[0] ||
@@ -47,15 +57,10 @@ function AppNavbar() {
       </nav>
 
       <div className="app-navbar-right">
-        <div className="user-pill">
-          <div className="user-avatar">
-            {displayName.charAt(0).toUpperCase()}
-          </div>
-          <div className="user-info">
-            <span className="user-name">{displayName}</span>
-            <span className="user-sub">Hesabım</span>
-          </div>
-        </div>
+        <UserMenu
+          displayName={displayName}
+          email={currentUser?.email || ""}
+        />
       </div>
     </header>
   );
