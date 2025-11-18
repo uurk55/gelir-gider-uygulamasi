@@ -1,5 +1,6 @@
+// src/pages/Raporlar.jsx
 import { useState } from 'react';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useLocation } from 'react-router-dom'; // useLocation eklendi
 import { useFinans } from '../context/FinansContext';
 import { FaCalendarAlt, FaDownload } from 'react-icons/fa';
 import { DateRange } from 'react-date-range';
@@ -21,8 +22,8 @@ const raporSekmeleri = [
 function Raporlar() {
   const { tarihAraligi, setTarihAraligi, handleVeriIndir } = useFinans();
   const [isDateRangeModalOpen, setIsDateRangeModalOpen] = useState(false);
+  const location = useLocation(); // 🔹 animasyon için current path
 
-  // Butonları bir değişkende tanımlıyoruz
   const actionButtons = (
     <>
       <button onClick={() => setIsDateRangeModalOpen(true)} className="secondary-btn">
@@ -49,7 +50,7 @@ function Raporlar() {
       <main className="sayfa-icerik-alani">
         <AnimatePresence mode="wait">
           <motion.div
-            key={location.pathname} // Animasyonun yol değişiminde tetiklenmesini sağlar
+            key={location.pathname}   // 🔹 sekme değişince yumuşak animasyon
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
@@ -60,13 +61,33 @@ function Raporlar() {
         </AnimatePresence>
       </main>
 
-      {/* Date Range Modal Logic (Değişmedi) */}
       <AnimatePresence>
         {isDateRangeModalOpen && (
-          <motion.div className="modal-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-            <motion.div className="modal-content date-range-modal" initial={{ y: -50, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -50, opacity: 0 }}>
-              <DateRange editableDateInputs={true} onChange={item => setTarihAraligi([item.selection])} moveRangeOnFirstSelection={false} ranges={tarihAraligi} locale={tr}/>
-              <button onClick={() => setIsDateRangeModalOpen(false)} className="primary-btn">Tamam</button>
+          <motion.div
+            className="modal-overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.div
+              className="modal-content date-range-modal"
+              initial={{ y: -50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -50, opacity: 0 }}
+            >
+              <DateRange
+                editableDateInputs={true}
+                onChange={item => setTarihAraligi([item.selection])}
+                moveRangeOnFirstSelection={false}
+                ranges={tarihAraligi}
+                locale={tr}
+              />
+              <button
+                onClick={() => setIsDateRangeModalOpen(false)}
+                className="primary-btn"
+              >
+                Tamam
+              </button>
             </motion.div>
           </motion.div>
         )}

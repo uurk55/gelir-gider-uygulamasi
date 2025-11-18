@@ -8327,4 +8327,1006 @@ body {
   display: flex;
   align-items: center;
 }
+/* ===========================
+   İŞLEMLER SAYFASI – LİSTE ÖZETİ & FİLTRE CHİPLER
+   =========================== */
+
+.liste-ozet-cubugu {
+  margin: 0.75rem 0 0.5rem;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  background: #f9fbff;
+}
+
+.liste-ozet-sayi {
+  font-size: 0.9rem;
+  color: #4b4f5c;
+  font-weight: 500;
+}
+
+.aktif-filtre-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.filtre-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #eef3ff;
+  border: 1px solid #d6e2ff;
+  font-size: 0.8rem;
+  color: #2850a8;
+}
+
+.filtre-chip-label {
+  opacity: 0.8;
+}
+
+.filtre-chip-value {
+  font-weight: 600;
+}
+
+.filtre-chip-temizle {
+  border: none;
+  background: transparent;
+  font-size: 0.78rem;
+  color: #888ea8;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  text-decoration: underline;
+}
+
+.filtre-chip-temizle:hover {
+  color: #555a73;
+}
+.trend-mini-ozet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 0.75rem 1.5rem 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  margin-top: 0.5rem;
+}
+
+.trend-mini-ozet-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.trend-mini-ozet-item .ozet-etiket {
+  font-size: 0.78rem;
+  color: var(--secondary-text);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.trend-mini-ozet-item .ozet-deger {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.trend-mini-ozet-item .ozet-alt {
+  font-size: 0.78rem;
+  color: var(--secondary-text);
+}
+
+@media (max-width: 1024px) {
+  .trend-mini-ozet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .trend-mini-ozet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Kategori analizi mini özet için ekstra ufak düzen */
+.kategori-ozet-grid {
+  border-top: 1px solid rgba(0, 0, 0, 0.03);
+}
+/* =========================================
+   RAPORLAR – ORTAK GRAFİK & MİNİ ÖZET STİLLERİ
+   ========================================= */
+
+/* Grafiklerin oturduğu kutu (yükseklik sabitleme) */
+.rapor-grafik-konteyner {
+  padding: 1rem 1.25rem 1.5rem;
+  height: 340px;
+  position: relative;
+}
+
+@media (max-width: 768px) {
+  .rapor-grafik-konteyner {
+    height: 260px;
+  }
+}
+
+/* Kart altındaki 4'lü mini özet barı */
+.trend-mini-ozet-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem 1.25rem 1.25rem;
+  border-top: 1px solid var(--card-border, #e3e6ec);
+}
+
+@media (max-width: 900px) {
+  .trend-mini-ozet-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 540px) {
+  .trend-mini-ozet-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.trend-mini-ozet-item {
+  background: var(--surface-subtle, #f7f8fc);
+  border-radius: 10px;
+  padding: 0.75rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.ozet-etiket {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--secondary-text, #7b8190);
+}
+
+.ozet-deger {
+  font-size: 1.02rem;
+  font-weight: 600;
+  color: var(--primary-text, #1f2430);
+}
+
+.ozet-deger.gider-renk {
+  color: var(--danger, #e74c3c);
+}
+
+.ozet-alt {
+  font-size: 0.78rem;
+  color: var(--secondary-text, #8a90a2);
+}
+/* =========================================
+   ANALİZ KUTUSU (Genel Trend / Nakit Akışı yorumları)
+   ========================================= */
+
+.analiz-kutusu {
+  margin: 0 1.25rem 1.25rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--surface-subtle, #f5f7fb);
+  border: 1px dashed var(--card-border, #dde1eb);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.analiz-kutusu-baslik {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.5rem;
+}
+
+.analiz-kutusu-ikon {
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(66, 135, 245, 0.08);
+  font-size: 0.9rem;
+}
+
+.analiz-kutusu-baslik h3 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--primary-text, #202534);
+}
+
+.analiz-kutusu-baslik span {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--secondary-text, #8a90a2);
+}
+
+.analiz-kutusu-paragraf {
+  margin: 0.3rem 0 0.6rem;
+  color: var(--primary-text, #282d3c);
+}
+
+.analiz-kutusu-liste {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.analiz-kutusu-liste li {
+  font-size: 0.86rem;
+  color: var(--secondary-text, #6e7486);
+}
+/* =========================================
+   BOŞ DURUM KUTULARI (Empty State)
+   ========================================= */
+
+.empty-state-container {
+  text-align: center;
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: var(--surface-subtle, #f7f8fc);
+  color: var(--secondary-text, #7b8190);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+}
+
+.empty-state-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Küçük buton stilleri (login / sign up / işlem ekle vs.) */
+.primary-btn-small,
+.secondary-btn-small {
+  border-radius: 999px;
+  font-size: 0.8rem;
+  padding: 0.4rem 0.9rem;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  text-decoration: none;
+}
+
+.primary-btn-small {
+  background: var(--primary, #3b82f6);
+  color: #fff;
+}
+
+.secondary-btn-small {
+  background: transparent;
+  border: 1px solid var(--card-border, #d0d6e2);
+  color: var(--primary-text, #1f2430);
+}
+/* =========================================
+   RAPOR TABLOLARI (Yıllık özet, En büyük harcamalar)
+   ========================================= */
+
+.tablo-container table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.tablo-container thead th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  font-weight: 600;
+  color: var(--secondary-text, #6f7584);
+  border-bottom: 1px solid var(--card-border, #e1e5ef);
+}
+
+.tablo-container tbody td {
+  padding: 0.55rem 0.75rem;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.7);
+}
+
+.tablo-container tbody tr:nth-child(every) {
+  background: transparent;
+}
+
+.tablo-container tbody tr:hover {
+  background: rgba(59, 130, 246, 0.03);
+}
+
+.tablo-container .toplam-satiri td {
+  font-weight: 600;
+  padding-top: 0.7rem;
+  border-top: 1px solid var(--card-border, #d5dbe7);
+}
+/* ================================
+   Bütçeler Sayfası Ek Stiller
+   ================================ */
+
+/* ================================
+   Bütçeler - Özet Bar Tasarımı
+   ================================ */
+
+.butce-ozet-bar {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+  padding: 1rem 1.5rem 1.25rem;
+  border-bottom: 1px solid #edf1f7;
+}
+
+@media (max-width: 992px) {
+  .butce-ozet-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .butce-ozet-bar {
+    grid-template-columns: 1fr;
+  }
+}
+
+.butce-ozet-item {
+  background: #f7f9ff;
+  border-radius: 12px;
+  padding: 0.9rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.2rem;
+  box-shadow: 0 0 0 1px rgba(15, 23, 42, 0.02);
+}
+
+.ozet-etiket {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--secondary-text, #7b8190);
+}
+
+.ozet-deger {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--primary-text, #1f2430);
+}
+
+.ozet-deger.pozitif {
+  color: #16a34a; /* yeşil */
+}
+
+.ozet-deger.negatif {
+  color: #dc2626; /* kırmızı */
+}
+
+.ozet-alt {
+  font-size: 0.78rem;
+  color: var(--secondary-text, #7b8190);
+}
+
+/* sayfa başlığı alt açıklama */
+.sayfa-aciklama {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--secondary-text, #7b8190);
+}
+
+
+/* Kart başlığındaki durum etiketi */
+.butce-karti-baslik-sol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.butce-durum-etiket {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.butce-durum-etiket.uyari,
+.butce-durum-etiket.kritik,
+.butce-durum-etiket.asildi {
+  background: #fff4f4;
+  color: #e11d48;
+}
+
+.butce-durum-etiket.iyi,
+.butce-durum-etiket.normal {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+/* En alttaki bilgi yazısı */
+.butce-bilgi-mesaji {
+  margin-top: 0.75rem;
+  font-size: 0.86rem;
+  color: var(--secondary-text, #7b8190);
+}
+/* ================================
+   Bütçeler – Yeni bütçe formu
+   ================================ */
+
+.yeni-butce-karti {
+  border-style: dashed;
+  border-color: rgba(59, 130, 246, 0.35);
+  background: #f8fbff;
+}
+
+.yeni-butce-aciklama {
+  margin-top: 0.15rem;
+  font-size: 0.85rem;
+  color: var(--secondary-text, #7b8190);
+}
+
+.yeni-butce-form {
+  margin-top: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+@media (max-width: 900px) {
+  .yeni-butce-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.yeni-butce-alani {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.yeni-butce-alani label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--secondary-text, #7b8190);
+}
+
+.yeni-butce-alani select,
+.yeni-butce-alani input {
+  border-radius: 8px;
+  border: 1px solid #dbe3f0;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.9rem;
+}
+
+.yeni-butce-aksiyonlar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Küçük buton varyantları – mevcut primary/secondary üzerine oturur */
+.primary-btn.small,
+.secondary-btn.small {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+}
+/* Hedefler – boş durum kartı ve başlık rozetleri */
+
+.hedefler-empty {
+  text-align: center;
+  padding: 2.5rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.hedefler-empty .empty-state-ikon {
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(59, 130, 246, 0.08);
+  color: var(--primary, #2563eb);
+  font-size: 1.4rem;
+  margin-bottom: 0.25rem;
+}
+
+.hedefler-empty h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+
+.hedefler-empty p {
+  max-width: 420px;
+  font-size: 0.9rem;
+  color: var(--secondary-text, #6b7280);
+}
+
+.hedef-sayi-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 0.4rem;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #e5f0ff;
+  color: #1d4ed8;
+}
+
+.hedef-sayi-badge.tamamlanan {
+  background: #dcfce7;
+  color: #15803d;
+}
+/* Hedef kartı ek bilgiler satırı */
+.hedef-ek-bilgiler {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.hedef-etiket {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: #f3f4f6;
+  color: #4b5563;
+  line-height: 1.2;
+}
+
+.hedef-etiket svg {
+  font-size: 0.7rem;
+}
+
+/* Kalan gün rozetleri */
+.hedef-etiket.gun.kritik {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.hedef-etiket.gun.gecikmis {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Öncelik rozetleri */
+.hedef-etiket.oncelik.oncelik-yuksek {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.hedef-etiket.oncelik.oncelik-orta {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.hedef-etiket.oncelik.oncelik-dusuk {
+  background: #ecfdf3;
+  color: #15803d;
+}
+
+/* Kalan tutar etiketi */
+.hedef-etiket.kalan-tutar-etiket {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+/* Sabit ödeme ekleme formu */
+.sabit-odeme-form-baslik {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sabit-odeme-form-baslik h3 {
+  font-size: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.sabit-odeme-form-baslik p {
+  font-size: 0.8rem;
+  color: var(--secondary-text);
+  max-width: 360px;
+}
+
+/* Ödeme tipi buton grubu */
+.odeme-tipi-secici {
+  display: inline-flex;
+  background: #f3f4f6;
+  border-radius: 999px;
+  padding: 2px;
+}
+
+.odeme-tipi-secici button {
+  border: none;
+  background: transparent;
+  font-size: 0.8rem;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.odeme-tipi-secici button.aktif {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.12);
+  color: #2563eb;
+}
+
+/* İki sütunlu grid */
+.sabit-odeme-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.sabit-odeme-form-grid .form-sutun {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Küçük açıklama yazıları */
+.form-etiket-aciklama {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+/* Alt aksiyon satırı */
+.sabit-odeme-form-aksiyonlar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+/* Mobilde tek sütuna düşsün */
+@media (max-width: 900px) {
+  .sabit-odeme-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* Yeni sabit ödeme formu alt özet barı */
+.sabit-odeme-form-ozet-cubugu {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 0.75rem;
+  background: #eef4ff;
+  border: 1px solid #dbeafe;
+  font-size: 0.8rem;
+  color: #374151;
+}
+
+/* Alt aksiyon butonları */
+.sabit-odeme-form-aksiyonlar {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+/* Liste üstündeki mini özet + filtreler */
+.sabit-odeme-liste-ust {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0 0.75rem;
+  gap: 1rem;
+  border-bottom: 1px solid #edf2f7;
+  margin-bottom: 0.5rem;
+}
+
+.sabit-odeme-liste-ozet {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #4b5563;
+}
+
+.sabit-odeme-liste-ozet .ayrac {
+  opacity: 0.5;
+}
+
+.sabit-odeme-liste-filtreler {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.sabit-odeme-liste-filtreler button {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  color: #4b5563;
+}
+
+.sabit-odeme-liste-filtreler button.aktif {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+/* Tip etiketi (Abonelik / Taksit) */
+.tip-etiketi {
+  font-weight: 500;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #3730a3;
+}
+
+.sabit-odeme-item.bekleyen-odeme .tip-etiketi {
+  background: #fef3c7;
+  color: #92400e;
+}
+/* ================= SABİT ÖDEMELER – YENİ TASARIM EKLEMELERİ ================= */
+
+/* Liste üstü özet satırı */
+.sabit-odeme-liste-ust {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem 0.75rem;
+  gap: 1rem;
+}
+
+.sabit-odeme-liste-ozet {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.sabit-odeme-liste-ozet strong {
+  color: #111827;
+}
+
+.sabit-odeme-liste-ozet .ayrac {
+  margin: 0 0.5rem;
+  opacity: 0.4;
+}
+
+/* Hepsi / Bekleyen / Abonelik / Taksit filtre butonları */
+.sabit-odeme-liste-filtreler {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.sabit-odeme-liste-filtreler button {
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.8rem;
+  background: #ffffff;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.sabit-odeme-liste-filtreler button:hover {
+  border-color: #3b82f6;
+  color: #2563eb;
+}
+
+.sabit-odeme-liste-filtreler button.aktif {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+/* Kart sağ tarafı hizalama */
+.sabit-odeme-sag {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.35rem;
+}
+
+/* Tutar */
+.sabit-odeme-tutar {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* BU AY DURUM ROZETİ */
+.bu-ay-durum-rozet {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.12rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+
+/* ödendi - yeşil */
+.bu-ay-durum-rozet.odendi {
+  background: #ecfdf3;
+  color: #15803d;
+  border-color: #bbf7d0;
+}
+
+/* bekleyen - turuncu */
+.bu-ay-durum-rozet.bekleyen {
+  background: #fff7ed;
+  color: #c2410c;
+  border-color: #fed7aa;
+}
+
+/* gelecek - mavi/grimsi */
+.bu-ay-durum-rozet.gelecek {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+/* ETİKETLER – tip ve taksit ilerleme */
+.islem-etiket.tip-etiketi {
+  background: #eff6ff;
+  color: #1d4ed8;
+  font-weight: 500;
+}
+
+.islem-etiket.taksit-ilerleme-etiketi {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+/* Form altındaki özet çubuğu */
+.sabit-odeme-form-ozet-cubugu {
+  margin-top: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+  border: 1px dashed #e5e7eb;
+  font-size: 0.8rem;
+  color: #4b5563;
+}
+
+.sabit-odeme-form-ozet-cubugu strong {
+  color: #111827;
+}
+
+/* Form aksiyon butonları (alt kısım) */
+.sabit-odeme-form-aksiyonlar {
+  margin-top: 0.75rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* Küçük ekranlarda üst satırı alt satıra düşür */
+@media (max-width: 768px) {
+  .sabit-odeme-liste-ust {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sabit-odeme-sag {
+    align-items: flex-start;
+  }
+}
+/* --- SABİT ÖDEMELER: YENİ ETİKETLER & SIRALAMA --- */
+
+.sabit-odeme-liste-filtreler {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.sabit-odeme-liste-siralama {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 1rem;
+  padding-left: 1rem;
+  border-left: 1px solid var(--border-subtle, #e5e7eb);
+  color: var(--secondary-text, #6b7280);
+}
+
+.sabit-odeme-liste-siralama select {
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle, #e5e7eb);
+  padding: 0.25rem 0.7rem;
+  font-size: 0.8rem;
+  background: #fff;
+  outline: none;
+}
+
+.sabit-odeme-liste-siralama select:focus {
+  border-color: var(--primary, #2563eb);
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.1);
+}
+
+/* Tip etiketi (Abonelik / Taksit) */
+.islem-etiket.tip-etiketi {
+  background: rgba(56, 189, 248, 0.08);
+  color: #0369a1;
+  font-weight: 500;
+}
+
+/* Kalan ay / kalan tutar etiketi */
+.islem-etiket.kalan-etiket {
+  background: rgba(52, 211, 153, 0.06);
+  color: #047857;
+}
+
+/* Bu ay durum pili */
+.sabit-odeme-buay-etiketi {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+
+.sabit-odeme-buay-etiketi.durum-gelecek {
+  background: rgba(59, 130, 246, 0.06);
+  color: #1d4ed8;
+}
+
+.sabit-odeme-buay-etiketi.durum-bekleyen {
+  background: rgba(248, 113, 113, 0.08);
+  color: #b91c1c;
+}
+
+.sabit-odeme-buay-etiketi.durum-odendi {
+  background: rgba(34, 197, 94, 0.08);
+  color: #15803d;
+}
+
+/* Detay ikon (hover tooltip) */
+.sabit-odeme-detay-ipucu {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  color: #9ca3af;
+  cursor: help;
+}
+
+.sabit-odeme-detay-ipucu:hover {
+  color: #6b7280;
+}
+
+/* Sağ tarafta tutar + durum hizası */
+.sabit-odeme-sag {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+.sabit-odeme-sag .buton-grubu {
+  margin-top: 0.15rem;
+}
+
 

@@ -212,6 +212,31 @@ function IslemlerPage() {
     const filtrelenmisToplamGelir = birlesikIslemler.filter(i => i.tip === 'gelir').reduce((acc, i) => acc + i.tutar, 0);
     const filtrelenmisToplamGider = birlesikIslemler.filter(i => i.tip === 'gider').reduce((acc, i) => acc + i.tutar, 0);
     const netDurum = filtrelenmisToplamGelir - filtrelenmisToplamGider;
+    // 🔹 Aktif filtre / arama özetlerini hazırlayan küçük yardımcı yapı
+    const aktifFiltreler = [];
+
+    if (birlesikFiltreTip !== ISLEM_TURLERI.TUMU) {
+        let tipEtiketi = 'Tümü';
+        if (birlesikFiltreTip === ISLEM_TURLERI.GELIR) tipEtiketi = 'Gelir';
+        if (birlesikFiltreTip === ISLEM_TURLERI.GIDER) tipEtiketi = 'Gider';
+        if (birlesikFiltreTip === ISLEM_TURLERI.TRANSFER) tipEtiketi = 'Transfer';
+        aktifFiltreler.push({ label: 'Tip', value: tipEtiketi });
+    }
+
+    if (birlesikFiltreKategori !== 'Tümü') {
+        aktifFiltreler.push({ label: 'Kategori', value: birlesikFiltreKategori });
+    }
+
+    if (birlesikFiltreHesap !== 'Tümü') {
+        const hesap = tumHesaplar.find(h => h.id === birlesikFiltreHesap);
+        aktifFiltreler.push({ label: 'Hesap', value: hesap?.ad || 'Seçili hesap' });
+    }
+
+    if (aramaMetni && aramaMetni.trim() !== '') {
+        aktifFiltreler.push({ label: 'Arama', value: `"${aramaMetni.trim()}"` });
+    }
+
+    const toplamIslemSayisi = birlesikIslemler.length;
 
     return (
         <>
@@ -336,6 +361,32 @@ function IslemlerPage() {
                     <div className="ozet-kalem"><span>Toplam Gelir:</span><span className="gelir-renk">{formatCurrency(filtrelenmisToplamGelir)}</span></div>
                     <div className="ozet-kalem"><span>Toplam Gider:</span><span className="gider-renk">{formatCurrency(filtrelenmisToplamGider)}</span></div>
                     <div className="ozet-kalem"><span>Net Durum:</span><span className={netDurum >= 0 ? 'gelir-renk' : 'gider-renk'}>{formatCurrency(netDurum)}</span></div>
+                </div>
+
+                {/* 🔹 Yeni: Liste özeti + aktif filtre chipleri */}
+                <div className="liste-ozet-cubugu">
+                    <span className="liste-ozet-sayi">
+                        {toplamIslemSayisi} işlem listeleniyor
+                    </span>
+
+                    {aktifFiltreler.length > 0 && (
+                        <div className="aktif-filtre-chips">
+                            {aktifFiltreler.map((f, i) => (
+                                <span key={i} className="filtre-chip">
+                                    <span className="filtre-chip-label">{f.label}:</span>
+                                    <span className="filtre-chip-value">{f.value}</span>
+                                </span>
+                            ))}
+
+                            <button
+                                type="button"
+                                onClick={handleFiltreTemizle}
+                                className="filtre-chip-temizle"
+                            >
+                                Filtreleri temizle
+                            </button>
+                        </div>
+                    )}
                 </div>
                 
                 <ul className={`islem-listesi-yeni ${secimModu && birseySeciliMi ? 'secim-modu-aktif' : ''}`}>
