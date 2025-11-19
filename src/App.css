@@ -10409,3 +10409,325 @@ body {
 .dark .ayar-aciklama {
   color: #cfcfcf;
 }
+/* ==== Ayarlar – Bildirimler Sekmesi (Güncel) ==== */
+
+/* Üstteki mail bilgisi kutusu */
+.ayar-info-banner {
+  margin-bottom: 1.25rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+  color: #4b5563;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ayar-info-banner strong {
+  color: #111827;
+}
+
+.ayar-info-note {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+/* Her bir bildirim satırı */
+.ayar-switch-grup {
+  padding: 1rem 1.25rem;
+  border-radius: 0.9rem;
+  background: #f3f4f6;          /* açık gri, kart hissi */
+  border: 1px solid #e5e7eb;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.ayar-switch-aciklama {
+  margin-top: 0.45rem;
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: #4b5563;
+}
+/* === Şifre Değiştir – Input Sağında Göster/Gizle İkonu === */
+
+.input-with-icon {
+    position: relative;
+    display: flex;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding-right: 45px;
+}
+
+.input-with-icon button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #6b7280;
+    font-size: 1rem;
+}
+
+/* === Şifre Güç Çubuğu === */
+.password-strength {
+    display: flex;
+    gap: 4px;
+    margin-top: 6px;
+}
+
+.password-strength .bar {
+    height: 4px;
+    flex: 1;
+    background: #e5e7eb;
+    border-radius: 3px;
+}
+
+.password-strength .bar.active {
+    background: #4ade80; /* yeşil */
+}
+
+/* === Güvenlik Bilgi Kutusu === */
+.security-tip {
+    margin-top: 20px;
+    padding: 12px 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #374151;
+}
+
+.security-tip .s-icon {
+    color: #2563eb;
+    font-size: 1.2rem;
+}
+/* === VERİ & GÜVENLİK – VERİ YÖNETİMİ === */
+
+.veri-yonetim {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+@media (min-width: 900px) {
+  .veri-yonetim {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+}
+
+.veri-yonetim-sol {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  flex: 1.4;
+}
+
+.veri-ikon-kapsul {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: #e0f2fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0369a1;
+  flex-shrink: 0;
+}
+
+.veri-yonetim-sol h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.veri-yonetim-sol p {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  color: #4b5563;
+}
+
+.veri-yardim-listesi {
+  margin: 0;
+  padding-left: 1rem;
+  font-size: 0.86rem;
+  color: #6b7280;
+}
+
+.veri-yardim-listesi li {
+  margin-bottom: 2px;
+}
+
+.veri-yonetim-sag {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.veri-yonetim-aksiyonlar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* info satırı */
+.veri-info-alert {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f3f4f6;
+  color: #4b5563;
+  font-size: 0.85rem;
+}
+
+.veri-info-alert svg {
+  color: #2563eb;
+}
+
+/* === TEHLİKELİ BÖLGE (HESAP SİLME) === */
+
+.tehlikeli-bolge {
+  border: 1px solid #fee2e2;
+  background: #fef2f2;
+  border-radius: 12px;
+  padding: 18px 20px;
+}
+
+.tehlike-baslik {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.tehlike-baslik svg {
+  color: #b91c1c;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tehlike-baslik h4 {
+  margin: 0 0 3px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #991b1b;
+}
+
+.tehlike-baslik p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #7f1d1d;
+}
+
+.tehlike-uyari-kutusu {
+  margin: 10px 0 14px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.7);
+  font-size: 0.86rem;
+  color: #7f1d1d;
+}
+
+/* genel danger buton */
+.danger-btn {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.danger-btn:hover {
+  background: #b91c1c;
+}
+
+.danger-btn:active {
+  transform: translateY(1px);
+}
+/* Veri & Güvenlik – aksiyon satırı */
+.veri-yonetim-aksiyonlar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* Upload butonu görünür olsun */
+.excel-upload-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+/* İhtiyaten ikon görünürlüğü için */
+.excel-upload-btn svg {
+  font-size: 0.9rem;
+}
+/* Veri & Güvenlik – aksiyon satırı */
+.veri-yonetim-aksiyonlar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+/* Excel Yükle butonu – HER ZAMAN görünür olsun */
+.veri-yonetim-aksiyonlar .primary-btn.excel-upload-btn {
+  background: #16a34a;           /* yeşil zemin */
+  color: #ffffff;                /* beyaz yazı */
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 999px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(22, 163, 74, 0.3);
+  transition: background 0.15s ease, transform 0.15s ease,
+              box-shadow 0.15s ease, opacity 0.15s ease;
+}
+
+/* Hover hali – biraz daha koyu yeşil */
+.veri-yonetim-aksiyonlar .primary-btn.excel-upload-btn:hover {
+  background: #15803d;
+  transform: translateY(-1px);
+  box-shadow: 0 10px 25px rgba(22, 163, 74, 0.4);
+}
+
+/* Disabled durumunda soluk ve tıklanamaz olsun */
+.veri-yonetim-aksiyonlar .primary-btn.excel-upload-btn.disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* İkon da beyaz görünsün */
+.veri-yonetim-aksiyonlar .primary-btn.excel-upload-btn svg {
+  color: inherit;
+}

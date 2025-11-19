@@ -334,60 +334,44 @@ export const FinansProvider = ({ children }) => {
     // ... dosyanın geri kalan tüm fonksiyonları aynı kalacak ...
     // useEffect, handleBekleyen, updateAyarlar, addIslem, vs. hepsi aynı...
     useEffect(() => {
-    if (!currentUser || sabitOdemeler.length === 0) {
-        setBekleyenOdemeler([]);
-        return;
-    }
-
-    const bugun = new Date();
-    const buAy = bugun.getMonth();
-    const buYil = bugun.getFullYear();
-    const yeniBekleyenOdemeler = [];
-
-    const buAyYil = `${buYil}-${buAy}`;
-    const atlananlarKey = `atlananOdemeler_${currentUser.uid}_${buAyYil}`;
-    const buAyAtlananlar = getLocalData(atlananlarKey, []);
-
-    const vadesiGecenler = sabitOdemeler.filter(odeme => {
-        const odemeGunu = parseInt(odeme.odemeGunu, 10);
-        if (!odeme.baslangicTarihi || isNaN(odemeGunu)) return false;
-
-        // 🔹 TAKSİT BİTMİŞ Mİ KONTROLÜ
-        if (odeme.taksitSayisi != null) {
-            const odenenTaksit = giderler.filter(
-                g => g.sabitOdemeId === odeme.id
-            ).length;
-            if (odeme.taksitSayisi && odenenTaksit >= odeme.taksitSayisi) {
-                // Tüm taksitler ödenmiş, artık bekleyen üretme
-                return false;
-            }
+        if (!currentUser || sabitOdemeler.length === 0) {
+            setBekleyenOdemeler([]);
+            return;
         }
 
-        const ilkOdemeTarihi = new Date(odeme.baslangicTarihi);
-        return odemeGunu <= bugun.getDate() && ilkOdemeTarihi <= bugun;
-    });
+        const bugun = new Date();
+        const buAy = bugun.getMonth();
+        const buYil = bugun.getFullYear();
+        const yeniBekleyenOdemeler = [];
+        
+        const buAyYil = `${buYil}-${buAy}`;
+        const atlananlarKey = `atlananOdemeler_${currentUser.uid}_${buAyYil}`;
+        const buAyAtlananlar = getLocalData(atlananlarKey, []);
 
-    vadesiGecenler.forEach(odeme => {
-        const zatenEklenmis = giderler.some(gider =>
-            gider.sabitOdemeId === odeme.id &&
-            new Date(gider.tarih).getMonth() === buAy &&
-            new Date(gider.tarih).getFullYear() === buYil
-        );
-
-        const buAyAtlandi = buAyAtlananlar.includes(odeme.id);
-
-        if (!zatenEklenmis && !buAyAtlandi) {
+        const vadesiGecenler = sabitOdemeler.filter(odeme => {
             const odemeGunu = parseInt(odeme.odemeGunu, 10);
-            const islenecekTarih = new Date(buYil, buAy, odemeGunu)
-                .toISOString()
-                .split('T')[0];
-            yeniBekleyenOdemeler.push({ ...odeme, islenecekTarih });
-        }
-    });
+            if (!odeme.baslangicTarihi || isNaN(odemeGunu)) return false;
+            const ilkOdemeTarihi = new Date(odeme.baslangicTarihi);
+            return odemeGunu <= bugun.getDate() && ilkOdemeTarihi <= bugun;
+        });
 
-    setBekleyenOdemeler(yeniBekleyenOdemeler);
-}, [sabitOdemeler, giderler, currentUser]);
+        vadesiGecenler.forEach(odeme => {
+            const zatenEklenmis = giderler.some(gider => 
+                gider.sabitOdemeId === odeme.id &&
+                new Date(gider.tarih).getMonth() === buAy &&
+                new Date(gider.tarih).getFullYear() === buYil
+            );
 
+            const buAyAtlandi = buAyAtlananlar.includes(odeme.id);
+
+            if (!zatenEklenmis && !buAyAtlandi) {
+                const odemeGunu = parseInt(odeme.odemeGunu, 10);
+                const islenecekTarih = new Date(buYil, buAy, odemeGunu).toISOString().split('T')[0];
+                yeniBekleyenOdemeler.push({ ...odeme, islenecekTarih });
+            }
+        });
+        setBekleyenOdemeler(yeniBekleyenOdemeler);
+    }, [sabitOdemeler, giderler, currentUser]);
     useEffect(() => {
         const tumKategoriler = [...giderKategorileri, ...gelirKategorileri];
         const yeniRenkHaritasi = {};
@@ -1086,32 +1070,15 @@ const finansalSaglikPuani = useMemo(() => {
     };
 }, [gelirler, giderler, butceDurumlari, toplamBakiye]);
 
-    const yaklasanOdemeler = useMemo(() => {
-    const bugun = new Date();
-    const bugununGunu = bugun.getDate();
-    const aySonGunu = new Date(bugun.getFullYear(), bugun.getMonth() + 1, 0).getDate();
-
-    return sabitOdemeler
-        .filter(odeme => {
-            // 🔹 Taksitli ise ve tüm taksitler ödenmişse yaklaşan listesine de alma
-            if (odeme.taksitSayisi != null) {
-                const odenenTaksit = giderler.filter(
-                    g => g.sabitOdemeId === odeme.id
-                ).length;
-                if (odeme.taksitSayisi && odenenTaksit >= odeme.taksitSayisi) {
-                    return false;
-                }
-            }
-            return true;
-        })
-        .map(odeme => {
-            let kalanGun = odeme.odemeGunu - bugununGunu;
-            if (kalanGun < 0) kalanGun += aySonGunu;
-            return { ...odeme, kalanGun, tutar: odeme.tutar || 0 };
-        })
-        .sort((a, b) => a.kalanGun - b.kalanGun);
-}, [sabitOdemeler, giderler]);
-
+    const yaklasanOdemeler = useMemo(() => { 
+        const bugun = new Date(); 
+        const bugununGunu = bugun.getDate(); 
+        return sabitOdemeler.map(odeme => { 
+            let kalanGun = odeme.odemeGunu - bugununGunu; 
+            if (kalanGun < 0) kalanGun += new Date(bugun.getFullYear(), bugun.getMonth() + 1, 0).getDate(); 
+            return { ...odeme, kalanGun, tutar: odeme.tutar || 0 }; 
+        }).sort((a, b) => a.kalanGun - b.kalanGun);
+    }, [sabitOdemeler]);
 
     const sabitOdemelerOzeti = useMemo(() => {
         const toplamAylikTaahhut = sabitOdemeler.reduce((acc, odeme) => acc + (odeme.tutar || 0), 0);

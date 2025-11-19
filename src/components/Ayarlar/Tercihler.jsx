@@ -3,179 +3,142 @@
 import { useState } from 'react';
 import { useFinans } from '../../context/FinansContext';
 import AyarKarti from './AyarKarti';
-import toast from 'react-hot-toast';
 
 const Tercihler = () => {
   const { ayarlar, updateTercihler } = useFinans();
-  const mevcutTercihler = ayarlar?.tercihler || {};
+
+  const tercihler = ayarlar?.tercihler || {};
 
   const [seciliParaBirimi, setSeciliParaBirimi] = useState(
-    mevcutTercihler.paraBirimi || 'TRY'
+    tercihler.paraBirimi || 'TRY'
   );
   const [tarihFormati, setTarihFormati] = useState(
-    mevcutTercihler.tarihFormati || 'DD.MM.YYYY'
+    tercihler.tarihFormati || 'DD.MM.YYYY'
   );
-  const [paraGosterimStili, setParaGosterimStili] = useState(
-    mevcutTercihler.paraGosterimStili || 'symbol' // symbol | code
+  const [paraGosterim, setParaGosterim] = useState(
+    tercihler.paraGosterim || 'symbol-first'
   );
-  const [kurYukleniyor, setKurYukleniyor] = useState(false);
 
-  const kurlar = mevcutTercihler.kurlar || { TRY: 1, USD: 0, EUR: 0 };
-  const kurGuncellemeZamani = mevcutTercihler.kurGuncellemeZamani;
-
-  // Tercih objesini tek yerden güncelle
-  const ortakGuncelle = (degisiklik) => {
-    const guncel = { ...mevcutTercihler, ...degisiklik };
+  const handleTercihGuncelle = (patch) => {
+    const guncel = { ...tercihler, ...patch };
+    // Context içindeki ayarları güncelle
     updateTercihler(guncel);
-  };
-
-  const handleParaBirimiDegistir = (e) => {
-    const yeniBirim = e.target.value;
-    setSeciliParaBirimi(yeniBirim);
-    ortakGuncelle({ paraBirimi: yeniBirim });
-  };
-
-  const handleTarihFormatiDegistir = (e) => {
-    const yeniFormat = e.target.value;
-    setTarihFormati(yeniFormat);
-    ortakGuncelle({ tarihFormati: yeniFormat });
-  };
-
-  const handleParaGosterimStiliDegistir = (e) => {
-    const yeniStil = e.target.value;
-    setParaGosterimStili(yeniStil);
-    ortakGuncelle({ paraGosterimStili: yeniStil });
-  };
-
-  const handleKurGuncelle = async () => {
-    setKurYukleniyor(true);
+    // Formatlayıcıların kullanacağı localStorage kaydı
     try {
-      // 🔁 YENİ: CORS dostu Frankfurter API
-      const res = await fetch(
-        'https://api.frankfurter.app/latest?from=TRY&to=USD,EUR'
-      );
-
-      if (!res.ok) {
-        console.error('Kur API status:', res.status, res.statusText);
-        throw new Error('API yanıtı başarısız');
-      }
-
-      const data = await res.json();
-      // Örnek response:
-      // { "amount":1,"base":"TRY","date":"2025-01-10","rates":{"USD":0.03,"EUR":0.028} }
-
-      if (!data?.rates) {
-        console.error('Kur API veri hatası:', data);
-        throw new Error('Geçersiz kur verisi');
-      }
-
-      const yeniKurlar = {
-        TRY: 1,
-        USD: data.rates.USD,
-        EUR: data.rates.EUR,
-      };
-
-      ortakGuncelle({
-        kurlar: yeniKurlar,
-        kurGuncellemeZamani: new Date().toISOString(),
-      });
-
-      toast.success('Kur bilgileri başarıyla güncellendi.');
-    } catch (err) {
-      console.error('Kur bilgisi alınırken hata:', err);
-      toast.error(
-        'Kur bilgileri alınamadı (CORS veya ağ hatası).\nİstersen daha sonra tekrar deneyebilirsin.'
-      );
-    } finally {
-      setKurYukleniyor(false);
+      localStorage.setItem('finans_tercihler_v1', JSON.stringify(guncel));
+    } catch (e) {
+      console.error('Tercihler localStorage’a kaydedilirken hata:', e);
     }
   };
 
-  const sonGuncelleYazi = kurGuncellemeZamani
-    ? new Date(kurGuncellemeZamani).toLocaleString('tr-TR')
-    : 'Henüz güncellenmedi';
+  const handleParaBirimiDegistir = (e) => {
+    const yeni = e.target.value;
+    setSeciliParaBirimi(yeni);
+    handleTercihGuncelle({ paraBirimi: yeni });
+  };
+
+  const handleTarihFormatiDegistir = (e) => {
+    const yeni = e.target.value;
+    setTarihFormati(yeni);
+    handleTercihGuncelle({ tarihFormati: yeni });
+  };
+
+  const handleParaGosterimDegistir = (e) => {
+    const yeni = e.target.value;
+    setParaGosterim(yeni);
+    handleTercihGuncelle({ paraGosterim: yeni });
+  };
 
   return (
     <AyarKarti
       title="Tercihler"
-      description="Uygulamanın genel davranışını ve gösterim şeklini kişiselleştirin."
+      description="Uygulamanın para birimi, tarih formatı ve gösterim şekillerini özelleştirin."
     >
-      <div className="ayar-formu">
-        {/* PARA BİRİMİ */}
-        <div className="form-grup">
-          <label htmlFor="paraBirimi">Varsayılan Para Birimi</label>
-          <select
-            id="paraBirimi"
-            value={seciliParaBirimi}
-            onChange={handleParaBirimiDegistir}
-          >
-            <option value="TRY">Türk Lirası (₺)</option>
-            <option value="USD">Amerikan Doları ($)</option>
-            <option value="EUR">Euro (€)</option>
-          </select>
-          <p className="ayar-aciklama">
-            Seçtiğin birim; raporlar, özetler ve kartlarda varsayılan olarak
-            kullanılacak.
-          </p>
-        </div>
-
-        {/* TARİH FORMATİ */}
-        <div className="form-grup">
-          <label htmlFor="tarihFormati">Tarih Formatı</label>
-          <select
-            id="tarihFormati"
-            value={tarihFormati}
-            onChange={handleTarihFormatiDegistir}
-          >
-            <option value="DD.MM.YYYY">31.12.2025</option>
-            <option value="DD/MM/YYYY">31/12/2025</option>
-            <option value="YYYY-MM-DD">2025-12-31</option>
-          </select>
-          <p className="ayar-aciklama">
-            İşlem listeleri ve raporlarda tarihler bu formata göre gösterilecek.
-          </p>
-        </div>
-
-        {/* PARA GÖSTERİM ŞEKLİ */}
-        <div className="form-grup">
-          <label htmlFor="paraStili">Para Gösterim Şekli</label>
-          <select
-            id="paraStili"
-            value={paraGosterimStili}
-            onChange={handleParaGosterimStiliDegistir}
-          >
-            <option value="symbol">₺1.234,50</option>
-            <option value="code">TRY 1.234,50</option>
-          </select>
-          <p className="ayar-aciklama">
-            Sembol ya da kod ile gösterim arasında tercih yapabilirsin.
-          </p>
-        </div>
-
-        {/* KUR BİLGİSİ */}
-        <div className="form-grup">
-          <label>Kur Bilgisi</label>
-          <div className="kur-bilgi-satiri">
-            <div className="kur-bilgi-metni">
-              <div>1 TRY ≈ {(kurlar.USD || 0).toFixed(4)} USD</div>
-              <div>1 TRY ≈ {(kurlar.EUR || 0).toFixed(4)} EUR</div>
-              <div style={{ fontSize: 12, opacity: 0.7 }}>
-                Son güncelleme: {sonGuncelleYazi}
-              </div>
-            </div>
-            <button
-              type="button"
-              className="secondary-btn"
-              onClick={handleKurGuncelle}
-              disabled={kurYukleniyor}
+      <div className="tercihler-grid">
+        {/* SOL TARAF – ÇALIŞAN AYARLAR */}
+        <div className="tercihler-sol ayar-formu">
+          <div className="form-grup">
+            <label htmlFor="paraBirimi">Varsayılan Para Birimi</label>
+            <select
+              id="paraBirimi"
+              value={seciliParaBirimi}
+              onChange={handleParaBirimiDegistir}
             >
-              {kurYukleniyor ? 'Güncelleniyor...' : 'Kurları Güncelle'}
-            </button>
+              <option value="TRY">Türk Lirası (₺)</option>
+              <option value="USD">Amerikan Doları ($)</option>
+              <option value="EUR">Euro (€)</option>
+            </select>
+            <p className="form-aciklama">
+              Tüm özetler ve listelerde tutarlar bu para biriminin
+              sembolüyle gösterilir.
+            </p>
           </div>
-          <p className="ayar-aciklama">
-            Kurlar, herkese açık bir servis üzerinden çekiliyor. Bu değerler
-            çevrimler için referans olarak kullanılacak.
-          </p>
+
+          <div className="form-grup">
+            <label htmlFor="tarihFormati">Tarih Gösterim Biçimi</label>
+            <select
+              id="tarihFormati"
+              value={tarihFormati}
+              onChange={handleTarihFormatiDegistir}
+            >
+              <option value="DD.MM.YYYY">31.12.2025</option>
+              <option value="YYYY-MM-DD">2025-12-31</option>
+              <option value="DD/MM/YYYY">31/12/2025</option>
+            </select>
+            <p className="form-aciklama">
+              İşlem listeleri ve raporlar bu formatta gösterilecek.
+            </p>
+          </div>
+
+          <div className="form-grup">
+            <label htmlFor="paraGosterim">Para Gösterim Şekli</label>
+            <select
+              id="paraGosterim"
+              value={paraGosterim}
+              onChange={handleParaGosterimDegistir}
+            >
+              <option value="symbol-first">₺ 1.234,56</option>
+              <option value="symbol-last">1.234,56 ₺</option>
+              <option value="code-first">TRY 1.234,56</option>
+            </select>
+            <p className="form-aciklama">
+              Sembolden önce / sonra veya para birimi koduyla
+              gösterilmesini seçebilirsiniz.
+            </p>
+          </div>
+        </div>
+
+        {/* SAĞ TARAF – KUR ALANI ŞİMDİLİK SADECE BİLGİ */}
+        <div className="tercihler-sag">
+          <div className="tercihler-kur-baslik">
+            Kur & çapraz kur
+            <span
+              style={{
+                marginLeft: '0.5rem',
+                fontSize: '0.8rem',
+                padding: '0.15rem 0.5rem',
+                borderRadius: '999px',
+                background: 'rgba(148, 163, 184, 0.15)',
+                color: 'var(--secondary-text)',
+                border: '1px solid rgba(148, 163, 184, 0.4)',
+              }}
+            >
+              Yakında
+            </span>
+          </div>
+          <div className="tercihler-kur-alt">
+            <p>
+              Seçtiğin para birimine göre otomatik kur güncelleme ve farklı para
+              birimlerine çevrilmiş toplamları gösterme özelliği burada yer
+              alacak.
+            </p>
+            <p>
+              Şu anda uygulama, seçtiğin para biriminin{' '}
+              <strong>sadece sembolünü ve yazım şeklini</strong> değiştiriyor.
+              Kur çevrimi ve internetten otomatik kur alma özelliği yakında
+              eklenecek.
+            </p>
+          </div>
         </div>
       </div>
     </AyarKarti>
