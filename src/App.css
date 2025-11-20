@@ -10731,3 +10731,200 @@ body {
 .veri-yonetim-aksiyonlar .primary-btn.excel-upload-btn svg {
   color: inherit;
 }
+/* Genel bakış kartları için üst başlık alanı */
+.dashboard-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+/* Kart sağ üstündeki küçük mavi butonlar */
+.btn-primary-small,
+.btn-primary-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.38rem 0.9rem;
+  border-radius: 999px;
+  border: none;
+  background: #2563eb;           /* Mavi */
+  color: #ffffff;                /* Beyaz yazı */
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.btn-primary-small:hover,
+.btn-primary-pill:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.3);
+}
+
+.btn-primary-small:active,
+.btn-primary-pill:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.25);
+}
+
+/* İkonlu kullanım için */
+.btn-icon-left {
+  font-size: 0.75rem;
+}
+.kart-alt-buton {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.yaklasan-odemeler-karti .btn-primary-small {
+  padding: 0.45rem 0.9rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: #2563eb;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  transition: 0.2s ease;
+}
+
+.yaklasan-odemeler-karti .btn-primary-small:hover {
+  background: #1d4ed8;
+  transform: translateY(-1px);
+}
+/* İşlem listesi açıklama metni */
+.liste-aciklama {
+  margin-top: 0.25rem;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  max-width: 520px;
+}
+
+/* Toplu silme onay modalı */
+.confirm-modal {
+  max-width: 420px;
+  padding: 1.75rem;
+  border-radius: 1rem;
+  background: var(--card-bg, #ffffff);
+  box-shadow: 0 18px 35px rgba(15, 23, 42, 0.18);
+}
+
+.confirm-modal h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem;
+}
+
+.confirm-modal p {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: var(--secondary-text);
+}
+
+.confirm-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.confirm-modal .danger-btn {
+  padding: 0.45rem 0.9rem;
+}
+
+.confirm-modal .secondary-btn {
+  padding: 0.45rem 0.9rem;
+  background: transparent;
+  border: 1px solid rgba(148, 163, 184, 0.6);
+  color: var(--secondary-text);
+}
+.secim-eylem-cubugu {
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  background: rgba(37, 99, 235, 0.03);
+  border: 1px dashed rgba(148, 163, 184, 0.6);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.secim-sol {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.secim-sag {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.secim-eylem-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.7);
+  background: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.secim-eylem-cubugu .danger-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+
+.secim-eylem-cubugu .secondary-btn {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.85rem;
+}
+/* Raporlar üst bar aksiyon butonları */
+.page-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.page-action-btn svg {
+  font-size: 0.85rem;
+}
+
+/* Dolgu mavi buton (indir butonu) */
+.page-action-primary {
+  background: var(--primary-color, #2563eb);
+  color: #fff;
+  box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+}
+
+.page-action-primary:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+/* Açık/grimsi buton (tarih seç) */
+.page-action-secondary {
+  background: #eef2ff;
+  color: #1d4ed8;
+}
+
+.page-action-secondary:hover {
+  background: #e0e7ff;
+}

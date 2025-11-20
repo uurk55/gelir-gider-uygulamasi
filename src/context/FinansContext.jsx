@@ -893,10 +893,44 @@ const handleHedefeParaEkle = async (hedefId, kaynakHesapId, tutar) => {
             return tarihSart && tipSart && kategoriSart && hesapSart && aramaSart;
         });
 
-        return filtrelenmisListe.sort((a, b) => {
-            // Sıralama için new Date() kullanmak güvenlidir.
-            return new Date(b.tarih) - new Date(a.tarih);
-        });
+        // --- SIRALAMA AŞAMASI ---
+const parseDateSafe = (value) => {
+    if (value && typeof value.toDate === 'function') {
+        // Firestore Timestamp ise
+        return value.toDate();
+    }
+    if (typeof value === 'string' && value.includes('-')) {
+        // "YYYY-MM-DD" için güvenli parse
+        const [y, m, d] = value.split('-');
+        return new Date(y, m - 1, d);
+    }
+    return new Date(value);
+};
+
+return filtrelenmisListe.sort((a, b) => {
+    const aTarih = parseDateSafe(a.tarih);
+    const bTarih = parseDateSafe(b.tarih);
+
+    switch (birlesikSiralamaKriteri) {
+        case SIRALAMA_KRITERLERI.TARIH_ESKI:
+            // En eski → en yeni
+            return aTarih - bTarih;
+
+        case SIRALAMA_KRITERLERI.TUTAR_ARTAN:
+            // Tutar küçük → büyük
+            return (a.tutar || 0) - (b.tutar || 0);
+
+        case SIRALAMA_KRITERLERI.TUTAR_AZALAN:
+            // Tutar büyük → küçük
+            return (b.tutar || 0) - (a.tutar || 0);
+
+        case SIRALAMA_KRITERLERI.TARIH_YENI:
+        default:
+            // En yeni → en eski (varsayılan)
+            return bTarih - aTarih;
+    }
+});
+
     }, [gelirler, giderler, transferler, tarihAraligi, birlesikFiltreTip, birlesikFiltreKategori, birlesikSiralamaKriteri, birlesikFiltreHesap, aramaMetni]);
 
     const filtrelenmisGelirler = useMemo(() => gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === seciliAy), [gelirler, seciliAy, seciliYil]);
@@ -1146,6 +1180,44 @@ const finansalSaglikPuani = useMemo(() => {
     const mevcutYillar = useMemo(() => { const yillar = new Set([...gelirler, ...giderler].map(islem => new Date(islem.tarih).getFullYear())); if (yillar.size === 0) { yillar.add(new Date().getFullYear()); } return Array.from(yillar).sort((a, b) => b - a); }, [gelirler, giderler]);
     const trendVerisi = useMemo(() => { const labels = []; const gelirlerData = []; const giderlerData = []; const bugun = new Date(); for (let i = 5; i >= 0; i--) { const tarih = new Date(bugun.getFullYear(), bugun.getMonth() - i, 1); const yil = tarih.getFullYear(); const ay = tarih.getMonth() + 1; labels.push(tarih.toLocaleString('tr-TR', { month: 'long' })); const aylikGelir = gelirler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); const aylikGider = giderler.filter(g => new Date(g.tarih).getFullYear() === yil && new Date(g.tarih).getMonth() + 1 === ay).reduce((t, g) => t + g.tutar, 0); gelirlerData.push(aylikGelir); giderlerData.push(aylikGider); } return { labels, gelirler: gelirlerData, giderler: giderlerData }; }, [gelirler, giderler]);
     const yillikRaporVerisi = useMemo(() => { const aylar = []; let yillikToplamGelir = 0; let yillikToplamGider = 0; for (let i = 1; i <= 12; i++) { const aylikGelirler = gelirler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); const aylikGiderler = giderler.filter(g => new Date(g.tarih).getFullYear() === seciliYil && new Date(g.tarih).getMonth() + 1 === i); if (aylikGelirler.length > 0 || aylikGiderler.length > 0) { const ayGelir = aylikGelirler.reduce((t, g) => t + g.tutar, 0); const ayGider = aylikGiderler.reduce((t, g) => t + g.tutar, 0); yillikToplamGelir += ayGelir; yillikToplamGider += ayGider; aylar.push({ ay: new Date(seciliYil, i - 1, 1).toLocaleString('tr-TR', { month: 'long' }), gelir: ayGelir, gider: ayGider, bakiye: ayGelir - ayGider }); } } return { aylar, toplamGelir: yillikToplamGelir, toplamGider: yillikToplamGider, toplamBakiye: yillikToplamGelir - yillikToplamGider }; }, [gelirler, giderler, seciliYil]);
+// 🔵 RAPOR İÇİN ÖZEL EXCEL İNDİRME
+const handleRaporIndir = () => {
+    if (!trendVerisi || !yillikRaporVerisi) {
+        toast.error("Rapor oluşturmak için yeterli veri bulunamadı.");
+        return;
+    }
+
+    // 1) Trend sheet verisi (Son 6 ay)
+    const trendSheetData = trendVerisi.labels.map((ay, i) => ({
+        Ay: ay,
+        "Toplam Gelir": trendVerisi.gelirler[i] || 0,
+        "Toplam Gider": trendVerisi.giderler[i] || 0,
+        "Net": (trendVerisi.gelirler[i] || 0) - (trendVerisi.giderler[i] || 0),
+    }));
+
+    const trendSheet = XLSX.utils.json_to_sheet(trendSheetData);
+
+    // 2) Yıllık özet sheet verisi
+    const yillikSheetData = yillikRaporVerisi.aylar.map((ayData) => ({
+        Ay: ayData.ay,
+        "Toplam Gelir": ayData.gelir,
+        "Toplam Gider": ayData.gider,
+        "Aylık Net": ayData.bakiye,
+    }));
+
+    const yillikSheet = XLSX.utils.json_to_sheet(yillikSheetData);
+
+    // 3) Workbook oluştur ve sheet'leri ekle
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, trendSheet, "Trend");
+    XLSX.utils.book_append_sheet(workbook, yillikSheet, "Yıllık Özet");
+
+    // 4) Dosya adı ve indirme
+    const today = new Date().toISOString().slice(0, 10);
+    XLSX.writeFile(workbook, `FinansRaporu-${today}.xlsx`);
+
+    toast.success("Rapor Excel olarak indirildi.");
+};
 
 const kategoriHarcamaOzeti = useMemo(() => {
     const filtrelenmisGiderler = giderler.filter(gider => {
@@ -1273,6 +1345,7 @@ const enBuyukHarcamalar = useMemo(() => {
         handleHedefeParaEkle,
         updateBildirimAyarlari,
         updateTercihler,
+        handleRaporIndir,
         handleVeriIndir, // Güncellenmiş Excel indirme
         handleVeriIçeAktar, // Güncellenmiş Excel içe aktarma
         handleDownloadExcelTemplate,

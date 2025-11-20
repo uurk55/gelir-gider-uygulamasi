@@ -1,11 +1,12 @@
-// src/components/GenelBakis/YaklasanOdemelerKarti.jsx 
+// src/components/GenelBakis/YaklasanOdemelerKarti.jsx  
 import { useFinans } from "../../context/FinansContext";
 import { formatCurrency } from "../../utils/formatters";
+import { Link } from "react-router-dom";
 
 function YaklasanOdemelerKarti() {
   const { yaklasanOdemeler } = useFinans();
 
-  // 🔵 YENİ: Toplam yaklaşan tutar
+  // 🔵 Toplam yaklaşan tutar
   const toplamYaklasanTutar = yaklasanOdemeler.reduce(
     (sum, o) => sum + (o.tutar || 0),
     0
@@ -32,7 +33,7 @@ function YaklasanOdemelerKarti() {
         <h3>Yaklaşan Ödemeler</h3>
       </div>
 
-      {/* 🔵 YENİ EKLENDİ: Özet alanı */}
+      {/* Özet alanı */}
       <div className="yaklasan-odeme-ozet">
         <span>Toplam yaklaşan tutar:</span>
         <strong>{formatCurrency(toplamYaklasanTutar)}</strong>
@@ -43,7 +44,7 @@ function YaklasanOdemelerKarti() {
           <p className="bos-mesaj">Yaklaşan ödeme bulunmuyor.</p>
         )}
 
-        {yaklasanOdemeler.map((odeme) => (
+        {yaklasanOdemeler.slice(0, 5).map((odeme) => (
           <div key={odeme.id} className="yaklasan-odeme-item">
             <div className="odeme-sol">
               <div className="odeme-aciklama">{odeme.aciklama}</div>
@@ -57,6 +58,13 @@ function YaklasanOdemelerKarti() {
             </span>
           </div>
         ))}
+      </div>
+
+      {/* Tüm Sabit Ödemeler butonu */}
+      <div className="kart-alt-buton">
+        <Link to="/sabit-odemeler" className="btn-primary-small">
+          Tüm Sabit Ödemeleri Gör →
+        </Link>
       </div>
     </div>
   );

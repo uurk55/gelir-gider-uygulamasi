@@ -292,22 +292,23 @@ function Butceler() {
         />
       </div>
 
-      <div className="yeni-butce-aksiyonlar">
+                  <div className="yeni-butce-aksiyonlar">
         <button
           type="button"
           onClick={() => setIsAdding(false)}
-          className="secondary-btn small"
+          className="secondary-btn"
         >
           Vazgeç
         </button>
         <button
           type="button"
           onClick={onEkle}
-          className="primary-btn small"
+          className="primary-btn"
         >
           <FaSave /> Kaydet
         </button>
       </div>
+
     </div>
   </div>
 )}
